@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>CC_ENABLE_CHIPMUNK_INTEGRATION=0;CC_USE_PHYSICS=0;CC_USE_3D_PHYSICS=0;CC_USE_NAVMESH=0;CC_USE_JPEG=0;CC_USE_TIFF=0;CC_USE_WEBP=0;CC_ENABLE_SCRIPT_BINDING=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CC_ENABLE_CHIPMUNK_INTEGRATION=0;CC_USE_PHYSICS=1;CC_USE_3D_PHYSICS=0;CC_USE_NAVMESH=0;CC_USE_JPEG=0;CC_USE_TIFF=0;CC_USE_WEBP=0;CC_ENABLE_SCRIPT_BINDING=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
