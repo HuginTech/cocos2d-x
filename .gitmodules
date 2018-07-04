@@ -10,3 +10,6 @@
 [submodule "web"]
         path = web
         url = git://github.com/cocos2d/cocos2d-html5.git
+[submodule "plugin"]
+	path = plugin
+	url = ../../cocos2d-x/plugin-x.git
