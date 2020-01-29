@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Stasism\External\cocos2d-x\build\CMakeFiles\c272451e07c434d3a3ee079162c2b882\COPY_LUA-lua-empty-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\project\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Stasism\External\cocos2d-x\build\engine\tests\lua-empty-test\CMakeFiles\COPY_LUA-lua-empty-test" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{DF7ABCB3-B608-32AD-AD93-D0BBBEE07352}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

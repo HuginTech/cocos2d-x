@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2016-2017 Chukong Technologies Inc.
+ Copyright (c) 2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos2d-x.org
 
@@ -28,7 +29,7 @@
 
 #define LOG_TAG "AudioDecoderOgg"
 
-namespace cocos2d { namespace experimental {
+namespace cocos2d {
 
     AudioDecoderOgg::AudioDecoderOgg()
     {
@@ -42,7 +43,7 @@ namespace cocos2d { namespace experimental {
     bool AudioDecoderOgg::open(const char* path)
     {
         std::string fullPath = FileUtils::getInstance()->fullPathForFilename(path);
-        if (0 == ov_fopen(fullPath.c_str(), &_vf))
+        if (0 == ov_fopen(FileUtils::getInstance()->getSuitableFOpen(fullPath).c_str(), &_vf))
         {
             // header
             vorbis_info* vi = ov_info(&_vf, -1);
@@ -83,4 +84,4 @@ namespace cocos2d { namespace experimental {
         return static_cast<uint32_t>(ov_pcm_tell(const_cast<OggVorbis_File*>(&_vf)));
     }
 
-}} // namespace cocos2d { namespace experimental {
+} // namespace cocos2d {

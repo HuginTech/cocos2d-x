@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2013-2017 Chukong Technologies Inc.
+ Copyright (c) 2013-2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -38,7 +39,7 @@ bool WebViewTest::init()
         Size winSize = Director::getInstance()->getVisibleSize();
 
         
-        _webView = cocos2d::experimental::ui::WebView::create();
+        _webView = cocos2d::ui::WebView::create();
         _webView->setPosition(winSize/2);
         _webView->setContentSize(winSize * 0.5);
         _webView->loadURL("https://www.baidu.com");
@@ -49,6 +50,10 @@ bool WebViewTest::init()
         _webView->setOnDidFailLoading(CC_CALLBACK_2(WebViewTest::onWebViewDidFailLoading, this));
         
         this->addChild(_webView);
+        
+        auto spriteHello = Sprite::create("Hello.png");
+        spriteHello->setPosition(winSize/2);
+        this->addChild(spriteHello);
         
         TextField *urlTextField = TextField::create("Input a URL here", "Arial", 20);
         urlTextField->setPlaceHolderColor(Color3B::RED);
@@ -144,26 +149,60 @@ bool WebViewTest::init()
         evalJsBtn->setName("evalJs");
         this->addChild(evalJsBtn);
         
+        Button *opacityBtn = Button::create("cocosui/animationbuttonnormal.png",
+                                           "cocosui/animationbuttonpressed.png");
+        opacityBtn->setTitleText("Opacity 1.f");
+        opacityBtn->setPosition(Vec2(winSize/2) - Vec2( _webView->getContentSize().width/2 +
+                                                      opacityBtn->getContentSize().width/2 + 10, 100 ));
+        opacityBtn->addClickEventListener([=](Ref*){
+            auto currentOpacity = _webView->getOpacityWebView();
+            if(currentOpacity ==1.f){
+                _webView->setOpacityWebView(.5f);
+                opacityBtn->setTitleText("Opacity .5f");
+            }else if(currentOpacity == .5f){
+                _webView->setOpacityWebView(0);
+                opacityBtn->setTitleText("Opacity 0.f");
+            }else{
+                _webView->setOpacityWebView(1.f);
+                opacityBtn->setTitleText("Opacity 1.f");
+            }
+            
+        });
+        opacityBtn->setName("Opacity");
+        this->addChild(opacityBtn);
+        
+        
+        Button *transparentBgBtn = Button::create("cocosui/animationbuttonnormal.png",
+                                            "cocosui/animationbuttonpressed.png");
+        transparentBgBtn->setTitleText("Transparent BG");
+        transparentBgBtn->setPosition(Vec2(winSize/2) + Vec2( _webView->getContentSize().width/2 +
+                                                             transparentBgBtn->getContentSize().width/2 + 10,-100 ));
+        transparentBgBtn->addClickEventListener([=](Ref*){
+            _webView->setBackgroundTransparent();
+        });
+        transparentBgBtn->setName("Transparent");
+        this->addChild(transparentBgBtn);
+        
         return true;
     }
     return false;
 }
 
-bool WebViewTest::onWebViewShouldStartLoading(experimental::ui::WebView *sender, const std::string &url)
+bool WebViewTest::onWebViewShouldStartLoading(ui::WebView *sender, const std::string &url)
 {
     CCLOG("onWebViewShouldStartLoading, url is %s", url.c_str());
     //don't do any OpenGL operation here!! It's forbidden!
     return true;
 }
 
-void WebViewTest::onWebViewDidFinishLoading(experimental::ui::WebView *sender, const std::string &url)
+void WebViewTest::onWebViewDidFinishLoading(ui::WebView *sender, const std::string &url)
 {
     auto node = (ui::Button*)this->getChildByName("evalJs");
     node->setTitleText("start loading...");
     CCLOG("onWebViewDidFinishLoading, url is %s", url.c_str());
 }
 
-void WebViewTest::onWebViewDidFailLoading(experimental::ui::WebView *sender, const std::string &url)
+void WebViewTest::onWebViewDidFailLoading(ui::WebView *sender, const std::string &url)
 {
     CCLOG("onWebViewDidFailLoading, url is %s", url.c_str());
 }

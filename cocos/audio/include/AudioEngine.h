@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2014-2017 Chukong Technologies Inc.
+ Copyright (c) 2014-2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos2d-x.org
 
@@ -21,17 +22,14 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
-#include "platform/CCPlatformConfig.h"
-
-#ifndef __AUDIO_ENGINE_H_
-#define __AUDIO_ENGINE_H_
+#pragma once
 
 #include <functional>
 #include <list>
 #include <string>
 #include <unordered_map>
 
+#include "platform/CCPlatformConfig.h"
 #include "platform/CCPlatformMacros.h"
 #include "audio/include/Export.h"
 
@@ -45,8 +43,6 @@
  */
 
 NS_CC_BEGIN
-    namespace experimental{
-
 /**
  * @class AudioProfile
  *
@@ -294,6 +290,21 @@ public:
      */
     static void preload(const std::string& filePath, std::function<void(bool isSuccess)> callback);
 
+    /**
+     * Gets playing audio count.
+     */
+    static int getPlayingAudioCount();
+    
+    /**
+     * Whether to enable playing audios
+     * @note If it's disabled, current playing audios will be stopped and the later 'preload', 'play2d' methods will take no effects.
+     */
+    static void setEnabled(bool isEnabled);
+    /**
+     * Check whether AudioEngine is enabled.
+     */
+    static bool isEnabled();
+    
 protected:
     static void addTask(const std::function<void()>& task);
     static void remove(int audioID);
@@ -315,7 +326,7 @@ protected:
     
     struct AudioInfo
     {
-        const std::string* filePath;
+        std::string filePath;
         ProfileHelper* profileHelper;
         
         float volume;
@@ -323,13 +334,13 @@ protected:
         float duration;
         AudioState state;
 
-        AudioInfo()
-            : profileHelper(nullptr)
-            , duration(TIME_UNKNOWN)
-            , state(AudioState::INITIALIZING)
-        {
-
-        }
+        AudioInfo();
+        ~AudioInfo();
+    private:
+        AudioInfo(const AudioInfo& info);
+        AudioInfo(AudioInfo&& info);
+        AudioInfo& operator=(const AudioInfo& info);
+        AudioInfo& operator=(AudioInfo&& info);
     };
 
     //audioID,audioAttribute
@@ -350,13 +361,12 @@ protected:
     class AudioEngineThreadPool;
     static AudioEngineThreadPool* s_threadPool;
     
+    static bool _isEnabled;
+    
     friend class AudioEngineImpl;
 };
 
-}
 NS_CC_END
 
 // end group
 /// @}
-
-#endif // __AUDIO_ENGINE_H_

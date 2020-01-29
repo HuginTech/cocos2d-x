@@ -1,0 +1,291 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\project\Classes\AppDelegate.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\project\proj.win32\main.cpp">
+      <Filter>Source Files\proj.win32</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Stasism\External\cocos2d-x\cocos\precheader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\project\Classes\AppDelegate.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\project\Classes\lua_module_register.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\project\proj.win32\main.h">
+      <Filter>Source Files\proj.win32</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\.gitignore">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\background.caf">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\background.mp3">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\background.ogg">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\crop.png">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\dog.png">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\effect1.wav">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\farm.jpg">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\fonts\Marker Felt.ttf">
+      <Filter>Resources\res\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\land.png">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\menu1.png">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\res\menu2.png">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\src\hello.lua">
+      <Filter>Resources\src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\src\hello2.lua">
+      <Filter>Resources\src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\src\mobdebug.lua">
+      <Filter>Resources\src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\3d\3dConstants.lua">
+      <Filter>Resources\src\cocos\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\Cocos2d.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\Cocos2dConstants.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\DeprecatedCocos2dClass.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\DeprecatedCocos2dEnum.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\DeprecatedCocos2dFunc.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\DrawPrimitives.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\bitExtend.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\deprecated.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\functions.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\json.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\luaj.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocos2d\luaoc.lua">
+      <Filter>Resources\src\cocos\cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocosdenshion\AudioEngine.lua">
+      <Filter>Resources\src\cocos\cocosdenshion</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocostudio\CocoStudio.lua">
+      <Filter>Resources\src\cocos\cocostudio</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocostudio\DeprecatedCocoStudioClass.lua">
+      <Filter>Resources\src\cocos\cocostudio</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocostudio\DeprecatedCocoStudioFunc.lua">
+      <Filter>Resources\src\cocos\cocostudio</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\cocostudio\StudioConstants.lua">
+      <Filter>Resources\src\cocos\cocostudio</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\controller\ControllerConstants.lua">
+      <Filter>Resources\src\cocos\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\extension\DeprecatedExtensionClass.lua">
+      <Filter>Resources\src\cocos\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\extension\DeprecatedExtensionEnum.lua">
+      <Filter>Resources\src\cocos\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\extension\DeprecatedExtensionFunc.lua">
+      <Filter>Resources\src\cocos\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\extension\ExtensionConstants.lua">
+      <Filter>Resources\src\cocos\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\components\event.lua">
+      <Filter>Resources\src\cocos\framework\components</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\device.lua">
+      <Filter>Resources\src\cocos\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\display.lua">
+      <Filter>Resources\src\cocos\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\LayerEx.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\MenuEx.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\NodeEx.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\SpriteEx.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\UICheckBox.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\UIEditBox.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\UIListView.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\UIPageView.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\UIScrollView.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\UISlider.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\UITextField.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\extends\UIWidget.lua">
+      <Filter>Resources\src\cocos\framework\extends</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\init.lua">
+      <Filter>Resources\src\cocos\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\package_support.lua">
+      <Filter>Resources\src\cocos\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\framework\transition.lua">
+      <Filter>Resources\src\cocos\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\init.lua">
+      <Filter>Resources\src\cocos</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\network\DeprecatedNetworkClass.lua">
+      <Filter>Resources\src\cocos\network</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\network\DeprecatedNetworkEnum.lua">
+      <Filter>Resources\src\cocos\network</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\network\DeprecatedNetworkFunc.lua">
+      <Filter>Resources\src\cocos\network</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\network\NetworkConstants.lua">
+      <Filter>Resources\src\cocos\network</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\physics3d\physics3d-constants.lua">
+      <Filter>Resources\src\cocos\physics3d</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\spine\SpineConstants.lua">
+      <Filter>Resources\src\cocos\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\ui\DeprecatedUIEnum.lua">
+      <Filter>Resources\src\cocos\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\ui\DeprecatedUIFunc.lua">
+      <Filter>Resources\src\cocos\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\cocos\scripting\lua-bindings\script\ui\GuiConstants.lua">
+      <Filter>Resources\src\cocos\ui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Stasism\External\cocos2d-x\tests\lua-empty-test\project\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{6D528DC8-9FCB-38EE-9671-020064D58426}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\res">
+      <UniqueIdentifier>{2BD61BB6-4712-329F-9908-E1C7ECBF0672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\res\fonts">
+      <UniqueIdentifier>{BE41D7CE-AD5E-38CC-B584-F5CCDC506698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src">
+      <UniqueIdentifier>{DFB9AFC4-BB20-3FC7-8BC5-9F07FCD53298}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos">
+      <UniqueIdentifier>{ED141C14-91FA-36DD-BFE6-F6046495620B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\3d">
+      <UniqueIdentifier>{3A941494-7902-3046-9176-ACE047748B65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\cocos2d">
+      <UniqueIdentifier>{1CB61500-9DA0-3252-86B9-E7D5FBC860B7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\cocosdenshion">
+      <UniqueIdentifier>{EB776F0A-0024-337D-9BCA-334594191ADC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\cocostudio">
+      <UniqueIdentifier>{C8579656-D84A-3CF9-8890-711ACCB6A5FC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\controller">
+      <UniqueIdentifier>{5DD3146A-701A-36EE-BABE-199821153FFD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\extension">
+      <UniqueIdentifier>{AA463575-E3A3-3649-8160-A070971760AD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\framework">
+      <UniqueIdentifier>{0640A9C0-B33C-3E95-B2A5-FD13803014FC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\framework\components">
+      <UniqueIdentifier>{6C7E01BC-3041-318B-8A4C-B51744344C97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\framework\extends">
+      <UniqueIdentifier>{8FB4DFFB-2062-3B25-B2AF-B9D338D6A5BD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\network">
+      <UniqueIdentifier>{AEA8FBC4-DD35-332C-8201-E35DF1E56428}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\physics3d">
+      <UniqueIdentifier>{5EE719EE-25FB-3B35-8B35-89CD94D764D1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\spine">
+      <UniqueIdentifier>{65C579AD-5DC5-33EE-BB11-433357AF9E6A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\src\cocos\ui">
+      <UniqueIdentifier>{D6D372E4-CD77-3385-8E9B-4BDFACD9426A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{634EAC33-5DE6-3B43-AE35-76A8D53B4B0D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Classes">
+      <UniqueIdentifier>{542FEDF3-1995-323A-B744-54204B1167B1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\proj.win32">
+      <UniqueIdentifier>{E8069C4D-2ECA-3D68-AD58-648A165DDED4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

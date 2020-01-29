@@ -2,7 +2,8 @@
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2017 Chukong Technologies Inc.
+Copyright (c) 2013-2016 Chukong Technologies Inc.
+Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -188,12 +189,6 @@ emitter.startSpin = 0;
 
 */
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-#ifdef RELATIVE
-#undef RELATIVE
-#endif
-#endif
-
 class CC_DLL ParticleSystem : public Node, public TextureProtocol, public PlayableProtocol
 {
 public:
@@ -250,7 +245,11 @@ public:
      * @js NA
      */
     static ParticleSystem* createWithTotalParticles(int numberOfParticles);
-    
+
+    /** Gets all ParticleSystem references
+     */
+    static Vector<ParticleSystem*>& getAllParticleSystems();
+public:
     void addParticles(int count);
     
     void stopSystem();
@@ -726,7 +725,6 @@ public:
     /** does the alpha value modify color */
     void setOpacityModifyRGB(bool opacityModifyRGB) override { _opacityModifyRGB = opacityModifyRGB; }
     bool isOpacityModifyRGB() const override { return _opacityModifyRGB; }
-    CC_DEPRECATED_ATTRIBUTE bool getOpacityModifyRGB() const { return isOpacityModifyRGB(); }
     
     /** Gets the particles movement type: Free or Grouped.
      @since v0.8
@@ -768,6 +766,9 @@ public:
     virtual void start() override;
     virtual void stop() override;
     /// @} end of PlayableProtocol
+    
+    void setSourcePositionCompatible(bool sourcePositionCompatible) { _sourcePositionCompatible = sourcePositionCompatible; }
+    bool isSourcePositionCompatible() const { return _sourcePositionCompatible; }
     
 CC_CONSTRUCTOR_ACCESS:
     /**
@@ -815,12 +816,19 @@ CC_CONSTRUCTOR_ACCESS:
 
 protected:
     virtual void updateBlendFunc();
+    
+private:
+    friend class EngineDataManager;
+    /** Internal use only, it's used by EngineDataManager class for Android platform */
+    static void setTotalParticleCountFactor(float factor);
+    
+protected:
 
     /** whether or not the particles are using blend additive.
      If enabled, the following blending function will be used.
      @code
-     source blend function = GL_SRC_ALPHA;
-     dest blend function = GL_ONE;
+     source blend function = BlendFactor::SRC_ALPHA;
+     dest blend function = BlendFactor::ONE;
      @endcode
      */
     bool _isBlendAdditive;
@@ -904,6 +912,9 @@ protected:
     
     /** Quantity of particles that are being simulated at the moment */
     int _particleCount;
+    /** The factor affects the total particle count, its value should be 0.0f ~ 1.0f, default 1.0f*/
+    static float __totalParticleCountFactor;
+    
     /** How many seconds the emitter will run. -1 means 'forever' */
     float _duration;
     /** sourcePosition of the emitter */
@@ -970,7 +981,12 @@ protected:
     
     /** is the emitter paused */
     bool _paused;
+    
+    /** is sourcePosition compatible */
+    bool _sourcePositionCompatible;
 
+    static Vector<ParticleSystem*> __allInstances;
+    
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(ParticleSystem);
 };

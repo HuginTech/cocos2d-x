@@ -1,5 +1,6 @@
 /****************************************************************************
  Copyright (c) 2013 cocos2d-x.org
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -575,10 +576,10 @@ void CSLoader::initNode(Node* node, const rapidjson::Value& json)
     float skewy         = DICTOOL->getFloatValue_json(json, SKEW_Y);
     float anchorx       = DICTOOL->getFloatValue_json(json, ANCHOR_X, 0.5f);
     float anchory       = DICTOOL->getFloatValue_json(json, ANCHOR_Y, 0.5f);
-    GLubyte alpha       = (GLubyte)DICTOOL->getIntValue_json(json, ALPHA, 255);
-    GLubyte red         = (GLubyte)DICTOOL->getIntValue_json(json, RED, 255);
-    GLubyte green       = (GLubyte)DICTOOL->getIntValue_json(json, GREEN, 255);
-    GLubyte blue        = (GLubyte)DICTOOL->getIntValue_json(json, BLUE, 255);
+    uint8_t alpha       = (uint8_t)DICTOOL->getIntValue_json(json, ALPHA, 255);
+    uint8_t red         = (uint8_t)DICTOOL->getIntValue_json(json, RED, 255);
+    uint8_t green       = (uint8_t)DICTOOL->getIntValue_json(json, GREEN, 255);
+    uint8_t blue        = (uint8_t)DICTOOL->getIntValue_json(json, BLUE, 255);
     int zorder          = DICTOOL->getIntValue_json(json, ZORDER);
     int tag             = DICTOOL->getIntValue_json(json, TAG);
     int actionTag       = DICTOOL->getIntValue_json(json, ACTION_TAG);
@@ -951,7 +952,7 @@ Node* CSLoader::nodeWithFlatBuffersFile(const std::string &fileName, const ccNod
     std::string fullPath = FileUtils::getInstance()->fullPathForFilename(fileName);
     
     CC_ASSERT(FileUtils::getInstance()->isFileExist(fullPath));
-
+    
     Data buf = FileUtils::getInstance()->getDataFromFile(fullPath);
 
     if (buf.isNull())
@@ -1028,7 +1029,7 @@ Node* CSLoader::nodeWithFlatBuffers(const flatbuffers::NodeTree *nodetree, const
             {
                 node = Node::create();
             }
-            reader->setPropsWithFlatBuffers(node, (const flatbuffers::Table*)options->data());
+            reader->setPropsWithFlatBuffers(node, options->data());
             if (action)
             {
                 action->setTimeSpeed(projectNodeOptions->innerActionSpeed());
@@ -1040,12 +1041,12 @@ Node* CSLoader::nodeWithFlatBuffers(const flatbuffers::NodeTree *nodetree, const
         {
             node = Node::create();
             auto reader = ComAudioReader::getInstance();
-            Component* component = reader->createComAudioWithFlatBuffers((const flatbuffers::Table*)options->data());
+            Component* component = reader->createComAudioWithFlatBuffers(options->data());
             if (component)
             {
                 component->setName(PlayableFrame::PLAYABLE_EXTENTION);
                 node->addComponent(component);
-                reader->setPropsWithFlatBuffers(node, (const flatbuffers::Table*)options->data());
+                reader->setPropsWithFlatBuffers(node, options->data());
             }
         }
         else
@@ -1061,7 +1062,7 @@ Node* CSLoader::nodeWithFlatBuffers(const flatbuffers::NodeTree *nodetree, const
             NodeReaderProtocol* reader = dynamic_cast<NodeReaderProtocol*>(ObjectFactory::getInstance()->createObject(readername));
             if (reader)
             {
-                node = reader->createNodeWithFlatBuffers((const flatbuffers::Table*)options->data());
+                node = reader->createNodeWithFlatBuffers(options->data());
             }
             
             Widget* widget = dynamic_cast<Widget*>(node);
@@ -1374,7 +1375,7 @@ Node* CSLoader::nodeWithFlatBuffersForSimulator(const flatbuffers::NodeTree *nod
         {
             node = Node::create();
         }
-        reader->setPropsWithFlatBuffers(node, (const flatbuffers::Table*)options->data());
+        reader->setPropsWithFlatBuffers(node, options->data());
         if (action)
         {
             action->setTimeSpeed(projectNodeOptions->innerActionSpeed());
@@ -1386,11 +1387,11 @@ Node* CSLoader::nodeWithFlatBuffersForSimulator(const flatbuffers::NodeTree *nod
     {
         node = Node::create();
         auto reader = ComAudioReader::getInstance();
-        Component* component = reader->createComAudioWithFlatBuffers((const flatbuffers::Table*)options->data());
+        Component* component = reader->createComAudioWithFlatBuffers(options->data());
         if (component)
         {
             node->addComponent(component);
-            reader->setPropsWithFlatBuffers(node, (const flatbuffers::Table*)options->data());
+            reader->setPropsWithFlatBuffers(node, options->data());
         }
     }
     else
@@ -1401,7 +1402,7 @@ Node* CSLoader::nodeWithFlatBuffersForSimulator(const flatbuffers::NodeTree *nod
         NodeReaderProtocol* reader = dynamic_cast<NodeReaderProtocol*>(ObjectFactory::getInstance()->createObject(readername));
         if (reader)
         {
-            node = reader->createNodeWithFlatBuffers((const flatbuffers::Table*)options->data());
+            node = reader->createNodeWithFlatBuffers(options->data());
         }
         
         Widget* widget = dynamic_cast<Widget*>(node);

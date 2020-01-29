@@ -2,7 +2,8 @@
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2017 Chukong Technologies Inc.
+Copyright (c) 2013-2016 Chukong Technologies Inc.
+Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -85,12 +86,12 @@ public:
      *
      * @return  The amplitude rate.
      */
-    float getAmplitudeRate(void);
+    float getAmplitudeRate();
 
     //
     // Overrides
     //
-    virtual bool isDone(void) const override;
+    virtual bool isDone() const override;
     /**
      * @param dt in seconds
      */
@@ -114,8 +115,9 @@ CC_CONSTRUCTOR_ACCESS:
 
 protected:
     float _elapsed;
-    bool   _firstTick;
-
+    bool _firstTick;
+    bool _done;
+    
 protected:
     bool sendUpdateEventToScript(float dt, Action *actionObject);
 };
@@ -130,25 +132,7 @@ public:
      *
      * @return An autoreleased Sequence object.
      */
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-    // VS2013 does not support nullptr in variable args lists and variadic templates are also not supported
-    typedef FiniteTimeAction* M;
-    static Sequence* create(M m1, std::nullptr_t listEnd) { return variadicCreate(m1, NULL); }
-    static Sequence* create(M m1, M m2, std::nullptr_t listEnd) { return variadicCreate(m1, m2, NULL); }
-    static Sequence* create(M m1, M m2, M m3, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, NULL); }
-    static Sequence* create(M m1, M m2, M m3, M m4, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, NULL); }
-    static Sequence* create(M m1, M m2, M m3, M m4, M m5, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, NULL); }
-    static Sequence* create(M m1, M m2, M m3, M m4, M m5, M m6, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, m6, NULL); }
-    static Sequence* create(M m1, M m2, M m3, M m4, M m5, M m6, M m7, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, m6, m7, NULL); }
-    static Sequence* create(M m1, M m2, M m3, M m4, M m5, M m6, M m7, M m8, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, m6, m7, m8, NULL); }
-    static Sequence* create(M m1, M m2, M m3, M m4, M m5, M m6, M m7, M m8, M m9, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, m6, m7, m8, m9, NULL); }
-    static Sequence* create(M m1, M m2, M m3, M m4, M m5, M m6, M m7, M m8, M m9, M m10, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10,  NULL); }
-
-    // On WP8 for variable argument lists longer than 10 items, use the other create functions or variadicCreate with NULL as the last argument
-    static Sequence* variadicCreate(FiniteTimeAction* item, ...);
-#else
     static Sequence* create(FiniteTimeAction *action1, ...) CC_REQUIRES_NULL_TERMINATION;
-#endif
 
     /** Helper constructor to create an array of sequenceable actions given an array.
      * @code
@@ -182,9 +166,9 @@ public:
     //
     virtual Sequence* clone() const override;
     virtual Sequence* reverse() const override;
-    virtual bool isDone() const override;
     virtual void startWithTarget(Node *target) override;
-    virtual void stop(void) override;
+    virtual void stop() override;
+    virtual bool isDone() const override;
     /**
      * @param t In seconds.
      */
@@ -251,12 +235,12 @@ public:
     virtual Repeat* clone() const override;
     virtual Repeat* reverse() const override;
     virtual void startWithTarget(Node *target) override;
-    virtual void stop(void) override;
+    virtual void stop() override;
     /**
      * @param dt In seconds.
      */
     virtual void update(float dt) override;
-    virtual bool isDone(void) const override;
+    virtual bool isDone() const override;
     
 CC_CONSTRUCTOR_ACCESS:
     Repeat() {}
@@ -319,13 +303,13 @@ public:
     // Overrides
     //
     virtual RepeatForever* clone() const override;
-    virtual RepeatForever* reverse(void) const override;
+    virtual RepeatForever* reverse() const override;
     virtual void startWithTarget(Node* target) override;
     /**
      * @param dt In seconds.
      */
     virtual void step(float dt) override;
-    virtual bool isDone(void) const override;
+    virtual bool isDone() const override;
     
 CC_CONSTRUCTOR_ACCESS:
     RepeatForever()
@@ -359,25 +343,7 @@ public:
      *
      * @return An autoreleased Spawn object.
      */
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-    // VS2013 does not support nullptr in variable args lists and variadic templates are also not supported.
-    typedef FiniteTimeAction* M;
-    static Spawn* create(M m1, std::nullptr_t listEnd) { return variadicCreate(m1, NULL); }
-    static Spawn* create(M m1, M m2, std::nullptr_t listEnd) { return variadicCreate(m1, m2, NULL); }
-    static Spawn* create(M m1, M m2, M m3, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, NULL); }
-    static Spawn* create(M m1, M m2, M m3, M m4, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, NULL); }
-    static Spawn* create(M m1, M m2, M m3, M m4, M m5, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, NULL); }
-    static Spawn* create(M m1, M m2, M m3, M m4, M m5, M m6, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, m6, NULL); }
-    static Spawn* create(M m1, M m2, M m3, M m4, M m5, M m6, M m7, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, m6, m7, NULL); }
-    static Spawn* create(M m1, M m2, M m3, M m4, M m5, M m6, M m7, M m8, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, m6, m7, m8, NULL); }
-    static Spawn* create(M m1, M m2, M m3, M m4, M m5, M m6, M m7, M m8, M m9, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, m6, m7, m8, m9, NULL); }
-    static Spawn* create(M m1, M m2, M m3, M m4, M m5, M m6, M m7, M m8, M m9, M m10, std::nullptr_t listEnd) { return variadicCreate(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10,  NULL); }
-
-    // On WP8 for variable argument lists longer than 10 items, use the other create functions or createSpawn with NULL as the last argument.
-    static Spawn* variadicCreate(FiniteTimeAction* item, ...);
-#else
     static Spawn* create(FiniteTimeAction *action1, ...) CC_REQUIRES_NULL_TERMINATION;
-#endif
 
     /** Helper constructor to create an array of spawned actions. 
      *
@@ -408,9 +374,9 @@ public:
     // Overrides
     //
     virtual Spawn* clone() const override;
-    virtual Spawn* reverse(void) const override;
+    virtual Spawn* reverse() const override;
     virtual void startWithTarget(Node *target) override;
-    virtual void stop(void) override;
+    virtual void stop() override;
     /**
      * @param time In seconds.
      */
@@ -546,7 +512,7 @@ public:
     // Override
     //
     virtual RotateBy* clone() const override;
-    virtual RotateBy* reverse(void) const override;
+    virtual RotateBy* reverse() const override;
     virtual void startWithTarget(Node *target) override;
     /**
      * @param time In seconds.
@@ -607,7 +573,7 @@ public:
     // Overrides
     //
     virtual MoveBy* clone() const override;
-    virtual MoveBy* reverse(void) const  override;
+    virtual MoveBy* reverse() const  override;
     virtual void startWithTarget(Node *target) override;
     /**
      * @param time in seconds
@@ -705,7 +671,7 @@ public:
     // Overrides
     //
     virtual SkewTo* clone() const override;
-    virtual SkewTo* reverse(void) const override;
+    virtual SkewTo* reverse() const override;
     virtual void startWithTarget(Node *target) override;
     /**
      * @param time In seconds.
@@ -755,7 +721,7 @@ public:
     //
     virtual void startWithTarget(Node *target) override;
     virtual SkewBy* clone() const  override;
-    virtual SkewBy* reverse(void) const override;
+    virtual SkewBy* reverse() const override;
     
 CC_CONSTRUCTOR_ACCESS:
     SkewBy() {}
@@ -831,7 +797,7 @@ public:
     // Overrides
     //
     virtual ResizeBy* clone() const override;
-    virtual ResizeBy* reverse(void) const  override;
+    virtual ResizeBy* reverse() const  override;
     virtual void startWithTarget(Node *target) override;
     /**
     * @param time in seconds
@@ -875,7 +841,7 @@ public:
     // Overrides
     //
     virtual JumpBy* clone() const override;
-    virtual JumpBy* reverse(void) const override;
+    virtual JumpBy* reverse() const override;
     virtual void startWithTarget(Node *target) override;
     /**
      * @param time In seconds.
@@ -924,7 +890,7 @@ public:
     //
     virtual void startWithTarget(Node *target) override;
     virtual JumpTo* clone() const override;
-    virtual JumpTo* reverse(void) const override;
+    virtual JumpTo* reverse() const override;
 
 CC_CONSTRUCTOR_ACCESS:
     JumpTo() {}
@@ -976,7 +942,7 @@ public:
     // Overrides
     //
     virtual BezierBy* clone() const override;
-    virtual BezierBy* reverse(void) const override;
+    virtual BezierBy* reverse() const override;
     virtual void startWithTarget(Node *target) override;
     /**
      * @param time In seconds.
@@ -1026,7 +992,7 @@ public:
     //
     virtual void startWithTarget(Node *target) override;
     virtual BezierTo* clone() const override;
-    virtual BezierTo* reverse(void) const override;
+    virtual BezierTo* reverse() const override;
     
 CC_CONSTRUCTOR_ACCESS:
     BezierTo() {}
@@ -1082,7 +1048,7 @@ public:
     // Overrides
     //
     virtual ScaleTo* clone() const override;
-    virtual ScaleTo* reverse(void) const override;
+    virtual ScaleTo* reverse() const override;
     virtual void startWithTarget(Node *target) override;
     /**
      * @param time In seconds.
@@ -1166,7 +1132,7 @@ public:
     //
     virtual void startWithTarget(Node *target) override;
     virtual ScaleBy* clone() const override;
-    virtual ScaleBy* reverse(void) const override;
+    virtual ScaleBy* reverse() const override;
 
 CC_CONSTRUCTOR_ACCESS:
     ScaleBy() {}
@@ -1234,13 +1200,13 @@ public:
      * @param opacity A certain opacity, the range is from 0 to 255.
      * @return An autoreleased FadeTo object.
      */
-    static FadeTo* create(float duration, GLubyte opacity);
+    static FadeTo* create(float duration, uint8_t opacity);
 
     //
     // Overrides
     //
     virtual FadeTo* clone() const override;
-    virtual FadeTo* reverse(void) const override;
+    virtual FadeTo* reverse() const override;
     virtual void startWithTarget(Node *target) override;
     /**
      * @param time In seconds.
@@ -1255,11 +1221,11 @@ CC_CONSTRUCTOR_ACCESS:
      * initializes the action with duration and opacity 
      * @param duration in seconds
      */
-    bool initWithDuration(float duration, GLubyte opacity);
+    bool initWithDuration(float duration, uint8_t opacity);
 
 protected:
-    GLubyte _toOpacity;
-    GLubyte _fromOpacity;
+    uint8_t _toOpacity;
+    uint8_t _fromOpacity;
     friend class FadeOut;
     friend class FadeIn;
 private:
@@ -1285,7 +1251,7 @@ public:
     //
     virtual void startWithTarget(Node *target) override;
     virtual FadeIn* clone() const override;
-    virtual FadeTo* reverse(void) const override;
+    virtual FadeTo* reverse() const override;
 
     /**
      * @js NA
@@ -1319,7 +1285,7 @@ public:
     //
     virtual void startWithTarget(Node *target) override;
     virtual FadeOut* clone() const  override;
-    virtual FadeTo* reverse(void) const override;
+    virtual FadeTo* reverse() const override;
 
     /**
      * @js NA
@@ -1350,7 +1316,7 @@ public:
      * @param blue Blue Color, from 0 to 255.
      * @return An autoreleased TintTo object.
      */
-    static TintTo* create(float duration, GLubyte red, GLubyte green, GLubyte blue);
+    static TintTo* create(float duration, uint8_t red, uint8_t green, uint8_t blue);
     /**
      * Creates an action with duration and color.
      * @param duration Duration time, in seconds.
@@ -1363,7 +1329,7 @@ public:
     // Overrides
     //
     virtual TintTo* clone() const override;
-    virtual TintTo* reverse(void) const override;
+    virtual TintTo* reverse() const override;
     virtual void startWithTarget(Node *target) override;
     /**
      * @param time In seconds.
@@ -1375,7 +1341,7 @@ CC_CONSTRUCTOR_ACCESS:
     virtual ~TintTo() {}
 
     /** initializes the action with duration and color */
-    bool initWithDuration(float duration, GLubyte red, GLubyte green, GLubyte blue);
+    bool initWithDuration(float duration, uint8_t red, uint8_t green, uint8_t blue);
 
 protected:
     Color3B _to;
@@ -1400,7 +1366,7 @@ public:
      * @param deltaBlue Delta blue color.
      * @return An autoreleased TintBy object.
      */
-    static TintBy* create(float duration, GLshort deltaRed, GLshort deltaGreen, GLshort deltaBlue);
+    static TintBy* create(float duration, int16_t deltaRed, int16_t deltaGreen, int16_t deltaBlue);
 
     //
     // Overrides
@@ -1418,16 +1384,16 @@ CC_CONSTRUCTOR_ACCESS:
     virtual ~TintBy() {}
 
     /** initializes the action with duration and color */
-    bool initWithDuration(float duration, GLshort deltaRed, GLshort deltaGreen, GLshort deltaBlue);
+    bool initWithDuration(float duration, int16_t deltaRed, int16_t deltaGreen, int16_t deltaBlue);
 
 protected:
-    GLshort _deltaR;
-    GLshort _deltaG;
-    GLshort _deltaB;
+    int16_t _deltaR;
+    int16_t _deltaG;
+    int16_t _deltaB;
 
-    GLshort _fromR;
-    GLshort _fromG;
-    GLshort _fromB;
+    int16_t _fromR;
+    int16_t _fromG;
+    int16_t _fromB;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(TintBy);
@@ -1488,7 +1454,7 @@ public:
     virtual ReverseTime* reverse() const override;
     virtual ReverseTime* clone() const override;
     virtual void startWithTarget(Node *target) override;
-    virtual void stop(void) override;
+    virtual void stop() override;
     /**
      * @param time In seconds.
      */
@@ -1496,7 +1462,7 @@ public:
     
 CC_CONSTRUCTOR_ACCESS:
     ReverseTime();
-    virtual ~ReverseTime(void);
+    virtual ~ReverseTime();
 
     /** initializes the action */
     bool initWithAction(FiniteTimeAction *action);
@@ -1545,7 +1511,7 @@ public:
     virtual Animate* clone() const override;
     virtual Animate* reverse() const override;
     virtual void startWithTarget(Node *target) override;
-    virtual void stop(void) override;
+    virtual void stop() override;
     /**
      * @param t In seconds.
      */
@@ -1559,14 +1525,14 @@ CC_CONSTRUCTOR_ACCESS:
     bool initWithAnimation(Animation *animation);
 
 protected:
-    std::vector<float>* _splitTimes;
-    int             _nextFrame;
-    SpriteFrame*    _origFrame;
-    int _currFrameIndex;
-    unsigned int    _executedLoops;
-    Animation*      _animation;
+    std::vector<float>* _splitTimes = new std::vector<float>;
+    int             _nextFrame = 0;
+    SpriteFrame*    _origFrame = nullptr;
+    int _currFrameIndex = 0;
+    unsigned int    _executedLoops = 0;
+    Animation*      _animation = nullptr;
 
-    EventCustom*    _frameDisplayedEvent;
+    EventCustom*    _frameDisplayedEvent = nullptr;
     AnimationFrame::DisplayedEventInfo _frameDisplayedEventInfo;
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Animate);
@@ -1605,7 +1571,7 @@ public:
     virtual TargetedAction* clone() const override;
     virtual TargetedAction* reverse() const  override;
     virtual void startWithTarget(Node *target) override;
-    virtual void stop(void) override;
+    virtual void stop() override;
     /**
      * @param time In seconds.
      */

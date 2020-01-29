@@ -1,8 +1,35 @@
+/****************************************************************************
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ 
+ http://www.cocos2d-x.org
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
 #include "SchedulerTest.h"
 #include "../testResource.h"
+#include "ui/UIText.h"
+#include "controller.h"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
+using namespace cocos2d::ui;
 
 enum {
     kTagAnimationDance = 1,
@@ -26,6 +53,7 @@ SchedulerTests::SchedulerTests()
     ADD_TEST_CASE(RescheduleSelector);
     ADD_TEST_CASE(SchedulerDelayAndRepeat);
     ADD_TEST_CASE(SchedulerIssue2268);
+    ADD_TEST_CASE(SchedulerIssueWithReschedule);
     ADD_TEST_CASE(ScheduleCallbackTest);
     ADD_TEST_CASE(ScheduleUpdatePriority);
     ADD_TEST_CASE(SchedulerIssue10232);
@@ -52,18 +80,18 @@ void SchedulerAutoremove::onEnter()
 void SchedulerAutoremove::autoremove(float dt)
 {
     accum += dt;
-    CCLOG("Time: %f", accum);
+    CCLOG("autoremove scheduler: Time: %f", accum);
 
     if( accum > 3 )
     {
         unschedule(CC_SCHEDULE_SELECTOR(SchedulerAutoremove::autoremove));
-        CCLOG("scheduler removed");
+        CCLOG("autoremove scheduler: scheduler removed");
     }
 }
 
 void SchedulerAutoremove::tick(float /*dt*/)
 {
-    CCLOG("This scheduler should not be removed");
+    CCLOG("tick scheduler: This scheduler should not be removed");
 }
 
 std::string SchedulerAutoremove::title() const
@@ -138,7 +166,7 @@ void SchedulerPauseResumeAll::onEnter()
     auto sprite = Sprite::create("Images/grossinis_sister1.png");
     sprite->setPosition(VisibleRect::center());
     this->addChild(sprite);
-    sprite->runAction(RepeatForever::create(RotateBy::create(3.0, 360)));
+    sprite->runAction(RepeatForever::create(RotateBy::create(3.0f, 360.0f)));
     sprite->setTag(123);
     scheduleUpdate();
     schedule(CC_SCHEDULE_SELECTOR(SchedulerPauseResumeAll::tick1), 0.5f);
@@ -230,7 +258,7 @@ void SchedulerPauseResumeAllUser::onEnter()
     sprite->setPosition(Vec2(s.width/2, s.height/2));
     sprite->setTag(123);
     this->addChild(sprite);
-    sprite->runAction(RepeatForever::create(RotateBy::create(3.0, 360)));
+    sprite->runAction(RepeatForever::create(RotateBy::create(3.0f, 360.0f)));
 
     schedule(CC_SCHEDULE_SELECTOR(SchedulerPauseResumeAllUser::tick1), 1.0f);
     schedule(CC_SCHEDULE_SELECTOR(SchedulerPauseResumeAllUser::tick2), 1.0f);
@@ -351,7 +379,7 @@ void SchedulerUnscheduleAllHard::onEnter()
     auto sprite = Sprite::create("Images/grossinis_sister1.png");
     sprite->setPosition(Vec2(s.width/2, s.height/2));
     this->addChild(sprite);
-    sprite->runAction(RepeatForever::create(RotateBy::create(3.0, 360)));
+    sprite->runAction(RepeatForever::create(RotateBy::create(3.0f, 360.0f)));
 
     _actionManagerActive = true;
 
@@ -423,7 +451,7 @@ void SchedulerUnscheduleAllUserLevel::onEnter()
     auto sprite = Sprite::create("Images/grossinis_sister1.png");
     sprite->setPosition(Vec2(s.width/2, s.height/2));
     this->addChild(sprite);
-    sprite->runAction(RepeatForever::create(RotateBy::create(3.0, 360)));
+    sprite->runAction(RepeatForever::create(RotateBy::create(3.0f, 360.0f)));
 
     schedule(CC_SCHEDULE_SELECTOR(SchedulerUnscheduleAllUserLevel::tick1), 0.5f);
     schedule(CC_SCHEDULE_SELECTOR(SchedulerUnscheduleAllUserLevel::tick2), 1.0f);
@@ -782,7 +810,7 @@ void SchedulerTimeScale::onEnter()
     auto s = Director::getInstance()->getWinSize();
 
     // rotate and jump
-    auto jump1 = JumpBy::create(4, Vec2(-s.width+80,0), 100, 4);
+    auto jump1 = JumpBy::create(4, Vec2(-s.width+80,0.0f), 100, 4);
     auto jump2 = jump1->reverse();
     auto rot1 = RotateBy::create(4, 360*2);
     auto rot2 = rot1->reverse();
@@ -799,9 +827,9 @@ void SchedulerTimeScale::onEnter()
     auto tamara = Sprite::create("Images/grossinis_sister1.png");
     auto kathia = Sprite::create("Images/grossinis_sister2.png");
 
-    grossini->setPosition(Vec2(40,80));
-    tamara->setPosition(Vec2(40,80));
-    kathia->setPosition(Vec2(40,80));
+    grossini->setPosition(Vec2(40.0f,80.0f));
+    tamara->setPosition(Vec2(40.0f,80.0f));
+    kathia->setPosition(Vec2(40.0f,80.0f));
 
     addChild(grossini);
     addChild(tamara);
@@ -889,7 +917,7 @@ void TwoSchedulers::onEnter()
         //
     auto grossini = Sprite::create("Images/grossini.png");
     addChild(grossini);
-    grossini->setPosition(Vec2(s.width/2,100));
+    grossini->setPosition(Vec2(s.width/2,100.0f));
     grossini->runAction(action->clone());
 
     auto defaultScheduler = Director::getInstance()->getScheduler();
@@ -915,7 +943,7 @@ void TwoSchedulers::onEnter()
         sprite->setActionManager(actionManager1);
 
         addChild(sprite);
-        sprite->setPosition(Vec2(30+15*i,100));
+        sprite->setPosition(Vec2(30+15*i,100.0f));
 
         sprite->runAction(action->clone());
     }
@@ -940,7 +968,7 @@ void TwoSchedulers::onEnter()
         sprite->setActionManager(actionManager2);
 
         addChild(sprite);
-        sprite->setPosition(Vec2(s.width-30-15*i,100));
+        sprite->setPosition(Vec2(s.width-30-15*i,100.0f));
 
         sprite->runAction(action->clone());
     }
@@ -982,6 +1010,8 @@ std::string TwoSchedulers::subtitle() const
 {
     return "Three schedulers. 2 custom + 1 default. Two different time scales";
 }
+
+// SchedulerIssue2268
 
 class TestNode2 : public Node
 {
@@ -1038,6 +1068,61 @@ std::string SchedulerIssue2268::title() const
 std::string SchedulerIssue2268::subtitle() const
 {
     return "Should not crash";
+}
+
+// SchedulerIssueWithReschedule
+// https://github.com/cocos2d/cocos2d-x/pull/17706
+
+void SchedulerIssueWithReschedule::onEnter()
+{
+	SchedulerTestLayer::onEnter();
+    
+    Size widgetSize = getContentSize();
+    
+    auto status_text = Text::create("Checking..", "fonts/Marker Felt.ttf", 18);
+    status_text->setColor(Color3B(255, 255, 255));
+    status_text->setPosition(Vec2(widgetSize.width / 2.0f, widgetSize.height / 2.0f));
+    addChild(status_text);
+    
+    // schedule(callback, target, interval, repeat, delay, paused, key);
+    auto verified = std::make_shared<bool>();
+    *verified = false;
+
+	_scheduler->schedule([this, verified](float dt){
+        log("SchedulerIssueWithReschedule - first timer");
+        
+        _scheduler->schedule([verified](float dt){
+            log("SchedulerIssueWithReschedule - second timer. OK");
+            *verified = true;
+        }, this, 0.1f, 0, 0, false, "test_timer");
+        
+    }, this, 0.1f, 0, 0, false, "test_timer");
+    
+    _scheduler->schedule([verified, status_text](float dt){
+        if (*verified)
+        {
+            log("SchedulerIssueWithReschedule - test OK");
+            status_text->setString("OK");
+            status_text->setColor(Color3B(0, 255, 0));
+        }
+        else
+        {
+            log("SchedulerIssueWithReschedule - test failed!");
+            status_text->setString("Failed");
+            status_text->setColor(Color3B(255, 0, 0));
+        }
+
+    }, this, 0.5f, 0, 0, false, "test_verify_timer");
+}
+
+std::string SchedulerIssueWithReschedule::title() const
+{
+    return "Issue with reschedule";
+}
+
+std::string SchedulerIssueWithReschedule::subtitle() const
+{
+    return "reschedule issue with same key";
 }
 
 // ScheduleCallbackTest
@@ -1184,7 +1269,8 @@ void SchedulerRemoveAllFunctionsToBePerformedInCocosThread::update(float dt) {
     Director::getInstance()->getScheduler()->performFunctionInCocosThread([this] () {
         _sprite->setVisible(false);
     });
-    Director::getInstance()->getScheduler()->removeAllFunctionsToBePerformedInCocosThread();
+    if(!TestController::getInstance()->isAutoTestRunning())
+        Director::getInstance()->getScheduler()->removeAllFunctionsToBePerformedInCocosThread();
 }
 
 std::string SchedulerRemoveAllFunctionsToBePerformedInCocosThread::title() const
@@ -1336,10 +1422,9 @@ void SchedulerRemoveEntryWhileUpdate::onExit()
 }
 
 SchedulerRemoveEntryWhileUpdate::TestClass::TestClass(int index, TestClass *nextObj, cocos2d::Scheduler* scheduler)
-: _index(index)
-, _nextObj(nextObj)
+: _nextObj(nextObj)
+, _index(index)
 , _scheduler(scheduler)
-, _cleanedUp(false)
 {
 }
 

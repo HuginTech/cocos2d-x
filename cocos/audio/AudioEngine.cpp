@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2014-2017 Chukong Technologies Inc.
+ Copyright (c) 2014-2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos2d-x.org
 
@@ -36,12 +37,8 @@
 #include "audio/apple/AudioEngine-inl.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 #include "audio/win32/AudioEngine-win32.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
-#include "audio/winrt/AudioEngine-winrt.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 #include "audio/linux/AudioEngine-linux.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_TIZEN
-#include "audio/tizen/AudioEngine-tizen.h"
 #endif
 
 #define TIME_DELAY_PRECISION 0.0001
@@ -51,7 +48,6 @@
 #endif // ERROR
 
 using namespace cocos2d;
-using namespace cocos2d::experimental;
 
 const int AudioEngine::INVALID_AUDIO_ID = -1;
 const float AudioEngine::TIME_UNKNOWN = -1.0f;
@@ -66,6 +62,21 @@ std::unordered_map<int, AudioEngine::AudioInfo> AudioEngine::_audioIDInfoMap;
 AudioEngineImpl* AudioEngine::_audioEngineImpl = nullptr;
 
 AudioEngine::AudioEngineThreadPool* AudioEngine::s_threadPool = nullptr;
+bool AudioEngine::_isEnabled = true;
+
+AudioEngine::AudioInfo::AudioInfo()
+: profileHelper(nullptr)
+, volume(1.0f)
+, loop(false)
+, duration(TIME_UNKNOWN)
+, state(AudioState::INITIALIZING)
+{
+
+}
+
+AudioEngine::AudioInfo::~AudioInfo()
+{
+}
 
 class AudioEngine::AudioEngineThreadPool
 {
@@ -73,9 +84,10 @@ public:
     AudioEngineThreadPool(int threads = 4)
         : _stop(false)
     {
+        _workers.reserve(threads);
         for (int index = 0; index < threads; ++index)
         {
-            _workers.emplace_back(std::thread(std::bind(&AudioEngineThreadPool::threadFunc, this)));
+            _workers.emplace_back(std::bind(&AudioEngineThreadPool::threadFunc, this));
         }
     }
 
@@ -121,7 +133,8 @@ private:
                 }
             }
 
-            task();
+            if (task)
+                task();
         }
     }
 
@@ -135,11 +148,8 @@ private:
 
 void AudioEngine::end()
 {
-    if (s_threadPool)
-    {
-        delete s_threadPool;
-        s_threadPool = nullptr;
-    }
+    delete s_threadPool;
+    s_threadPool = nullptr;
 
     delete _audioEngineImpl;
     _audioEngineImpl = nullptr;
@@ -175,6 +185,11 @@ int AudioEngine::play2d(const std::string& filePath, bool loop, float volume, co
     int ret = AudioEngine::INVALID_AUDIO_ID;
 
     do {
+        if (!isEnabled())
+        {
+            break;
+        }
+        
         if ( !lazyInit() ){
             break;
         }
@@ -225,7 +240,7 @@ int AudioEngine::play2d(const std::string& filePath, bool loop, float volume, co
             auto& audioRef = _audioIDInfoMap[ret];
             audioRef.volume = volume;
             audioRef.loop = loop;
-            audioRef.filePath = &it->first;
+            audioRef.filePath = it->first;
 
             if (profileHelper) {
                 profileHelper->lastPlayTime = utils::gettime();
@@ -326,8 +341,8 @@ void AudioEngine::remove(int audioID)
         if (it->second.profileHelper) {
             it->second.profileHelper->audioIDs.remove(audioID);
         }
-        _audioPathIDMap[*it->second.filePath].remove(audioID);
-        _audioIDInfoMap.erase(audioID);
+        _audioPathIDMap[it->second.filePath].remove(audioID);
+        _audioIDInfoMap.erase(it);
     }
 }
 
@@ -350,6 +365,9 @@ void AudioEngine::stopAll()
 
 void AudioEngine::uncache(const std::string &filePath)
 {
+    if(!_audioEngineImpl){
+        return;
+    }
     auto audioIDsIter = _audioPathIDMap.find(filePath);
     if (audioIDsIter != _audioPathIDMap.end())
     {
@@ -369,16 +387,13 @@ void AudioEngine::uncache(const std::string &filePath)
                 {
                     itInfo->second.profileHelper->audioIDs.remove(audioID);
                 }
-                _audioIDInfoMap.erase(audioID);
+                _audioIDInfoMap.erase(itInfo);
             }
         }
         _audioPathIDMap.erase(filePath);
     }
 
-    if (_audioEngineImpl)
-    {
-        _audioEngineImpl->uncache(filePath);
-    }
+    _audioEngineImpl->uncache(filePath);
 }
 
 void AudioEngine::uncacheAll()
@@ -510,6 +525,12 @@ AudioProfile* AudioEngine::getProfile(const std::string &name)
 
 void AudioEngine::preload(const std::string& filePath, std::function<void(bool isSuccess)> callback)
 {
+    if (!isEnabled())
+    {
+        callback(false);
+        return;
+    }
+    
     lazyInit();
 
     if (_audioEngineImpl)
@@ -535,3 +556,27 @@ void AudioEngine::addTask(const std::function<void()>& task)
         s_threadPool->addTask(task);
     }
 }
+
+int AudioEngine::getPlayingAudioCount()
+{
+    return static_cast<int>(_audioIDInfoMap.size());
+}
+
+void AudioEngine::setEnabled(bool isEnabled)
+{
+    if (_isEnabled != isEnabled)
+    {
+        _isEnabled = isEnabled;
+        
+        if (!_isEnabled)
+        {
+            stopAll();
+        }
+    }
+}
+
+bool AudioEngine::isEnabled()
+{
+    return _isEnabled;
+}
+

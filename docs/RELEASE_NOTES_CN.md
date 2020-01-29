@@ -2,22 +2,33 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [v3.14.1](#v3141)
-  - [修复的问题](#%E4%BF%AE%E5%A4%8D%E7%9A%84%E9%97%AE%E9%A2%98)
-  - [其他](#%E5%85%B6%E4%BB%96)
+- [Cocos2d-x v4 Release Notes](#cocos2d-x-v4-release-notes)
+  - [版本特性](#%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7)
+  - [文档](#%E6%96%87%E6%A1%A3)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# v3.14.1
+# Cocos2d-x v4 Release Notes #
 
-## 修复的问题
+## 版本特性
 
-* 如果创建物理场景但是没有设置3d物理的摄像机，那么程序会崩溃
-* 由于glfw版本冲突，在linux平台可能会有链接错误
-* 通过带有多边形信息的sprite frame创建的Sprite效果不对
-* VS2015编译Lua工程时有链接错误
-* 通过`cocos compile/run -p android --android-studio`命令编译Android工程时会有编译错误
+- iOS/macOS 支持 metal
+- 使用 CMake，删除各平台的工程文件
+- 升级 GLFW 到 3.3
+- 升级 minizip 到 1.2
+- 删除废弃函数
+- 删除 h5 引擎和 Javascript 绑定
+- 删除 tiff
+- 删除 `SimpleAudioEngine`
+- 删除 `experimental` 名字空间
+- 修复 macOS 15 系统字体绘制问题
+- 适配 iOS13
+  - UIWebView 使用 WKWebView 实现
+  - VideoPlayer 使用 AVPlayerController 实现
+- 修复 lua 工程在 64 位设备的崩溃问题
 
-## 其他
+## 文档
 
-通过查看[3.14.1版本信息](https://github.com/cocos2d/cocos2d-x/milestone/36?closed=1)了解所有的问题或者代码改动。
+编写了一些文档方便开发者升级到 v4:
+- [如何运行测试例子，如何新建工程并运行](https://docs.cocos2d-x.org/cocos2d-x/v4/zn/installation)
+- [v4 升级指南](https://docs.cocos2d-x.org/cocos2d-x/v4/zh/installation/)

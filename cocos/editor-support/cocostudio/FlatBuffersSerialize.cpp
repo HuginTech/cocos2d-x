@@ -1,5 +1,6 @@
 /****************************************************************************
  Copyright (c) 2013 cocos2d-x.org
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -25,6 +26,7 @@
 #include "editor-support/cocostudio/FlatBuffersSerialize.h"
 
 #include "base/ObjectFactory.h"
+#include "base/ccConstants.h"
 #include "ui/CocosGUI.h"
 #include "platform/CCFileUtils.h"
 #include "editor-support/cocostudio/CocoStudio.h"
@@ -337,15 +339,12 @@ Offset<NodeTree> FlatBuffersSerialize::createNodeTree(const tinyxml2::XMLElement
     if (classname == "ProjectNode")
     {
         auto reader = ProjectNodeReader::getInstance();
-        auto tempOptions = reader->createOptionsWithFlatBuffers(objectData, _builder);
-        
-        options = CreateOptions(*_builder, *(Offset<WidgetOptions>*)(&tempOptions));
+        options = CreateOptions(*_builder, reader->createOptionsWithFlatBuffers(objectData, _builder));
     }
     else if (classname == "SimpleAudio")
     {
         auto reader = ComAudioReader::getInstance();
-        auto tempOptions = reader->createOptionsWithFlatBuffers(objectData, _builder);
-        options = CreateOptions(*_builder, *(Offset<WidgetOptions>*)(&tempOptions));
+        options = CreateOptions(*_builder, reader->createOptionsWithFlatBuffers(objectData, _builder));
     }
     else
     {
@@ -355,8 +354,7 @@ Offset<NodeTree> FlatBuffersSerialize::createNodeTree(const tinyxml2::XMLElement
         NodeReaderProtocol* reader = dynamic_cast<NodeReaderProtocol*>(ObjectFactory::getInstance()->createObject(readername));
         if (reader != nullptr)
         {
-            auto tempOptions = reader->createOptionsWithFlatBuffers(objectData, _builder);
-            options = CreateOptions(*_builder, *(Offset<WidgetOptions>*)(&tempOptions));
+            options = CreateOptions(*_builder, reader->createOptionsWithFlatBuffers(objectData, _builder));
         }
     }
     
@@ -1178,7 +1176,7 @@ flatbuffers::Offset<flatbuffers::BlendFrame> FlatBuffersSerialize::createBlendFr
 {
     int frameIndex = 0;
     bool tween = true;
-    int32_t src = GL_ONE, dst = GL_ONE_MINUS_SRC_ALPHA;
+    int32_t src = GLBlendConst::ONE, dst = GLBlendConst::ONE_MINUS_SRC_ALPHA;
     std::string name = "";
     std::string value = "";
 
@@ -1426,14 +1424,12 @@ Offset<NodeTree> FlatBuffersSerialize::createNodeTreeForSimulator(const tinyxml2
     if (classname == "ProjectNode")
     {
         auto projectNodeOptions = createProjectNodeOptionsForSimulator(objectData);
-        options = CreateOptions(*_builder, *(Offset<WidgetOptions>*)(&projectNodeOptions));
+        options = CreateOptions(*_builder, *(Offset<Table>*)(&projectNodeOptions));
     }
     else if (classname == "SimpleAudio")
     {
         auto reader = ComAudioReader::getInstance();
-        auto tempOptions = reader->createOptionsWithFlatBuffers(objectData, _builder);
-        
-        options = CreateOptions(*_builder, *(Offset<WidgetOptions>*)(&tempOptions));
+        options = CreateOptions(*_builder, reader->createOptionsWithFlatBuffers(objectData, _builder));
     }
     else
     {
@@ -1443,9 +1439,7 @@ Offset<NodeTree> FlatBuffersSerialize::createNodeTreeForSimulator(const tinyxml2
         NodeReaderProtocol* reader = dynamic_cast<NodeReaderProtocol*>(ObjectFactory::getInstance()->createObject(readername));
         if (reader != nullptr)
         {
-            auto tempOptions = reader->createOptionsWithFlatBuffers(objectData, _builder);
-            
-            options = CreateOptions(*_builder, *(Offset<WidgetOptions>*)(&tempOptions));
+            options = CreateOptions(*_builder, reader->createOptionsWithFlatBuffers(objectData, _builder));
         }
     }
     

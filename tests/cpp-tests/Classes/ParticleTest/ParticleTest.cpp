@@ -1,3 +1,27 @@
+/****************************************************************************
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ 
+ http://www.cocos2d-x.org
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
 #include "ParticleTest.h"
 #include "../testResource.h"
 #include "editor-support/cocostudio/CocosStudioExtension.h"
@@ -47,7 +71,7 @@ void DemoFire::onEnter()
 
     _emitter->setTexture( Director::getInstance()->getTextureCache()->addImage(s_fire) );//.pvr");
     auto p = _emitter->getPosition();
-    _emitter->setPosition( Vec2(p.x, 100) );
+    _emitter->setPosition( Vec2(p.x, 100.0f) );
 
     setEmitterPosition();
 }
@@ -415,7 +439,7 @@ void DemoSmoke::onEnter()
     _emitter->setTexture( Director::getInstance()->getTextureCache()->addImage(s_fire) );
 
     auto p = _emitter->getPosition();
-    _emitter->setPosition( Vec2( p.x, 100) );
+    _emitter->setPosition( Vec2( p.x, 100.0f) );
 
     setEmitterPosition();
 }
@@ -444,7 +468,7 @@ void DemoSnow::onEnter()
     _emitter->setLifeVar(1);
 
     // gravity
-    _emitter->setGravity(Vec2(0,-10));
+    _emitter->setGravity(Vec2(0.0f,-10.0f));
 
     // speed of particles
     _emitter->setSpeed(130);
@@ -523,7 +547,7 @@ void DemoModernArt::onEnter()
     _emitter->setDuration(-1);
 
     // gravity
-    _emitter->setGravity(Vec2(0,0));
+    _emitter->setGravity(Vec2(0.0f,0.0f));
 
     // angle
     _emitter->setAngle(0);
@@ -632,8 +656,8 @@ void ParallaxParticle::onEnter()
     auto p1 = Sprite::create(s_back3);
     auto p2 = Sprite::create(s_back3);
 
-    p->addChild( p1, 1, Vec2(0.5f,1), Vec2(0,250) );
-    p->addChild(p2, 2, Vec2(1.5f,1), Vec2(0,50) );
+    p->addChild( p1, 1, Vec2(0.5f,1.0f), Vec2(0.0f,250.0f) );
+    p->addChild(p2, 2, Vec2(1.5f,1.0f), Vec2(0.0f,50.0f) );
 
     _emitter = ParticleFlower::create();
     _emitter->retain();
@@ -646,7 +670,7 @@ void ParallaxParticle::onEnter()
     p2->addChild(par, 10);
     par->setTexture( Director::getInstance()->getTextureCache()->addImage(s_fire) );
 
-    auto move = MoveBy::create(4, Vec2(300,0));
+    auto move = MoveBy::create(4, Vec2(300.0f,0.0f));
     auto move_back = move->reverse();
     auto seq = Sequence::create( move, move_back, nullptr);
     p->runAction(RepeatForever::create(seq));
@@ -1051,14 +1075,16 @@ ParticleTests::ParticleTests()
     ADD_TEST_CASE(ParticleSpriteFrame);
 }
 
-ParticleDemo::~ParticleDemo(void)
+ParticleDemo::~ParticleDemo()
 {
     CC_SAFE_RELEASE(_emitter);
 }
 
-void ParticleDemo::onEnter(void)
+void ParticleDemo::onEnter()
 {
     TestCase::onEnter();
+
+    MenuItemFont::setFontSize(32);
 
 	_color = LayerColor::create( Color4B(127,127,127,255) );
 	this->addChild(_color);
@@ -1089,7 +1115,7 @@ void ParticleDemo::onEnter(void)
 
     auto labelAtlas = LabelAtlas::create("0000", "fps_images.png", 12, 32, '.');
     addChild(labelAtlas, 100, kTagParticleCount);
-    labelAtlas->setPosition(Vec2(s.width-66,50));
+    labelAtlas->setPosition(Vec2(s.width-66,50.0f));
 
     // moving background
     _background = Sprite::create(s_back3);
@@ -1380,7 +1406,7 @@ bool RainbowEffect::initWithTotalParticles(int numberOfParticles)
         setEmitterMode(ParticleSystem::Mode::GRAVITY);
 
         // Gravity Mode: gravity
-        setGravity(Vec2(0,0));
+        setGravity(Vec2(0.0f,0.0f));
 
         // Gravity mode: radial acceleration
         setRadialAccel(0);
@@ -1482,7 +1508,7 @@ void MultipleParticleSystems::onEnter()
     for (int i = 0; i<5; i++) {
         auto particleSystem = ParticleSystemQuad::create("Particles/SpinningPeas.plist");
 
-        particleSystem->setPosition(Vec2(i*50 ,i*50));
+        particleSystem->setPosition(Vec2(i*50.0f,i*50.0f));
 
         particleSystem->setPositionType(ParticleSystem::PositionType::GROUPED);
         addChild(particleSystem);
@@ -1540,7 +1566,7 @@ void MultipleParticleSystemsBatched::onEnter()
         auto particleSystem = ParticleSystemQuad::create("Particles/SpinningPeas.plist");
 
         particleSystem->setPositionType(ParticleSystem::PositionType::GROUPED);
-        particleSystem->setPosition(Vec2(i*50 ,i*50));
+        particleSystem->setPosition(Vec2(i*50.0f,i*50.0f));
 
         batchNode->setTexture(particleSystem->getTexture());
         batchNode->addChild(particleSystem);
@@ -1602,7 +1628,7 @@ void AddAndDeleteParticleSystems::onEnter()
         particleSystem->setPositionType(ParticleSystem::PositionType::GROUPED);
         particleSystem->setTotalParticles(200);
 
-        particleSystem->setPosition(Vec2(i*15 +100,i*15+100));
+        particleSystem->setPosition(Vec2(i*15 +100.0f,i*15+100.0f));
 
         unsigned int randZ = rand() % 100;
         _batchNode->addChild(particleSystem, randZ, -1);
@@ -1748,7 +1774,7 @@ void ReorderParticleSystems::onEnter()
 
         // additive
 
-        particleSystem->setPosition(Vec2(i*10+120 ,200));
+        particleSystem->setPosition(Vec2(i*10+120.0f,200.0f));
 
 
         _batchNode->addChild(particleSystem);
@@ -1813,7 +1839,7 @@ std::string PremultipliedAlphaTest::subtitle() const
     return "no black halo, particles should fade out\n animation should be normal";
 }
 
-void PremultipliedAlphaTest::readdPaticle(float delta)
+void PremultipliedAlphaTest::readdParticle(float delta)
 {
     if (_hasEmitter)
     {
@@ -1838,7 +1864,7 @@ void PremultipliedAlphaTest::onEnter()
     _emitter = ParticleSystemQuad::create("Particles/BoilingFoam.plist");
     _emitter->retain();
     // Particle Designer "normal" blend func causes black halo on premul textures (ignores multiplication)
-    //this->emitter.blendFunc = (BlendFunc){ GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA };
+    //this->emitter.blendFunc = (BlendFunc){ BlendFactor::SRC_ALPHA, BlendFactor::ONE_MINUS_SRC_ALPHA };
 
     // Cocos2d "normal" blend func for premul causes alpha to be ignored (oversaturates colors)
     _emitter->setBlendFunc( BlendFunc::ALPHA_PREMULTIPLIED );
@@ -1856,7 +1882,7 @@ void PremultipliedAlphaTest::onEnter()
     this->addChild(_emitter, 10);
     _hasEmitter = true;
     
-    schedule(CC_SCHEDULE_SELECTOR(PremultipliedAlphaTest::readdPaticle), 1.0f);
+    schedule(CC_SCHEDULE_SELECTOR(PremultipliedAlphaTest::readdParticle), 1.0f);
 }
 
 // PremultipliedAlphaTest2
@@ -1999,7 +2025,9 @@ void ParticleResetTotalParticles::onEnter()
                                     {
                                         p->setTotalParticles(p->getTotalParticles() + 10 );
                                     });
+    add->setFontSizeObj(20);
     add->setPosition(Vec2(0, 25));
+    
     auto remove = MenuItemFont::create("remove 10 particles",
                                        [p](Ref*)->void
                                        {
@@ -2008,6 +2036,7 @@ void ParticleResetTotalParticles::onEnter()
                                            p->setTotalParticles(count);
                                        });
     remove->setPosition(Vec2(0, -25));
+    remove->setFontSizeObj(20);
     
     auto menu = Menu::create(add, remove, nullptr);
     menu->setPosition(Vec2(VisibleRect::center()));

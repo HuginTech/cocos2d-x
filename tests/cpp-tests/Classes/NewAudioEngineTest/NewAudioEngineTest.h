@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2014-2017 Chukong Technologies Inc.
+ Copyright (c) 2014-2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos2d-x.org
 
@@ -41,6 +42,9 @@ public:
     
     virtual std::string title() const override;
     virtual void onExit() override;
+
+    virtual void onBackCallback(cocos2d::Ref* sender) override;
+
 protected:
     std::shared_ptr<bool> _isDestroyed;
 };
@@ -107,7 +111,7 @@ public:
 private:
     static const int FILE_COUNT = 2;
     std::string _files[FILE_COUNT];
-    cocos2d::experimental::AudioProfile _audioProfile;
+    cocos2d::AudioProfile _audioProfile;
     
     int _audioCount;
     cocos2d::Label* _showLabel;
@@ -155,6 +159,19 @@ public:
     virtual bool init() override;
 
     virtual std::string title() const override;
+};
+
+class AudioIssue18597Test : public AudioEngineTestDemo
+{
+public:
+    CREATE_FUNC(AudioIssue18597Test);
+
+    float _time;
+
+    virtual bool init() override;
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
 };
 
 class AudioIssue11143Test : public AudioEngineTestDemo
@@ -269,6 +286,37 @@ public:
     
 private:
     std::vector<std::string> _oldSearchPaths;
+};
+
+class AudioPlayInFinishedCB : public AudioEngineTestDemo
+{
+public:
+    CREATE_FUNC(AudioPlayInFinishedCB);
+
+    virtual void onEnter() override;
+    virtual void onExit() override;
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+
+private:
+    void doPlay(const std::string& filename);
+    void playMusic(const std::string& filename);
+    std::list<std::string> _playList;
+};
+
+class AudioUncacheInFinishedCB : public AudioEngineTestDemo
+{
+public:
+    CREATE_FUNC(AudioUncacheInFinishedCB);
+
+    virtual void onEnter() override;
+    virtual void onExit() override;
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+
+private:
 };
 
 #endif /* defined(__NEWAUDIOENGINE_TEST_H_) */

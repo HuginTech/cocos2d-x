@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Classes\AppDelegate.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Classes\HelloWorldScene.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\proj.win32\main.cpp">
+      <Filter>Source Files\proj.win32</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Stasism\External\cocos2d-x\cocos\precheader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Classes\AppMacros.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Classes\HelloWorldScene.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Classes\AppDelegate.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\proj.win32\main.h">
+      <Filter>Source Files\proj.win32</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\.gitignore">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\bang.png">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\fonts\Marker Felt.ttf">
+      <Filter>Resources\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\fonts\arial.ttf">
+      <Filter>Resources\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-20.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-20@2x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-20@3x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-29.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-29@2x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-29@3x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-40.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-40@2x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-40@3x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-50.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-50@2x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-57.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-57@2x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-60@2x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-60@3x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-72.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-72@2x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-76.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-76@2x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\icons\Icon-83.5@2x.png">
+      <Filter>Resources\icons</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\ipad\CloseNormal.png">
+      <Filter>Resources\ipad</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\ipad\CloseSelected.png">
+      <Filter>Resources\ipad</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\ipad\HelloWorld.png">
+      <Filter>Resources\ipad</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\ipad\grossini.png">
+      <Filter>Resources\ipad</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\ipad\uv_checker_01.jpg">
+      <Filter>Resources\ipad</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\ipadhd\CloseNormal.png">
+      <Filter>Resources\ipadhd</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\ipadhd\CloseSelected.png">
+      <Filter>Resources\ipadhd</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\ipadhd\HelloWorld.png">
+      <Filter>Resources\ipadhd</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\iphone\CloseNormal.png">
+      <Filter>Resources\iphone</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\iphone\CloseSelected.png">
+      <Filter>Resources\iphone</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\Resources\iphone\HelloWorld.png">
+      <Filter>Resources\iphone</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Stasism\External\cocos2d-x\tests\cpp-empty-test\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{6D528DC8-9FCB-38EE-9671-020064D58426}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\fonts">
+      <UniqueIdentifier>{F9B571EE-419E-3155-8558-3C5B1987DF66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\icons">
+      <UniqueIdentifier>{DCF67C0A-81DD-380D-8B1E-EDE370442431}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\ipad">
+      <UniqueIdentifier>{9190D8B6-C3EA-3152-A6C0-F4E12F0AD283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\ipadhd">
+      <UniqueIdentifier>{BCC12CE8-3CF0-3A7F-AF44-B3B67AA033BF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\iphone">
+      <UniqueIdentifier>{E53EB1BB-7D66-3A0F-BD3F-4C1338C49FF9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{634EAC33-5DE6-3B43-AE35-76A8D53B4B0D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Classes">
+      <UniqueIdentifier>{542FEDF3-1995-323A-B744-54204B1167B1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\proj.win32">
+      <UniqueIdentifier>{E8069C4D-2ECA-3D68-AD58-648A165DDED4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
