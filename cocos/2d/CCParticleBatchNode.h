@@ -4,8 +4,7 @@
  * Copyright (c) 2010-2012 cocos2d-x.org
  * Copyright (c) 2011      Zynga Inc.
  * Copyright (c) 2011      Marco Tillemans
- * Copyright (c) 2013-2016 Chukong Technologies Inc.
- * Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ * Copyright (c) 2013-2017 Chukong Technologies Inc.
  *
  * http://www.cocos2d-x.org
  *
@@ -28,11 +27,12 @@
  * THE SOFTWARE.
  *
  */
-#pragma once
+#ifndef __CCPARTICLEBATCHNODE_H__
+#define __CCPARTICLEBATCHNODE_H__
 
 #include "2d/CCNode.h"
 #include "base/CCProtocols.h"
-#include "renderer/CCCustomCommand.h"
+#include "renderer/CCBatchCommand.h"
 
 NS_CC_BEGIN
 
@@ -129,7 +129,7 @@ public:
     virtual void removeChild(Node* child, bool cleanup) override;
     virtual void reorderChild(Node * child, int zOrder) override;
     virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
-    virtual Texture2D* getTexture() const override;
+    virtual Texture2D* getTexture(void) const override;
     virtual void setTexture(Texture2D *texture) override;
     /**
     * @code
@@ -143,7 +143,7 @@ public:
     * @js NA
     * @lua NA
     */
-    virtual const BlendFunc& getBlendFunc() const override;
+    virtual const BlendFunc& getBlendFunc(void) const override;
     
 CC_CONSTRUCTOR_ACCESS:
     /**
@@ -169,20 +169,20 @@ private:
     void getCurrentIndex(int* oldIndex, int* newIndex, Node* child, int z);
     int addChildHelper(ParticleSystem* child, int z, int aTag, const std::string &name, bool setTag);
     void addChildByTagOrName(ParticleSystem* child, int z, int tag, const std::string &name, bool setTag);
-    void updateBlendFunc();
+    void updateBlendFunc(void);
     /** the texture atlas used for drawing the quads */
-    TextureAtlas* _textureAtlas = nullptr;
+    TextureAtlas* _textureAtlas;
 
     /** the blend function used for drawing the quads */
     BlendFunc _blendFunc;
-    
-    CustomCommand _customCommand;
-    
-    backend::UniformLocation _mvpMatrixLocaiton;
-    backend::UniformLocation _textureLocation;
+    // quad command
+    BatchCommand _batchCommand;
 };
 
 // end of _2d group
 /// @}
 
 NS_CC_END
+
+#endif /* __CCPARTICLEBATCHNODE_H__ */
+

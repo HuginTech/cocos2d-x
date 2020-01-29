@@ -1,6 +1,5 @@
 /****************************************************************************
  Copyright (c) 2013 cocos2d-x.org
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -221,6 +220,10 @@ public:
      */
     virtual void onSuccess() {};
 };
+
+// Deprecated declaration
+CC_DEPRECATED_ATTRIBUTE typedef AssetsManager CCAssetsManager;
+CC_DEPRECATED_ATTRIBUTE typedef AssetsManagerDelegateProtocol CCAssetsManagerDelegateProtocol;
 
 NS_CC_EXT_END;
 

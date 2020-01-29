@@ -65,26 +65,20 @@ local function CreateTouchesLayer()
     
     local paddlesM = {}
     
-    local paddleStep =( VisibleRect:getVisibleRect().height - kStatusBarHeight - 30 - 3 * paddleTexture:getPixelsHigh() ) / 3 + paddleTexture:getPixelsHigh()
-    local nextPaddlePos = VisibleRect:bottom().y + 15
-
-    local paddle = Paddle:paddleWithTexture(paddleTexture)
-    paddle:setPosition( cc.p(VisibleRect:center().x, nextPaddlePos) )
+    local paddle = Paddle:paddleWithTexture(paddleTexture);
+    paddle:setPosition( cc.p(VisibleRect:center().x, VisibleRect:bottom().y + 15) );
     paddlesM[#paddlesM+1] = paddle
     
-    nextPaddlePos = nextPaddlePos + paddleStep
-    paddle = Paddle:paddleWithTexture( paddleTexture )
-    paddle:setPosition( cc.p(VisibleRect:center().x, nextPaddlePos) )
+    paddle = Paddle:paddleWithTexture( paddleTexture );
+    paddle:setPosition( cc.p(VisibleRect:center().x, VisibleRect:top().y - kStatusBarHeight - 15) );
     paddlesM[#paddlesM+1] = paddle
     
-    nextPaddlePos = nextPaddlePos + paddleStep
-    paddle = Paddle:paddleWithTexture( paddleTexture )
-    paddle:setPosition( cc.p(VisibleRect:center().x, nextPaddlePos) )
+    paddle = Paddle:paddleWithTexture( paddleTexture );
+    paddle:setPosition( cc.p(VisibleRect:center().x, VisibleRect:bottom().y + 100) );
     paddlesM[#paddlesM+1] = paddle
     
-    nextPaddlePos = nextPaddlePos + paddleStep
-    paddle = Paddle:paddleWithTexture( paddleTexture )
-    paddle:setPosition( cc.p(VisibleRect:center().x, nextPaddlePos) )
+    paddle = Paddle:paddleWithTexture( paddleTexture );
+    paddle:setPosition( cc.p(VisibleRect:center().x, VisibleRect:top().y - kStatusBarHeight - 100) );
     paddlesM[#paddlesM+1] = paddle
 
     m_paddles = paddlesM

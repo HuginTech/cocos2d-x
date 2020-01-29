@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2015-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2015-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -481,7 +480,7 @@ namespace ui
         if (tabcell != nullptr && tabcell->init())
         {
             tabcell->_frontCrossRenderer->setVisible(false); // _isSelected == false
-            tabcell->_anchorPoint = Vec2(.5f, 0.0f);
+            tabcell->_anchorPoint = Vec2(.5f, 0);
             tabcell->autorelease();
             return tabcell;
         }
@@ -503,7 +502,7 @@ namespace ui
         {
             tabcell->_frontCrossRenderer->setVisible(false);
             tabcell->_tabLabelRender->setString(titleStr);
-            tabcell->_anchorPoint = Vec2(.5f, 0.0f);
+            tabcell->_anchorPoint = Vec2(.5f, 0);
             tabcell->autorelease();
             return tabcell;
         }
@@ -529,7 +528,7 @@ namespace ui
         {
             tabcell->_frontCrossRenderer->setVisible(false);
             tabcell->_tabLabelRender->setString(titleStr);
-            tabcell->_anchorPoint = Vec2(.5f, 0.0f);
+            tabcell->_anchorPoint = Vec2(.5f, 0);
             tabcell->autorelease();
             return tabcell;
         }

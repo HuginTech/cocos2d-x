@@ -2,8 +2,7 @@
 Copyright (c) 2009-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -92,7 +91,7 @@ bool TransitionScene::initWithDuration(float t, Scene *scene)
         if (_outScene == nullptr)
         {
             _outScene = Scene::create();
-            // just change its state is running that can run actions later
+            // just change its state is running that can run actoins later
             // issue: https://github.com/cocos2d/cocos2d-x/issues/17442
             _outScene->onEnter();
         }
@@ -360,7 +359,7 @@ void TransitionJumpZoom::onEnter()
     _inScene->setAnchorPoint(Vec2(0.5f, 0.5f));
     _outScene->setAnchorPoint(Vec2(0.5f, 0.5f));
 
-    ActionInterval *jump = JumpBy::create(_duration/4, Vec2(-s.width,0.0f), s.width/4, 2);
+    ActionInterval *jump = JumpBy::create(_duration/4, Vec2(-s.width,0), s.width/4, 2);
     ActionInterval *scaleIn = ScaleTo::create(_duration/4, 1.0f);
     ActionInterval *scaleOut = ScaleTo::create(_duration/4, 0.5f);
 
@@ -425,7 +424,7 @@ void TransitionMoveInL::onEnter()
  
 ActionInterval* TransitionMoveInL::action()
 {
-    return MoveTo::create(_duration, Vec2(0.0f,0.0f));
+    return MoveTo::create(_duration, Vec2(0,0));
 }
 
 ActionInterval* TransitionMoveInL::easeActionWithAction(ActionInterval* action)
@@ -569,13 +568,13 @@ void TransitionSlideInL::sceneOrder()
 void TransitionSlideInL:: initScenes()
 {
     Size s = Director::getInstance()->getWinSize();
-    _inScene->setPosition(-(s.width-ADJUST_FACTOR),0.0f);
+    _inScene->setPosition(-(s.width-ADJUST_FACTOR),0);
 }
 
 ActionInterval* TransitionSlideInL::action()
 {
     Size s = Director::getInstance()->getWinSize();
-    return MoveBy::create(_duration, Vec2(s.width-ADJUST_FACTOR,0.0f));
+    return MoveBy::create(_duration, Vec2(s.width-ADJUST_FACTOR,0));
 }
 
 ActionInterval* TransitionSlideInL::easeActionWithAction(ActionInterval* action)
@@ -632,7 +631,7 @@ void TransitionSlideInR::initScenes()
 ActionInterval* TransitionSlideInR:: action()
 {
     Size s = Director::getInstance()->getWinSize();
-    return MoveBy::create(_duration, Vec2(-(s.width-ADJUST_FACTOR),0.0f));
+    return MoveBy::create(_duration, Vec2(-(s.width-ADJUST_FACTOR),0));
 }
 
 
@@ -673,7 +672,7 @@ void TransitionSlideInT::initScenes()
 ActionInterval* TransitionSlideInT::action()
 {
     Size s = Director::getInstance()->getWinSize();
-    return MoveBy::create(_duration, Vec2(0.0f,-(s.height-ADJUST_FACTOR)));
+    return MoveBy::create(_duration, Vec2(0,-(s.height-ADJUST_FACTOR)));
 }
 
 //
@@ -713,7 +712,7 @@ void TransitionSlideInB:: initScenes()
 ActionInterval* TransitionSlideInB:: action()
 {
     Size s = Director::getInstance()->getWinSize();
-    return MoveBy::create(_duration, Vec2(0.0f,s.height-ADJUST_FACTOR));
+    return MoveBy::create(_duration, Vec2(0,s.height-ADJUST_FACTOR));
 }
 
 //
@@ -1317,7 +1316,7 @@ void TransitionCrossFade::onEnter()
     LayerColor* layer = LayerColor::create(color);
 
     // create the first render texture for inScene
-    RenderTexture* inTexture = RenderTexture::create((int)size.width, (int)size.height,backend::PixelFormat::RGBA8888, PixelFormat::D24S8);
+    RenderTexture* inTexture = RenderTexture::create((int)size.width, (int)size.height,Texture2D::PixelFormat::RGBA8888,GL_DEPTH24_STENCIL8);
 
     if (nullptr == inTexture)
     {
@@ -1334,7 +1333,7 @@ void TransitionCrossFade::onEnter()
     inTexture->end();
 
     // create the second render texture for outScene
-    RenderTexture* outTexture = RenderTexture::create((int)size.width, (int)size.height,backend::PixelFormat::RGBA8888, PixelFormat::D24S8);
+    RenderTexture* outTexture = RenderTexture::create((int)size.width, (int)size.height,Texture2D::PixelFormat::RGBA8888,GL_DEPTH24_STENCIL8);
     outTexture->getSprite()->setAnchorPoint( Vec2(0.5f,0.5f) );
     outTexture->setPosition(size.width/2, size.height/2);
     outTexture->setAnchorPoint( Vec2(0.5f,0.5f) );
@@ -1346,9 +1345,12 @@ void TransitionCrossFade::onEnter()
 
     // create blend functions
 
+    BlendFunc blend1 = {GL_ONE, GL_ONE}; // inScene will lay on background and will not be used with alpha
+    BlendFunc blend2 = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}; // we are going to blend outScene via alpha 
+
     // set blendfunctions
-    inTexture->getSprite()->setBlendFunc(BlendFunc::DISABLE);
-    outTexture->getSprite()->setBlendFunc(BlendFunc::ALPHA_PREMULTIPLIED);    
+    inTexture->getSprite()->setBlendFunc(blend1);
+    outTexture->getSprite()->setBlendFunc(blend2);    
 
     // add render textures to the layer
     layer->addChild(inTexture);

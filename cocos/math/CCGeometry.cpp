@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2013-2017 Chukong Technologies
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -35,7 +34,7 @@ NS_CC_BEGIN
 
 // implementation of Size
 
-Size::Size() : width(0), height(0)
+Size::Size(void) : width(0), height(0)
 {
 }
 
@@ -100,7 +99,7 @@ const Size Size::ZERO = Size(0, 0);
 
 // implementation of Rect
 
-Rect::Rect()
+Rect::Rect(void)
 {
     setRect(0.0f, 0.0f, 0.0f, 0.0f);
 }

@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2011      Laschweinski
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,7 +22,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#pragma once
+
+#ifndef CCAPLICATION_H_
+#define CCAPLICATION_H_
+
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 
 #include "platform/CCCommon.h"
 #include "platform/CCApplicationProtocol.h"
@@ -49,7 +53,7 @@ public:
      @brief Callback by Director for limit FPS.
      @param interval    The time, which expressed in second in second, between current frame and next.
      */
-    virtual void setAnimationInterval(float interval) override;
+    void setAnimationInterval(float interval) override;
 
     /**
      @brief Run the message loop.
@@ -97,7 +101,7 @@ public:
      *  Gets the Resource root path.
      *  @deprecated Please use FileUtils::getInstance()->getSearchPaths() instead. 
      */
-    CC_DEPRECATED_ATTRIBUTE const std::string& getResourceRootPath();
+    CC_DEPRECATED_ATTRIBUTE const std::string& getResourceRootPath(void);
     
     /**
      @brief Get target platform
@@ -111,3 +115,7 @@ protected:
 };
 
 NS_CC_END
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
+
+#endif /* CCAPLICATION_H_ */

@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,6 +22,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+
 #include "platform/CCDevice.h"
 #include <Foundation/Foundation.h>
 #include <Cocoa/Cocoa.h>
@@ -259,6 +262,7 @@ static bool _initWithString(const char * text, Device::TextAlign align, const ch
         
         // alignment
         NSTextAlignment textAlign = FontUtils::_calculateTextAlignment(align);
+        
         NSMutableParagraphStyle *paragraphStyle = FontUtils::_calculateParagraphStyle(enableWrap, overflow);
         [paragraphStyle setAlignment:textAlign];
         
@@ -274,50 +278,48 @@ static bool _initWithString(const char * text, Device::TextAlign align, const ch
 
         NSSize realDimensions;
         
-        if (overflow == 2)
+        if (overflow == 2) {
             realDimensions = _calculateRealSizeForString(&stringWithAttributes, font, dimensions, enableWrap);
-        else
-            realDimensions = _calculateStringSize(stringWithAttributes, font, &dimensions, enableWrap, overflow);        
+        } else {
+            realDimensions = _calculateStringSize(stringWithAttributes, font, &dimensions, enableWrap, overflow);
+        }
+        
 
         // Mac crashes if the width or height is 0
         CC_BREAK_IF(realDimensions.width <= 0 || realDimensions.height <= 0);
+        
        
-        if(dimensions.width <= 0.f)
+        if(dimensions.width <= 0.f) {
             dimensions.width = realDimensions.width;
-        if (dimensions.height <= 0.f)
-            dimensions.height = realDimensions.height;      
+        }
+        if (dimensions.height <= 0.f) {
+            dimensions.height = realDimensions.height;
+        }
+      
         
         //Alignment
         CGFloat xPadding = FontUtils::_calculateTextDrawStartWidth(align, realDimensions, dimensions);
-
+        
         CGFloat yPadding = _calculateTextDrawStartHeight(align, realDimensions, dimensions);
-
+        
         NSInteger POTWide = dimensions.width;
         NSInteger POTHigh = dimensions.height;
         NSRect textRect = NSMakeRect(xPadding, POTHigh - dimensions.height + yPadding,
                                      realDimensions.width, realDimensions.height);
-
-        NSBitmapImageRep* offscreenRep = [[[NSBitmapImageRep alloc]
-            initWithBitmapDataPlanes:NULL
-            pixelsWide:POTWide
-            pixelsHigh:POTHigh
-            bitsPerSample:8
-            samplesPerPixel:4
-            hasAlpha:YES
-            isPlanar:NO
-            colorSpaceName:NSDeviceRGBColorSpace
-            bitmapFormat: 0
-            bytesPerRow:4 * POTWide
-            bitsPerPixel:32] autorelease];
-
-        NSGraphicsContext* g = [NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep];
-        [NSGraphicsContext saveGraphicsState];
-        [NSGraphicsContext setCurrentContext:g];
+        
+        
+        [[NSGraphicsContext currentContext] setShouldAntialias:NO];
+        
+        NSImage *image = [[NSImage alloc] initWithSize:NSMakeSize(POTWide, POTHigh)];
+        [image lockFocus];
+        // patch for mac retina display and lableTTF
+        [[NSAffineTransform transform] set];
         [stringWithAttributes drawInRect:textRect];
-        [NSGraphicsContext restoreGraphicsState];
-
-        auto data = (unsigned char*) [offscreenRep bitmapData];  //Use the same buffer to improve the performance.
-
+        NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect (0.0f, 0.0f, POTWide, POTHigh)];
+        [image unlockFocus];
+        
+        auto data = (unsigned char*) [bitmap bitmapData];  //Use the same buffer to improve the performance.
+        
         NSUInteger textureSize = POTWide * POTHigh * 4;
         auto dataNew = (unsigned char*)malloc(sizeof(unsigned char) * textureSize);
         if (dataNew) {
@@ -330,6 +332,8 @@ static bool _initWithString(const char * text, Device::TextAlign align, const ch
             info->isPremultipliedAlpha = true;
             ret = true;
         }
+        [bitmap release];
+        [image release];
     } while (0);
     return ret;
 }
@@ -364,3 +368,5 @@ void Device::vibrate(float duration)
 }
 
 NS_CC_END
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_MAC

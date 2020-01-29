@@ -2,8 +2,7 @@
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -25,7 +24,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#pragma once
+
+#ifndef __CCTEXTURE_ATLAS_H__
+#define __CCTEXTURE_ATLAS_H__
 
 #include <string>
 
@@ -65,7 +66,7 @@ public:
     /** Creates a TextureAtlas with an filename and with an initial capacity for Quads.
 
      * The TextureAtlas capacity can be increased in runtime.
-     @param file The file path.
+     @param file A null terminated string contains the file path.
      @param capacity Capacity for Quads.
     */
     static TextureAtlas* create(const std::string& file , ssize_t capacity);
@@ -92,7 +93,7 @@ public:
     * The TextureAtlas capacity can be increased in runtime.
     *
      @attention Do not reinitialize the TextureAtlas because it will leak memory (issue #706).
-     @param file The file path.
+     @param file A null terminated string contains the file path.
      @param capacity Capacity for Quads.
     */
     bool initWithFile(const std::string& file, ssize_t capacity);
@@ -188,6 +189,25 @@ public:
     */
     void fillWithEmptyQuadsFromIndex(ssize_t index, ssize_t amount);
 
+    /** Draws n quads.
+    * N can't be greater than the capacity of the Atlas.
+    */
+    void drawNumberOfQuads(ssize_t n);
+
+    /** Draws n quads from an index (offset).
+    N + start can't be greater than the capacity of the atlas.
+
+    @since v1.0
+    */
+    void drawNumberOfQuads(ssize_t numberOfQuads, ssize_t start);
+
+    /** Draws all the Atlas's Quads.
+    */
+    void drawQuads();
+    /** Listen the event that renderer was recreated on Android.
+     */
+    void listenRendererRecreated(EventCustom* event);
+
     /** Whether or not the array buffer of the VBO needs to be updated.*/
     bool isDirty() { return _dirty; }
     /** Specify if the array buffer of the VBO needs to be updated. */
@@ -200,10 +220,10 @@ public:
     virtual std::string getDescription() const;
 
     /** Gets the quantity of quads that are going to be drawn. */
-    size_t getTotalQuads() const;
+    ssize_t getTotalQuads() const;
     
     /** Gets the quantity of quads that can be stored with the current texture atlas size. */
-    size_t getCapacity() const;
+    ssize_t getCapacity() const;
     
     /** Gets the texture of the texture atlas. */
     Texture2D* getTexture() const;
@@ -217,30 +237,30 @@ public:
     /** Sets the quads that are going to be rendered. */
     void setQuads(V3F_C4B_T2F_Quad* quads);
     
-    inline unsigned short* getIndices() { return _indices; }
-    
 private:
-    friend class ParticleBatchNode;
-    friend class AtlasNode;
-
     void renderCommand();
 
     void setupIndices();
+    void mapBuffers();
+    void setupVBOandVAO();
+    void setupVBO();
 
 protected:
-    unsigned short* _indices = nullptr;
-    bool _dirty = false; //indicates whether or not the array buffer of the VBO needs to be updated
+    GLushort*           _indices;
+    GLuint              _VAOname;
+    GLuint              _buffersVBO[2]; //0: vertex  1: indices
+    bool                _dirty; //indicates whether or not the array buffer of the VBO needs to be updated
     /** quantity of quads that are going to be drawn */
-    size_t _totalQuads = 0;
+    ssize_t _totalQuads;
     /** quantity of quads that can be stored with the current texture atlas size */
-    size_t _capacity = 0;
+    ssize_t _capacity;
     /** Texture of the texture atlas */
-    Texture2D* _texture = nullptr;
+    Texture2D* _texture;
     /** Quads that are going to be rendered */
-    V3F_C4B_T2F_Quad* _quads = nullptr;
+    V3F_C4B_T2F_Quad* _quads;
     
 #if CC_ENABLE_CACHE_TEXTURE_DATA
-    EventListenerCustom* _rendererRecreatedListener = nullptr;
+    EventListenerCustom* _rendererRecreatedListener;
 #endif
 };
 
@@ -248,3 +268,7 @@ protected:
 /// @}
 
 NS_CC_END
+
+#endif //__CCTEXTURE_ATLAS_H__
+
+

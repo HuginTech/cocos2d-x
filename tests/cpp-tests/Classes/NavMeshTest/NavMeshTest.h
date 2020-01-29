@@ -1,6 +1,5 @@
 /****************************************************************************
  Copyright (c) 2013 cocos2d-x.org
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -46,8 +45,8 @@ class NavMeshBaseTestDemo : public TestCase
 {
 public:
     CREATE_FUNC(NavMeshBaseTestDemo);
-    NavMeshBaseTestDemo();
-    virtual ~NavMeshBaseTestDemo();
+    NavMeshBaseTestDemo(void);
+    virtual ~NavMeshBaseTestDemo(void);
 
     // overrides
     virtual bool init() override;
@@ -77,8 +76,8 @@ class NavMeshBasicTestDemo : public NavMeshBaseTestDemo
 {
 public:
     CREATE_FUNC(NavMeshBasicTestDemo);
-    NavMeshBasicTestDemo();
-    virtual ~NavMeshBasicTestDemo();
+    NavMeshBasicTestDemo(void);
+    virtual ~NavMeshBasicTestDemo(void);
     
     // overrides
     virtual bool init() override;
@@ -101,8 +100,8 @@ class NavMeshAdvanceTestDemo : public NavMeshBaseTestDemo
 {
 public:
     CREATE_FUNC(NavMeshAdvanceTestDemo);
-    NavMeshAdvanceTestDemo();
-    virtual ~NavMeshAdvanceTestDemo();
+    NavMeshAdvanceTestDemo(void);
+    virtual ~NavMeshAdvanceTestDemo(void);
 
     // overrides
     virtual bool init() override;

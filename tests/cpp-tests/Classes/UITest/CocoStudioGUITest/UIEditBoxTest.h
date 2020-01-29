@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -38,6 +37,7 @@ public:
     virtual bool init() override;
     
     virtual void editBoxEditingDidBegin(cocos2d::ui::EditBox* editBox)override;
+    virtual void editBoxEditingDidEnd(cocos2d::ui::EditBox* editBox)override;
     virtual void editBoxEditingDidEndWithAction(cocos2d::ui::EditBox* editBox, cocos2d::ui::EditBoxDelegate::EditBoxEndAction action)override;
     virtual void editBoxTextChanged(cocos2d::ui::EditBox* editBox, const std::string& text)override;
     virtual void editBoxReturn(cocos2d::ui::EditBox* editBox)override;
@@ -59,6 +59,7 @@ public:
     virtual bool init() override;
     
     virtual void editBoxEditingDidBegin(cocos2d::ui::EditBox* editBox)override;
+    virtual void editBoxEditingDidEnd(cocos2d::ui::EditBox* editBox)override;
     virtual void editBoxTextChanged(cocos2d::ui::EditBox* editBox, const std::string& text)override;
     virtual void editBoxReturn(cocos2d::ui::EditBox* editBox)override;
     
@@ -69,21 +70,6 @@ protected:
     cocos2d::ui::EditBox* _editPassword;
     cocos2d::ui::EditBox* _editEmail;
     cocos2d::Node* _editEmailParent;
-};
-
-class UIEditBoxTestTextHorizontalAlignment : public UIScene
-{
-public:
-    CREATE_FUNC(UIEditBoxTestTextHorizontalAlignment);
-    
-    virtual bool init() override;
-};
-
-class UIEditBoxTestPressedAndDisabled : public UIScene
-{
-public:
-    CREATE_FUNC(UIEditBoxTestPressedAndDisabled);
-    virtual bool init() override;
 };
 
 #endif /* defined(__cocos2d_tests__UIEditBoxTest__) */

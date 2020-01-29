@@ -267,7 +267,7 @@ function iskindof(obj, classname)
     local mt
     if t == "userdata" then
         if tolua.iskindof(obj, classname) then return true end
-        mt = getmetatable(tolua.getpeer(obj))
+        mt = tolua.getpeer(obj)
     else
         mt = getmetatable(obj)
     end

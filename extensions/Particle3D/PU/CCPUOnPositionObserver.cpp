@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (C) 2013 Henry van Merode. All rights reserved.
- Copyright (c) 2015-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2015-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -33,7 +32,7 @@ NS_CC_BEGIN
 const Vec3 PUOnPositionObserver::DEFAULT_POSITION_THRESHOLD(0, 0, 0);
 
 //-----------------------------------------------------------------------
-PUOnPositionObserver::PUOnPositionObserver() : 
+PUOnPositionObserver::PUOnPositionObserver(void) : 
     PUObserver(),
     _positionXThreshold(DEFAULT_POSITION_THRESHOLD.x),
     _positionYThreshold(DEFAULT_POSITION_THRESHOLD.y),

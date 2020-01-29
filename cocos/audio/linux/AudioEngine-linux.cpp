@@ -1,27 +1,3 @@
-/****************************************************************************
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
- http://www.cocos2d-x.org
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
 /**
  * @author cesarpachon
  */
@@ -34,6 +10,7 @@
 #include "platform/CCFileUtils.h"
 
 using namespace cocos2d;
+using namespace cocos2d::experimental;
 
 AudioEngineImpl * g_AudioEngineImpl = nullptr;
 
@@ -71,6 +48,8 @@ AudioEngineImpl::AudioEngineImpl()
 AudioEngineImpl::~AudioEngineImpl()
 {
     FMOD_RESULT result;
+    result = pSystem->close();
+    ERRCHECKWITHEXIT(result);
     result = pSystem->release();
     ERRCHECKWITHEXIT(result);
 }
@@ -94,7 +73,7 @@ bool AudioEngineImpl::init()
     mapSound.clear();
 
     auto scheduler = cocos2d::Director::getInstance()->getScheduler();
-    scheduler->schedule(CC_SCHEDULE_SELECTOR(AudioEngineImpl::update), this, 0.05f, false);
+    scheduler->schedule(schedule_selector(AudioEngineImpl::update), this, 0.05f, false);
 
     g_AudioEngineImpl = this;
 
@@ -106,8 +85,7 @@ int AudioEngineImpl::play2d(const std::string &fileFullPath, bool loop, float vo
     int id = preload(fileFullPath, nullptr);
     if (id >= 0) {
         mapChannelInfo[id].loop=loop;
-        // channel is null here. Don't dereference it. It's only set in resume(id).
-        //mapChannelInfo[id].channel->setPaused(true);
+        mapChannelInfo[id].channel->setPaused(true);
         mapChannelInfo[id].volume = volume;
         AudioEngine::_audioIDInfoMap[id].state = AudioEngine::AudioState::PAUSED;
         resume(id);
@@ -285,7 +263,8 @@ void AudioEngineImpl::uncache(const std::string& path)
         }
         mapSound.erase(it);
     }
-    mapId.erase(path);
+    if (mapId.find(path) != mapId.end())
+        mapId.erase(path);
 }
 
 void AudioEngineImpl::uncacheAll()
@@ -317,9 +296,10 @@ int AudioEngineImpl::preload(const std::string& filePath, std::function<void(boo
     }
 
     int id = static_cast<int>(mapChannelInfo.size()) + 1;
-    // std::map::insert returns std::pair<iter, bool>
-    auto channelInfoIter = mapId.insert({filePath, id});
-    id = channelInfoIter.first->second;
+    if (mapId.find(filePath) == mapId.end())
+        mapId.insert({filePath, id});
+    else
+        id = mapId.at(filePath);
 
     auto& chanelInfo = mapChannelInfo[id];
     chanelInfo.sound = sound;

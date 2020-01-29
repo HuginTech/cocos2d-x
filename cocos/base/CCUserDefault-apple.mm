@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -491,6 +490,18 @@ UserDefault* UserDefault::getInstance()
 void UserDefault::destroyInstance()
 {
     CC_SAFE_DELETE(_userDefault);
+}
+
+// FIXME:: deprecated
+UserDefault* UserDefault::sharedUserDefault()
+{
+    return UserDefault::getInstance();
+}
+
+// FIXME:: deprecated
+void UserDefault::purgeSharedUserDefault()
+{
+    UserDefault::destroyInstance();
 }
 
 bool UserDefault::isXMLFileExist()

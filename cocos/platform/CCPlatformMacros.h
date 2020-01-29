@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2013-2017 Chukong Technologies
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -86,13 +85,13 @@ CC_DEPRECATED_ATTRIBUTE static __TYPE__* node() \
  * 
  * @since v0.99.5
  */
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) 
     #define CC_ENABLE_CACHE_TEXTURE_DATA       1
 #else
     #define CC_ENABLE_CACHE_TEXTURE_DATA       0
 #endif
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
     /** Application will crash in glDrawElements function on some win32 computers and some android devices.
      *  Indices should be bound again while drawing to avoid this bug.
      */
@@ -130,10 +129,12 @@ CC_DEPRECATED_ATTRIBUTE static __TYPE__* node() \
  *            If you need protected or private, please declare.
  */
 #define CC_PROPERTY_READONLY(varType, varName, funName)\
-protected: varType varName; public: virtual varType get##funName() const;
+protected: varType varName;\
+public: virtual varType get##funName(void) const;
 
 #define CC_PROPERTY_READONLY_PASS_BY_REF(varType, varName, funName)\
-protected: varType varName; public: virtual const varType& get##funName() const;
+protected: varType varName;\
+public: virtual const varType& get##funName(void) const;
 
 /** @def CC_PROPERTY 
  * It is used to declare a protected variable.
@@ -148,10 +149,14 @@ protected: varType varName; public: virtual const varType& get##funName() const;
  *            If you need protected or private, please declare.
  */
 #define CC_PROPERTY(varType, varName, funName)\
-protected: varType varName; public: virtual varType get##funName() const; virtual void set##funName(varType var);
+protected: varType varName;\
+public: virtual varType get##funName(void) const;\
+public: virtual void set##funName(varType var);
 
 #define CC_PROPERTY_PASS_BY_REF(varType, varName, funName)\
-protected: varType varName; public: virtual const varType& get##funName() const; virtual void set##funName(const varType& var);
+protected: varType varName;\
+public: virtual const varType& get##funName(void) const;\
+public: virtual void set##funName(const varType& var);
 
 /** @def CC_SYNTHESIZE_READONLY 
  * It is used to declare a protected variable. We can use getter to read the variable.
@@ -164,10 +169,12 @@ protected: varType varName; public: virtual const varType& get##funName() const;
  *            If you need protected or private, please declare.
  */
 #define CC_SYNTHESIZE_READONLY(varType, varName, funName)\
-protected: varType varName; public: virtual inline varType get##funName() const { return varName; }
+protected: varType varName;\
+public: virtual varType get##funName(void) const { return varName; }
 
 #define CC_SYNTHESIZE_READONLY_PASS_BY_REF(varType, varName, funName)\
-protected: varType varName; public: virtual inline const varType& get##funName() const { return varName; }
+protected: varType varName;\
+public: virtual const varType& get##funName(void) const { return varName; }
 
 /** @def CC_SYNTHESIZE 
  * It is used to declare a protected variable.
@@ -182,13 +189,19 @@ protected: varType varName; public: virtual inline const varType& get##funName()
  *            If you need protected or private, please declare.
  */
 #define CC_SYNTHESIZE(varType, varName, funName)\
-protected: varType varName; public: virtual inline varType get##funName() const { return varName; } virtual inline void set##funName(varType var){ varName = var; }
+protected: varType varName;\
+public: virtual varType get##funName(void) const { return varName; }\
+public: virtual void set##funName(varType var){ varName = var; }
 
 #define CC_SYNTHESIZE_PASS_BY_REF(varType, varName, funName)\
-protected: varType varName; public: virtual inline const varType& get##funName() const { return varName; } virtual inline void set##funName(const varType& var){ varName = var; }
+protected: varType varName;\
+public: virtual const varType& get##funName(void) const { return varName; }\
+public: virtual void set##funName(const varType& var){ varName = var; }
 
 #define CC_SYNTHESIZE_RETAIN(varType, varName, funName)    \
-private: varType varName; public: virtual inline varType get##funName() const { return varName; } virtual inline void set##funName(varType var) \
+private: varType varName; \
+public: virtual varType get##funName(void) const { return varName; } \
+public: virtual void set##funName(varType var)   \
 { \
     if (varName != var) \
     { \

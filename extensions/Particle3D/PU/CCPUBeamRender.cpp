@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (C) 2013 Henry van Merode. All rights reserved.
- Copyright (c) 2015-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2015-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -32,7 +31,9 @@
 #include "renderer/CCMeshCommand.h"
 #include "renderer/CCRenderer.h"
 #include "renderer/CCTextureCache.h"
-#include "renderer/backend/ProgramState.h"
+#include "renderer/CCGLProgramState.h"
+#include "renderer/CCGLProgramCache.h"
+#include "renderer/CCVertexIndexBuffer.h"
 #include "base/CCDirector.h"
 #include "3d/CCSprite3D.h"
 #include "3d/CCMesh.h"
@@ -152,7 +153,7 @@ void PUBeamRender::particleExpired( PUParticleSystem3D* /*particleSystem*/, PUPa
 }
 
 //-----------------------------------------------------------------------
-bool PUBeamRender::isUseVertexColours() const
+bool PUBeamRender::isUseVertexColours(void) const
 {
     return _useVertexColours;
 } 
@@ -167,7 +168,7 @@ void PUBeamRender::setUseVertexColours(bool useVertexColours)
     _billboardChain->setUseTextureCoords(!_useVertexColours);
 } 
 //-----------------------------------------------------------------------
-size_t PUBeamRender::getMaxChainElements() const
+size_t PUBeamRender::getMaxChainElements(void) const
 {
     return _maxChainElements;
 } 
@@ -177,7 +178,7 @@ void PUBeamRender::setMaxChainElements(size_t maxChainElements)
     _maxChainElements = maxChainElements;
 } 
 //-----------------------------------------------------------------------
-float PUBeamRender::getUpdateInterval() const
+float PUBeamRender::getUpdateInterval(void) const
 {
     return _updateInterval;
 }
@@ -187,7 +188,7 @@ void PUBeamRender::setUpdateInterval(float updateInterval)
     _updateInterval = updateInterval;
 }
 //-----------------------------------------------------------------------
-float PUBeamRender::getDeviation() const
+float PUBeamRender::getDeviation(void) const
 {
     return _deviation;
 }
@@ -197,7 +198,7 @@ void PUBeamRender::setDeviation(float deviation)
     _deviation = deviation;
 }
 //-----------------------------------------------------------------------
-size_t PUBeamRender::getNumberOfSegments() const
+size_t PUBeamRender::getNumberOfSegments(void) const
 {
     return _numberOfSegments;
 }
@@ -207,7 +208,7 @@ void PUBeamRender::setNumberOfSegments(size_t numberOfSegments)
     _numberOfSegments = numberOfSegments;
 }
 //-----------------------------------------------------------------------
-bool PUBeamRender::isJump() const
+bool PUBeamRender::isJump(void) const
 {
     return _jump;
 }
@@ -217,7 +218,7 @@ void PUBeamRender::setJump(bool jump)
     _jump = jump;
 }
 //-----------------------------------------------------------------------
-PUBillboardChain::TexCoordDirection PUBeamRender::getTexCoordDirection() const
+PUBillboardChain::TexCoordDirection PUBeamRender::getTexCoordDirection(void) const
 {
     return _texCoordDirection;
 }
@@ -326,7 +327,7 @@ void PUBeamRender::updateRender( PUParticle3D *particle, float deltaTime, bool /
 }
 
 //-----------------------------------------------------------------------
-void PUBeamRender::destroyAll()
+void PUBeamRender::destroyAll(void)
 {
     if (!_particleSystem || !_billboardChain)
         return;

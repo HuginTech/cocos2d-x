@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (C) 2013 Henry van Merode. All rights reserved.
- Copyright (c) 2015-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2015-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -24,7 +23,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#pragma once
+#ifndef __CC_PU_PARTICLE_3D_RENDER_H__
+#define __CC_PU_PARTICLE_3D_RENDER_H__
 
 #include <vector>
 
@@ -32,8 +32,6 @@
 #include "math/CCMath.h"
 #include "extensions/Particle3D/CCParticle3DRender.h"
 #include "renderer/CCRenderState.h"
-#include "renderer/backend/Types.h"
-#include "renderer/backend/Buffer.h"
 
 NS_CC_BEGIN
 
@@ -48,7 +46,7 @@ public:
     virtual void unPrepare(){};
     virtual void updateRender(PUParticle3D* particle, float deltaTime, bool firstParticle);
 
-    const std::string& getRenderType() const {return _renderType;};
+    const std::string& getRenderType(void) const {return _renderType;};
     void setRenderType(const std::string& observerType) {_renderType = observerType;};
 
     virtual PURender* clone() = 0;
@@ -75,11 +73,6 @@ CC_CONSTRUCTOR_ACCESS:
 protected:
 
     bool initRender(const std::string &texFile);
-
-    void onBeforeDraw();
-
-    void onAfterDraw();
-
 protected:
 
     struct VertexInfo
@@ -88,30 +81,17 @@ protected:
         Vec2 uv;
         Vec4 color;
     };
-    
-    MeshCommand           _meshCommand;
+    MeshCommand* _meshCommand;
+    RenderState::StateBlock* _stateBlock;
+    Texture2D*             _texture;
+    GLProgramState*        _glProgramState;
+    IndexBuffer*           _indexBuffer; //index buffer
+    VertexBuffer*          _vertexBuffer; // vertex buffer
 
-    RenderState::StateBlock     _stateBlock;
-    Texture2D*                  _texture        = nullptr;
-    backend::ProgramState*      _programState   = nullptr;
-    backend::Buffer*            _indexBuffer    = nullptr; //index buffer
-    backend::Buffer*            _vertexBuffer   = nullptr; // vertex buffer
-
-    std::vector<VertexInfo>     _vertices;
-    std::vector<uint16_t> _indices;
+    std::vector<VertexInfo> _vertices;
+    std::vector<unsigned short> _indices;
 
     std::string _texFile;
-
-    backend::UniformLocation    _locColor;
-    backend::UniformLocation    _locTexture;
-    backend::UniformLocation    _locPMatrix;
-
-    //renderer state cache variables
-    bool                        _rendererDepthTestEnabled   = true;
-    backend::CompareFunction    _rendererDepthCmpFunc       = backend::CompareFunction::LESS;
-    backend::CullMode           _rendererCullMode           = backend::CullMode::BACK;
-    backend::Winding            _rendererWinding            = backend::Winding::COUNTER_CLOCK_WISE;
-    bool                        _rendererDepthWrite         = false;
 };
 
 class CC_DLL PUParticle3DQuadRender : public PUParticle3DEntityRender
@@ -266,3 +246,4 @@ protected:
 };
 
 NS_CC_END
+#endif

@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2014-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2014-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -59,18 +58,6 @@ public:
     static void destroyBundle(Bundle3D* bundle);
     
 	virtual void clear();
-
-    /**
-    * get define data type
-    * @param str The type in string
-    */
-    static backend::VertexFormat parseGLDataType(const std::string& str, int size);
-
-    /**
-    * get define data type
-    * @param str The type in string
-    */
-    static backend::SamplerAddressMode parseSamplerAddressMode(const std::string& str);
 
     /**
      * load a file. You must load a file first, then call loadMeshData, loadSkinData, and so on
@@ -149,6 +136,12 @@ protected:
     bool loadNodesBinary(NodeDatas& nodedatas);
     NodeData* parseNodesRecursivelyBinary(bool& skeleton, bool singleSprite);
 
+    /**
+     * get define data type
+     * @param str The type in string
+     */
+    GLenum parseGLType(const std::string& str);
+
      /**
      * get define data type
      * @param str The type in string
@@ -159,7 +152,7 @@ protected:
      * get vertex attribute type
      * @param str The type in string
      */
-    shaderinfos::VertexKey parseGLProgramAttribute(const std::string& str);
+    unsigned int parseGLProgramAttribute(const std::string& str);
 
     /*
      * get model path

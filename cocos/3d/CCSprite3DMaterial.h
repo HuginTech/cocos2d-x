@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2014-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2014-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -22,14 +21,15 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-#pragma once
+
+#ifndef __CCSPRIT3DMATERIAL_H__
+#define __CCSPRIT3DMATERIAL_H__
 
 #include <string>
 #include <unordered_map>
 #include "base/ccTypes.h"
 #include "renderer/CCMaterial.h"
 #include "3d/CCBundle3DData.h"
-#include "renderer/backend/Types.h"
 
 NS_CC_BEGIN
 
@@ -39,11 +39,6 @@ NS_CC_BEGIN
  */
 
 class Texture2D;
-
-namespace backend
-{
-    class ProgramState;
-}
 
 /**
  * @brief Sprite3DMaterial: Material for Sprite3D.
@@ -94,9 +89,8 @@ public:
      * @param programState GLProgramState instance
      * @return Created material
      */
-//    static Sprite3DMaterial* createWithGLStateProgram(GLProgramState* programState);
-    static Sprite3DMaterial* createWithProgramState(backend::ProgramState* programState);
-
+    static Sprite3DMaterial* createWithGLStateProgram(GLProgramState* programState);
+    
     void setTexture(Texture2D* tex, NTextureData::Usage usage);
     
     /**
@@ -134,18 +128,6 @@ protected:
     static Sprite3DMaterial* _vertexLitMaterialSkin;
     static Sprite3DMaterial* _diffuseMaterialSkin;
     static Sprite3DMaterial* _bumpedDiffuseMaterialSkin;
-
-    static backend::ProgramState* _unLitMaterialProgState;
-    static backend::ProgramState* _unLitNoTexMaterialProgState;
-    static backend::ProgramState* _vertexLitMaterialProgState;
-    static backend::ProgramState* _diffuseMaterialProgState;
-    static backend::ProgramState* _diffuseNoTexMaterialProgState;
-    static backend::ProgramState* _bumpedDiffuseMaterialProgState;
-
-    static backend::ProgramState* _unLitMaterialSkinProgState;
-    static backend::ProgramState* _vertexLitMaterialSkinProgState;
-    static backend::ProgramState* _diffuseMaterialSkinProgState;
-    static backend::ProgramState* _bumpedDiffuseMaterialSkinProgState;
 };
 
 /**
@@ -188,3 +170,5 @@ protected:
 /// @}
 
 NS_CC_END
+
+#endif // __CCSPRIT3DMATERIAL_H__

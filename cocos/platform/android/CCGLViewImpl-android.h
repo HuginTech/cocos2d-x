@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,7 +22,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#pragma once
+
+#ifndef __CC_EGLVIEWIMPL_ANDROID_H__
+#define __CC_EGLVIEWIMPL_ANDROID_H__
+
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 
 #include "base/CCRef.h"
 #include "math/CCGeometry.h"
@@ -44,7 +48,6 @@ public:
     void end() override;
     void swapBuffers() override;
     void setIMEKeyboardState(bool bOpen) override;
-    virtual Rect getSafeAreaRect() const override;
 
 protected:
     GLViewImpl();
@@ -55,3 +58,8 @@ protected:
 };
 
 NS_CC_END
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+
+#endif    // end of __CC_EGLVIEWIMPL_ANDROID_H__
+

@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2012 cocos2d-x.org
- Copyright (c) 2015-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2015-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -40,6 +39,8 @@ enum
     IDC_RESTART
 };
 
+static cocos2d::Scene* physicsScene = nullptr;
+
 #define START_POS_X -0.5
 #define START_POS_Y -2.5
 #define START_POS_Z -0.5
@@ -47,8 +48,6 @@ enum
 #define ARRAY_SIZE_X 4
 #define ARRAY_SIZE_Y 3
 #define ARRAY_SIZE_Z 4
-
-static cocos2d::Scene *physicsScene = nullptr;
 
 Physics3DTests::Physics3DTests()
 {
@@ -176,7 +175,9 @@ void Physics3DTestDemo::onTouchesEnded(const std::vector<Touch*>& touches, cocos
     }
 }
 
-Physics3DTestDemo::Physics3DTestDemo()
+Physics3DTestDemo::Physics3DTestDemo( void )
+: _angle(0.0f)
+, _camera(nullptr)
 {
 
 }
@@ -186,7 +187,7 @@ void Physics3DTestDemo::update( float /*delta*/ )
     
 }
 
-Physics3DTestDemo::~Physics3DTestDemo()
+Physics3DTestDemo::~Physics3DTestDemo( void )
 {
     
 }

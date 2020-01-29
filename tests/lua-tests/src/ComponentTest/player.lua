@@ -40,7 +40,7 @@ local player = {
         local function onTouchesEnded(touches, event)
             local location = touches[1]:getLocation()
             self:generateProjectile(location.x, location.y)
-            cc.AudioEngine:play2d("pew-pew-lei.wav")
+            ccexp.AudioEngine:play2d("pew-pew-lei.wav")
         end
 
         local listener = cc.EventListenerTouchAllAtOnce:create()

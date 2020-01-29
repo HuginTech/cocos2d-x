@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -30,7 +29,7 @@ NS_CC_BEGIN
 lua_State *LuaBridge::s_luaState = NULL;
 int        LuaBridge::s_newFunctionId = 0;
 
-LuaStack *LuaBridge::getStack()
+LuaStack *LuaBridge::getStack(void)
 {
     return LuaEngine::getInstance()->getLuaStack();
 }
@@ -51,7 +50,7 @@ int LuaBridge::pushLuaFunctionById(int functionId)
     lua_pushnil(L);                                             /* L: f_id nil */
     while (lua_next(L, -2) != 0)                                /* L: f_id f id */
     {
-        int value = lua_tointeger(L, -1);
+        int value = lua_tonumber(L, -1);
         lua_pop(L, 1);                                          /* L: f_id f */
         if (value == functionId)
         {
@@ -85,7 +84,7 @@ int LuaBridge::retainLuaFunctionById(int functionId)
     }
     
     // increase counter
-    int retainCount = lua_tointeger(L, -1);
+    int retainCount = lua_tonumber(L, -1);
     retainCount++;
     lua_pop(L, 1);                                              /* L: id_r */
     lua_pushinteger(L, functionId);                             /* L: id_r id */
@@ -130,7 +129,7 @@ int LuaBridge::releaseLuaFunctionById(int functionId)
         return 0;
     }
     
-    int retainCount = lua_tointeger(L, -1);
+    int retainCount = lua_tonumber(L, -1);
     retainCount--;
     
     if (retainCount > 0)
@@ -155,7 +154,7 @@ int LuaBridge::releaseLuaFunctionById(int functionId)
     lua_pushnil(L);                                             /* L: f_id nil */
     while (lua_next(L, -2) != 0)                                /* L: f_id f id */
     {
-        int value = lua_tointeger(L, -1);
+        int value = lua_tonumber(L, -1);
         lua_pop(L, 1);                                          /* L: f_id f */
         if (value == functionId)
         {
@@ -214,7 +213,7 @@ int LuaBridge::retainLuaFunction(lua_State *L, int functionIndex, int *retainCou
     }
     else
     {
-        functionId = lua_tointeger(L, -1);
+        functionId = lua_tonumber(L, -1);
     }
     
     // get function retain
@@ -230,7 +229,7 @@ int LuaBridge::retainLuaFunction(lua_State *L, int functionIndex, int *retainCou
     else
     {
         // add retain count
-        retainCount = lua_tointeger(L, -1);
+        retainCount = lua_tonumber(L, -1);
         retainCount++;
         lua_pop(L, 1);
         lua_pushinteger(L, retainCount);

@@ -1,6 +1,5 @@
 /****************************************************************************
  Copyright (c) 2014 cocos2d-x.org
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -231,10 +230,10 @@ namespace cocostudio
         
         auto nodeOptions = options->node3DOption()->nodeOptions();
         
-        uint8_t alpha       = (uint8_t)nodeOptions->color()->a();
-        uint8_t red         = (uint8_t)nodeOptions->color()->r();
-        uint8_t green       = (uint8_t)nodeOptions->color()->g();
-        uint8_t blue        = (uint8_t)nodeOptions->color()->b();
+        GLubyte alpha       = (GLubyte)nodeOptions->color()->a();
+        GLubyte red         = (GLubyte)nodeOptions->color()->r();
+        GLubyte green       = (GLubyte)nodeOptions->color()->g();
+        GLubyte blue        = (GLubyte)nodeOptions->color()->b();
         
         if (alpha != 255)
         {
@@ -247,7 +246,7 @@ namespace cocostudio
         if (isFlipped)
         {
             sprite3D->setCullFaceEnabled(true);
-            sprite3D->setCullFace(CullFaceSide::FRONT);
+            sprite3D->setCullFace(GL_FRONT);
         }
 
         if (lightFlag <= 0)

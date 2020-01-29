@@ -1,27 +1,3 @@
-/****************************************************************************
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
- http://www.cocos2d-x.org
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
 #include "UIListViewTest.h"
 
 USING_NS_CC;
@@ -37,8 +13,6 @@ UIListViewTests::UIListViewTests()
     ADD_TEST_CASE(UIListViewTest_ScrollToItemHorizontal);
     ADD_TEST_CASE(UIListViewTest_MagneticVertical);
     ADD_TEST_CASE(UIListViewTest_MagneticHorizontal);
-    ADD_TEST_CASE(UIListViewTest_PaddingVertical);
-    ADD_TEST_CASE(UIListViewTest_PaddingHorizontal);
     ADD_TEST_CASE(Issue12692);
     ADD_TEST_CASE(Issue8316);
 }
@@ -46,7 +20,16 @@ UIListViewTests::UIListViewTests()
 // UIListViewTest_Vertical
 
 UIListViewTest_Vertical::UIListViewTest_Vertical()
+: _displayValueLabel(nullptr),
+_spawnCount(5), //spawnCount should > listview.width / templateWidth + 2
+_totalCount(50),
+_bufferZone(45), //bufferZone should be larger than List item width
+_updateTimer(0),
+_updateInterval(1.0f / 24), // you could tweak this value to adjust ListView data update rate
+_lastContentPosY(0), //use this value to detect if we are scrolling left or right
+_itemTemplateHeight(0)
 {
+    
 }
 
 UIListViewTest_Vertical::~UIListViewTest_Vertical()
@@ -95,7 +78,7 @@ bool UIListViewTest_Vertical::init()
         _listView->setBackGroundImage("cocosui/green_edit.png");
         _listView->setGlobalZOrder(200);
         _listView->setBackGroundImageScale9Enabled(true);
-        _listView->setContentSize(Size(240.0f, 130.0f));
+        _listView->setContentSize(Size(240, 130));
 		_listView->setPosition(Vec2((widgetSize - _listView->getContentSize()) / 2.0f));
         _listView->addEventListener((ui::ListView::ccListViewCallback)CC_CALLBACK_2(UIListViewTest_Vertical::selectedItemEvent, this));
         _listView->addEventListener((ui::ListView::ccScrollViewCallback)CC_CALLBACK_2(UIListViewTest_Vertical::selectedItemEventScrollView,this));
@@ -162,15 +145,15 @@ bool UIListViewTest_Vertical::init()
             // Labels
             _indexLabels[0] = Text::create(" ", "fonts/Marker Felt.ttf", 12);
             _indexLabels[0]->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            _indexLabels[0]->setPosition(_uiLayer->getContentSize() / 2 + Size(0.0f, position));
+            _indexLabels[0]->setPosition(_uiLayer->getContentSize() / 2 + Size(0, position));
             _uiLayer->addChild(_indexLabels[0]);
             _indexLabels[1] = Text::create("  ", "fonts/Marker Felt.ttf", 12);
             _indexLabels[1]->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            _indexLabels[1]->setPosition(_uiLayer->getContentSize() / 2 + Size(140.0f, 0.0f));
+            _indexLabels[1]->setPosition(_uiLayer->getContentSize() / 2 + Size(140, 0));
             _uiLayer->addChild(_indexLabels[1]);
             _indexLabels[2] = Text::create(" ", "fonts/Marker Felt.ttf", 12);
             _indexLabels[2]->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            _indexLabels[2]->setPosition(_uiLayer->getContentSize() / 2 + Size(0.0f, -position));
+            _indexLabels[2]->setPosition(_uiLayer->getContentSize() / 2 + Size(0, -position));
             _uiLayer->addChild(_indexLabels[2]);
             
             // Callback
@@ -294,6 +277,14 @@ void UIListViewTest_Vertical::selectedItemEventScrollView(Ref* pSender, ui::Scro
 // UIListViewTest_Horizontal
 
 UIListViewTest_Horizontal::UIListViewTest_Horizontal()
+: _displayValueLabel(nullptr),
+_spawnCount(4), //spawnCount should > listview.width / templateWidth + 2
+_totalCount(50),
+_bufferZone(140), //bufferZone should be larger than List item width
+_updateTimer(0),
+_updateInterval(1.0f / 24), // you could tweak this value to adjust ListView data update rate
+_lastContentPosX(0), //use this value to detect if we are scrolling left or right
+_itemTemplateWidth(0)
 {
 }
 
@@ -348,7 +339,7 @@ bool UIListViewTest_Horizontal::init()
         _listView->setBounceEnabled(true);
         _listView->setBackGroundImage("cocosui/green_edit.png");
         _listView->setBackGroundImageScale9Enabled(true);
-        _listView->setContentSize(Size(240.0f, 130.0f));
+        _listView->setContentSize(Size(240, 130));
         _listView->setPosition(Vec2((widgetSize.width - backgroundSize.width) / 2.0f +
                                     (backgroundSize.width - _listView->getContentSize().width) / 2.0f,
                                     (widgetSize.height - backgroundSize.height) / 2.0f +
@@ -516,7 +507,7 @@ bool Issue12692::init()
         listView->setBounceEnabled(true);
         listView->setBackGroundImage("cocosui/green_edit.png");
         listView->setBackGroundImageScale9Enabled(true);
-        listView->setContentSize(Size(240.0f, 130.0f));
+        listView->setContentSize(Size(240, 130));
         listView->setPosition(Vec2((widgetSize.width - backgroundSize.width) / 2.0f +
                                    (backgroundSize.width - listView->getContentSize().width) / 2.0f,
                                    (widgetSize.height - backgroundSize.height) / 2.0f +
@@ -591,7 +582,7 @@ bool Issue8316::init()
                                 widgetSize.height / 2.0f + label->getContentSize().height * 1.5f));
         _uiLayer->addChild(label);
         
-        Text* alert = Text::create("Can not scroll list view", "fonts/Marker Felt.ttf", 20);
+        Text* alert = Text::create("ListView Disable Touch", "fonts/Marker Felt.ttf", 20);
         alert->setColor(Color3B(159, 168, 176));
         alert->setPosition(Vec2(widgetSize.width / 2.0f,
                                 widgetSize.height / 2.0f - alert->getContentSize().height * 3.075f));
@@ -610,7 +601,7 @@ bool Issue8316::init()
         listView->setTouchEnabled(false);
         listView->setBackGroundImage("cocosui/green_edit.png");
         listView->setBackGroundImageScale9Enabled(true);
-        listView->setContentSize(Size(240.0f, 130.0f));
+        listView->setContentSize(Size(240, 130));
         listView->setPosition(Vec2((widgetSize.width - backgroundSize.width) / 2.0f +
                                    (backgroundSize.width - listView->getContentSize().width) / 2.0f,
                                    (widgetSize.height - backgroundSize.height) / 2.0f +
@@ -662,7 +653,7 @@ bool UIListViewTest_ScrollToItem::init()
     _nextIndex = 0;
     _titleLabel = Text::create("Scroll to item", "fonts/Marker Felt.ttf", 32);
     _titleLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    _titleLabel->setPosition(Vec2(layerSize / 2) + Vec2(0.0f, _titleLabel->getContentSize().height * 3.15f));
+    _titleLabel->setPosition(Vec2(layerSize / 2) + Vec2(0, _titleLabel->getContentSize().height * 3.15f));
     _uiLayer->addChild(_titleLabel, 3);
     
     // Create the list view
@@ -700,7 +691,7 @@ bool UIListViewTest_ScrollToItem::init()
     auto pButton = Button::create("cocosui/backtotoppressed.png", "cocosui/backtotopnormal.png");
     pButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     pButton->setScale(0.8f);
-    pButton->setPosition(Vec2(layerSize / 2) + Vec2(120.0f, -60.0f));
+    pButton->setPosition(Vec2(layerSize / 2) + Vec2(120, -60));
     pButton->setTitleText(StringUtils::format("Go to '%d'", _nextIndex));
     pButton->addClickEventListener([this, pButton](Ref*) {
         _listView->scrollToItem(_nextIndex, Vec2::ANCHOR_MIDDLE, Vec2::ANCHOR_MIDDLE);
@@ -736,7 +727,7 @@ bool UIListViewTest_Magnetic::init()
     
     _titleLabel = Text::create("Magnetic scroll", "fonts/Marker Felt.ttf", 32);
     _titleLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    _titleLabel->setPosition(Vec2(layerSize / 2) + Vec2(0.0f, _titleLabel->getContentSize().height * 3.15f));
+    _titleLabel->setPosition(Vec2(layerSize / 2) + Vec2(0, _titleLabel->getContentSize().height * 3.15f));
     _uiLayer->addChild(_titleLabel, 3);
     
     // Create the list view
@@ -779,10 +770,10 @@ bool UIListViewTest_Magnetic::init()
             _uiLayer->addChild(_indexLabels[i]);
         }
         float deltaX = 145, deltaY = 90;
-        _indexLabels[0]->setPosition(_uiLayer->getContentSize() / 2 + Size(-deltaX, 0.0f));   // left
-        _indexLabels[1]->setPosition(_uiLayer->getContentSize() / 2 + Size(deltaX, 0.0f));   // right
-        _indexLabels[2]->setPosition(_uiLayer->getContentSize() / 2 + Size(0.0f, deltaY));   // top
-        _indexLabels[3]->setPosition(_uiLayer->getContentSize() / 2 + Size(0.0f, -deltaY));   // bottom
+        _indexLabels[0]->setPosition(_uiLayer->getContentSize() / 2 + Size(-deltaX, 0));   // left
+        _indexLabels[1]->setPosition(_uiLayer->getContentSize() / 2 + Size(deltaX, 0));   // right
+        _indexLabels[2]->setPosition(_uiLayer->getContentSize() / 2 + Size(0, deltaY));   // top
+        _indexLabels[3]->setPosition(_uiLayer->getContentSize() / 2 + Size(0, -deltaY));   // bottom
         _indexLabels[4]->setPosition(_uiLayer->getContentSize() / 2 + Size(deltaX, deltaY));  // center
         
         // Callback
@@ -814,11 +805,11 @@ bool UIListViewTest_Magnetic::init()
     auto pButton = Button::create("cocosui/backtotoppressed.png", "cocosui/backtotopnormal.png");
     pButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     pButton->setScale(0.8f);
-    pButton->setPosition(Vec2(layerSize / 2) + Vec2(130.0f, -60.0f));
+    pButton->setPosition(Vec2(layerSize / 2) + Vec2(130, -60));
     pButton->setTitleText("Next Magnetic");
     pButton->addClickEventListener([this](Ref*) {
         ListView::MagneticType eCurrentType = _listView->getMagneticType();
-        ListView::MagneticType eNextType = ListView::MagneticType::NONE;
+        ListView::MagneticType eNextType;
         std::string sString;
         if(eCurrentType == ListView::MagneticType::NONE)
         {
@@ -867,151 +858,7 @@ bool UIListViewTest_Magnetic::init()
         _titleLabel->setString(StringUtils::format("MagneticType - %s", sString.c_str()));
     });
     _uiLayer->addChild(pButton);
-
-    // Add list items
-    static const Size BUTTON_SIZE(100, 70);
-    for (int i = 0; i < 40; ++i)
-    {
-        auto pButton = Button::create("cocosui/button.png", "cocosui/buttonHighlighted.png");
-        pButton->setContentSize(BUTTON_SIZE);
-        pButton->setScale9Enabled(true);
-        pButton->setTitleText(StringUtils::format("Button-%d", i));
-        _listView->pushBackCustomItem(pButton);
-    }
-    return true;
-}
-
-
-
-// UIListViewTest_Padding
-bool UIListViewTest_Padding::init()
-{
-    if(!UIScene::init())
-    {
-        return false;
-    }
-
-    Size layerSize = _uiLayer->getContentSize();
-
-    _titleLabel = Text::create("Set Padding", "fonts/Marker Felt.ttf", 32);
-    _titleLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    _titleLabel->setPosition(Vec2(layerSize / 2) + Vec2(0.0f, _titleLabel->getContentSize().height * 3.15f));
-    _uiLayer->addChild(_titleLabel, 3);
-
-    // Create the list view
-    _listView = ListView::create();
-    _listView->setDirection(getListViewDirection());
-    _listView->setBounceEnabled(true);
-    _listView->setBackGroundImage("cocosui/green_edit.png");
-    _listView->setBackGroundImageScale9Enabled(true);
-    _listView->setContentSize(layerSize / 2);
-    _listView->setScrollBarPositionFromCorner(Vec2(7, 7));
-    _listView->setItemsMargin(2.0f);
-    _listView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    _listView->setGravity(ListView::Gravity::TOP);
-    _listView->setPosition(layerSize / 2);
-    _uiLayer->addChild(_listView);
-
-
-    // Guide line for center align
-    {
-        DrawNode* pNode = DrawNode::create();
-        Vec2 center = layerSize / 2;
-        if(getListViewDirection() == ScrollView::Direction::HORIZONTAL)
-        {
-            float halfY = 110;
-            pNode->drawLine(Vec2(center.x, center.y - halfY), Vec2(center.x, center.y + halfY), Color4F(0, 0, 0, 1));
-        }
-        else
-        {
-            float halfX = 150;
-            pNode->drawLine(Vec2(center.x - halfX, center.y), Vec2(center.x + halfX, center.y), Color4F(0, 0, 0, 1));
-        }
-        pNode->setLineWidth(2);
-        _uiLayer->addChild(pNode);
-    }
-
-    // Slider for setting padding
-    {
-        auto title = Text::create("Padding", "fonts/Marker Felt.ttf", 14);
-        title->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        title->setPosition(Vec2(30.0f, 170.0f));
-        _uiLayer->addChild(title);
-        for (int i = 0; i < 4; ++i)
-        {
-            auto slider = Slider::create();
-            slider->loadBarTexture("cocosui/sliderTrack.png");
-            slider->loadSlidBallTextures("cocosui/sliderThumb.png", "cocosui/sliderThumb.png", "");
-            slider->loadProgressBarTexture("cocosui/sliderProgress.png");
-            slider->setScale9Enabled(true);
-            slider->setCapInsets(Rect(0.0f, 0.0f, 0.0f, 0.0f));
-            slider->setContentSize(Size(30.0f, 10.0f));
-            slider->setPosition(Vec2(60.0f, 150.0f - (25 * i)));
-            slider->addEventListener(CC_CALLBACK_2(UIListViewTest_Padding::sliderEvent, this));
-            slider->setTag(i);
-            _uiLayer->addChild(slider);
-
-            std::string str;
-            if (i == 0) str = "Left";
-            else if (i == 1) str = "Top";
-            else if (i == 2) str = "Right";
-            else if (i == 3) str = "Bottom";
-
-            // Show title of slider
-            {
-                auto text = Text::create(str, "fonts/Marker Felt.ttf", 12);
-                text->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-                text->setPosition(Vec2(3, 150 - (25 * i)));
-                _uiLayer->addChild(text);
-            }
-            // Show value of paddings
-            {
-                auto text = Text::create(str + "\nPadding=0", "fonts/Marker Felt.ttf", 12);
-                text->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-                text->setPosition(Vec2(layerSize.width - 65, 200.0f - (40 * i)));
-                _uiLayer->addChild(text);
-                
-                _paddingLabels[i] = text;
-            }
-        }
-    }
     
-    // Show the indexes of items on each boundary.
-    {
-        for(int i = 0; i < 5; ++i)
-        {
-            _indexLabels[i] = Text::create(" ", "fonts/Marker Felt.ttf", 12);
-            _indexLabels[i]->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            _uiLayer->addChild(_indexLabels[i]);
-        }
-        float deltaX = 145, deltaY = 90;
-        _indexLabels[0]->setPosition(_uiLayer->getContentSize() / 2 + Size(-deltaX, 0.0f));   // left
-        _indexLabels[1]->setPosition(_uiLayer->getContentSize() / 2 + Size(deltaX, 0.0f));   // right
-        _indexLabels[2]->setPosition(_uiLayer->getContentSize() / 2 + Size(0.0f, deltaY));   // top
-        _indexLabels[3]->setPosition(_uiLayer->getContentSize() / 2 + Size(0.0f, -deltaY));   // bottom
-        _indexLabels[4]->setPosition(_uiLayer->getContentSize() / 2 + Size(deltaX, deltaY));  // center
-
-        // Callback
-        _listView->ScrollView::addEventListener([this](Ref* ref, ScrollView::EventType eventType) {
-            ListView* listView = dynamic_cast<ListView*>(ref);
-            if(listView == nullptr || eventType != ScrollView::EventType::CONTAINER_MOVED)
-            {
-                return;
-            }
-            auto left = listView->getLeftmostItemInCurrentView();
-            auto right = listView->getRightmostItemInCurrentView();
-            auto top = listView->getTopmostItemInCurrentView();
-            auto bottom = listView->getBottommostItemInCurrentView();
-            auto center = listView->getCenterItemInCurrentView();
-
-            _indexLabels[0]->setString(StringUtils::format("Left\nindex=%zd", listView->getIndex(left)));
-            _indexLabels[1]->setString(StringUtils::format("RIght\nindex=%zd", listView->getIndex(right)));
-            _indexLabels[2]->setString(StringUtils::format("Top index=%zd", listView->getIndex(top)));
-            _indexLabels[3]->setString(StringUtils::format("Bottom index=%zd", listView->getIndex(bottom)));
-            _indexLabels[4]->setString(StringUtils::format("Center\nindex=%zd", listView->getIndex(center)));
-        });
-    }
-
     // Add list items
     static const Size BUTTON_SIZE(100, 70);
     for (int i = 0; i < 40; ++i)
@@ -1023,44 +870,4 @@ bool UIListViewTest_Padding::init()
         _listView->pushBackCustomItem(pButton);
     }
     return true;
-}
-
-void UIListViewTest_Padding::sliderEvent(Ref *pSender, Slider::EventType type)
-{
-    if (type == Slider::EventType::ON_PERCENTAGE_CHANGED)
-    {
-        auto slider = dynamic_cast<Slider*>(pSender);
-        // left
-        if (slider && slider->getTag() == 0)
-        {
-            int left = slider->getPercent() / 100.f * 50.f;
-            CCLOG("Left Padding: %d", left);
-            _listView->setLeftPadding(left);
-            _paddingLabels[0]->setString(StringUtils::format("Left\nPadding=%d", left));
-        }
-        // top
-        if (slider && slider->getTag() == 1)
-        {
-            int top = slider->getPercent() / 100.f * 50.f;
-            CCLOG("Top Padding: %d", top);
-            _listView->setTopPadding(top);
-            _paddingLabels[1]->setString(StringUtils::format("Top\nPadding=%d", top));
-        }
-        // right
-        if (slider && slider->getTag() == 2)
-        {
-            int right = slider->getPercent() / 100.f * 50.f;
-            CCLOG("Right Padding: %d", right);
-            _listView->setRightPadding(right);
-            _paddingLabels[2]->setString(StringUtils::format("Right\nPadding=%d", right));
-        }
-        // bottom
-        if (slider && slider->getTag() == 3)
-        {
-            int bottom = slider->getPercent() / 100.f * 50.f;
-            CCLOG("Bottom Padding: %d", bottom);
-            _listView->setBottomPadding(bottom);
-            _paddingLabels[3]->setString(StringUtils::format("Bottom\nPadding=%d", bottom));
-        }
-    }
 }

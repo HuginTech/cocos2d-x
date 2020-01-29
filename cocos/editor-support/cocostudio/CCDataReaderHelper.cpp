@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -296,7 +295,7 @@ void DataReaderHelper::addDataFromFile(const std::string& filePath)
 
     //! find the base file path
     std::string basefilePath = filePath;
-    size_t pos = basefilePath.find_last_of('/');
+    size_t pos = basefilePath.find_last_of("/");
 
     if (pos != std::string::npos)
     {
@@ -362,7 +361,7 @@ void DataReaderHelper::addDataFromFileAsync(const std::string& imagePath, const 
 
     //! find the base file path
     std::string basefilePath = filePath;
-    size_t pos = basefilePath.find_last_of('/');
+    size_t pos = basefilePath.find_last_of("/");
 
     if (pos != std::string::npos)
     {
@@ -1040,20 +1039,20 @@ FrameData *DataReaderHelper::decodeFrame(tinyxml2::XMLElement *frameXML,  tinyxm
             break;
         case BLEND_ADD:
             {
-                frameData->blendFunc.src = backend::BlendFactor::SRC_ALPHA;
-                frameData->blendFunc.dst = backend::BlendFactor::ONE;
+                frameData->blendFunc.src = GL_SRC_ALPHA;
+                frameData->blendFunc.dst = GL_ONE;
             }
             break;
         case BLEND_MULTIPLY:
             {
-                frameData->blendFunc.src = backend::BlendFactor::DST_COLOR;
-                frameData->blendFunc.dst = backend::BlendFactor::ONE_MINUS_SRC_ALPHA;
+                frameData->blendFunc.src = GL_DST_COLOR;
+                frameData->blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
             }
             break;
         case BLEND_SCREEN:
             {
-                frameData->blendFunc.src = backend::BlendFactor::ONE;
-                frameData->blendFunc.dst = backend::BlendFactor::ONE_MINUS_SRC_COLOR;
+                frameData->blendFunc.src = GL_ONE;
+                frameData->blendFunc.dst = GL_ONE_MINUS_SRC_COLOR;
             }
             break;
         default:
@@ -1305,7 +1304,7 @@ void DataReaderHelper::addDataFromJsonCache(const std::string& fileContent, Data
             }
 
             std::string filePath = path;
-            filePath = filePath.erase(filePath.find_last_of('.'));
+            filePath = filePath.erase(filePath.find_last_of("."));
 
             if (dataInfo->asyncStruct)
             {
@@ -1608,8 +1607,8 @@ FrameData *DataReaderHelper::decodeFrame(const rapidjson::Value& json, DataInfo 
 
 	frameData->tweenEasing = (TweenType)(DICTOOL->getIntValue_json(json, A_TWEEN_EASING, cocos2d::tweenfunc::Linear));
 	frameData->displayIndex = DICTOOL->getIntValue_json(json, A_DISPLAY_INDEX);
-	frameData->blendFunc.src = utils::toBackendBlendFactor(DICTOOL->getIntValue_json(json, A_BLEND_SRC, utils::toGLBlendFactor(BlendFunc::ALPHA_PREMULTIPLIED.src)));
-	frameData->blendFunc.dst = utils::toBackendBlendFactor(DICTOOL->getIntValue_json(json, A_BLEND_DST, utils::toGLBlendFactor(BlendFunc::ALPHA_PREMULTIPLIED.dst)));
+	frameData->blendFunc.src = (GLenum)(DICTOOL->getIntValue_json(json, A_BLEND_SRC, BlendFunc::ALPHA_PREMULTIPLIED.src));
+	frameData->blendFunc.dst = (GLenum)(DICTOOL->getIntValue_json(json, A_BLEND_DST, BlendFunc::ALPHA_PREMULTIPLIED.dst));
 	frameData->isTween = DICTOOL->getBooleanValue_json(json, A_TWEEN_FRAME, true);
 
 	const char *event =  DICTOOL->getStringValue_json(json, A_EVENT);
@@ -1844,7 +1843,7 @@ void DataReaderHelper::decodeNode(BaseData *node, const rapidjson::Value& json, 
                             }
 
                             std::string filePath = path;
-                            filePath = filePath.erase(filePath.find_last_of('.'));
+                            filePath = filePath.erase(filePath.find_last_of("."));
 
                             if (dataInfo->asyncStruct)
                             {
@@ -2315,14 +2314,14 @@ void DataReaderHelper::decodeNode(BaseData *node, const rapidjson::Value& json, 
             {
                 if(str != nullptr)
                 {
-                    frameData->blendFunc.src = utils::toBackendBlendFactor(atoi(str));
+                    frameData->blendFunc.src = (GLenum)(atoi(str));
                 }
             }
             else if (key.compare(A_BLEND_DST) == 0)
             {
                 if(str != nullptr)
                 {
-                    frameData->blendFunc.dst = utils::toBackendBlendFactor(atoi(str));
+                    frameData->blendFunc.dst = (GLenum)(atoi(str));
                 }
             }
             else if (key.compare(A_TWEEN_FRAME) == 0)

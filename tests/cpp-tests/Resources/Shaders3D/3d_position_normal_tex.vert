@@ -20,12 +20,9 @@ varying vec3 v_vertexToSpotLightDirection[MAX_SPOT_LIGHT_NUM];
 varying vec3 v_normal;
 #endif
 
-uniform mat4 u_MVMatrix;
-uniform mat4 u_PMatrix;
-uniform mat3 u_NormalMatrix;
 void main(void)
 {
-    vec4 ePosition = u_MVMatrix * a_position;
+    vec4 ePosition = CC_MVMatrix * a_position;
 #if (MAX_POINT_LIGHT_NUM > 0)
     for (int i = 0; i < MAX_POINT_LIGHT_NUM; ++i)
     {
@@ -41,11 +38,11 @@ void main(void)
 #endif
         
 #if ((MAX_DIRECTIONAL_LIGHT_NUM > 0) || (MAX_POINT_LIGHT_NUM > 0) || (MAX_SPOT_LIGHT_NUM > 0))
-    v_normal = u_NormalMatrix * a_normal;
+    v_normal = CC_NormalMatrix * a_normal;
 #endif
 
     TextureCoordOut = a_texCoord;
     TextureCoordOut.y = 1.0 - TextureCoordOut.y;
-    gl_Position = u_PMatrix * ePosition;
+    gl_Position = CC_PMatrix * ePosition;
 }
 

@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -45,7 +44,7 @@ void CC_DLL LuaLog(const char * format);
 /**
 @brief Pop out a message box
 */
-void CC_DLL ccMessageBox(const char * msg, const char * title);
+void CC_DLL MessageBox(const char * msg, const char * title);
 
 /**
 @brief Enum the language type supported now
@@ -70,8 +69,7 @@ enum class LanguageType
     TURKISH,
     UKRAINIAN,
     ROMANIAN,
-    BULGARIAN,
-    BELARUSIAN
+    BULGARIAN
 };
 
 // END of platform group

@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (C) 2013 Henry van Merode. All rights reserved.
- Copyright (c) 2015-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2015-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -33,7 +32,7 @@ NS_CC_BEGIN
 const float PUJetAffector::DEFAULT_ACCELERATION = 1.0f;
 
 //-----------------------------------------------------------------------
-PUJetAffector::PUJetAffector () : 
+PUJetAffector::PUJetAffector (void) : 
     PUAffector(),
     _scaled(0.0f)
 {
@@ -41,7 +40,7 @@ PUJetAffector::PUJetAffector () :
     (static_cast<PUDynamicAttributeFixed*>(_dynAcceleration))->setValue(DEFAULT_ACCELERATION);
 }
 //-----------------------------------------------------------------------
-PUJetAffector::~PUJetAffector ()
+PUJetAffector::~PUJetAffector (void)
 {
     if (!_dynAcceleration)
         return;

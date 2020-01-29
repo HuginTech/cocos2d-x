@@ -2,8 +2,7 @@
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
  
 http://www.cocos2d-x.org
 
@@ -294,7 +293,7 @@ public:
     
 CC_CONSTRUCTOR_ACCESS:
     Speed();
-    virtual ~Speed();
+    virtual ~Speed(void);
     /** Initializes the action. */
     bool initWithAction(ActionInterval *action, float speed);
 
@@ -355,6 +354,12 @@ public:
      * @param value Turn on/off boundary.
      */
     void setBoundarySet(bool value) { _boundarySet = value; }
+    
+    /** @deprecated Alter behavior - turn on/off boundary. 
+     *
+     * @param value Turn on/off boundary.
+     */
+    CC_DEPRECATED_ATTRIBUTE void setBoudarySet(bool value) { setBoundarySet(value); }
 
     //
     // Override

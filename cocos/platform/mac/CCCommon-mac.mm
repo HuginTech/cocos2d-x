@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,6 +22,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+
 #include "platform/CCCommon.h"
 
 #include "base/CCDirector.h"
@@ -39,7 +42,7 @@ void LuaLog(const char * format)
 }
 
 // ios no MessageBox, use log instead
-void ccMessageBox(const char * msg, const char * title)
+void MessageBox(const char * msg, const char * title)
 {
     NSString * tmpTitle = (title) ? [NSString stringWithUTF8String : title] : nil;
     NSString * tmpMsg = (msg) ? [NSString stringWithUTF8String : msg] : nil;
@@ -48,11 +51,16 @@ void ccMessageBox(const char * msg, const char * title)
     [alert addButtonWithTitle:@"OK"];
     [alert setMessageText:tmpMsg];
     [alert setInformativeText:tmpTitle];
-    [alert setAlertStyle:NSAlertStyleWarning];
+    [alert setAlertStyle:NSWarningAlertStyle];
 
     auto glview = Director::getInstance()->getOpenGLView();
     id window = glview->getCocoaWindow();
-    [alert beginSheetModalForWindow:window completionHandler:nil];
+    [alert beginSheetModalForWindow:window
+                      modalDelegate:[window delegate]
+                     didEndSelector:nil
+                        contextInfo:nil];
 }
 
 NS_CC_END
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_MAC

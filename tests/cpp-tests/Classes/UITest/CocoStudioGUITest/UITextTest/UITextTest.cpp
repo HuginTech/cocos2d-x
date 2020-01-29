@@ -1,27 +1,3 @@
-/****************************************************************************
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
- http://www.cocos2d-x.org
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
 #include "UITextTest.h"
 
 USING_NS_CC;
@@ -85,7 +61,7 @@ bool UITextTest_LineWrap::init()
         Text* text = Text::create("TextArea Widget can line wrap",
                                   "AmericanTypewriter",32);
         text->ignoreContentAdaptWithSize(false);
-        text->setContentSize(Size(280.0f, 150.0f));
+        text->setContentSize(Size(280, 150));
         text->setTextHorizontalAlignment(TextHAlignment::CENTER);
         text->setTouchScaleChangeEnabled(true);
         text->setTouchEnabled(true);
@@ -95,10 +71,10 @@ bool UITextTest_LineWrap::init()
             {
                 if ((int)text->getContentSize().width == 280)
                 {
-                    text->setContentSize(Size(380.0f,100.0f));
+                    text->setContentSize(Size(380,100));
                 }else
                 {
-                    text->setContentSize(Size(280.0f, 150.0f));
+                    text->setContentSize(Size(280, 150));
                 }
             }
         });
@@ -178,8 +154,8 @@ bool UILabelTest_Effect::init()
         auto disableOutlineBtn= Button::create();
         disableOutlineBtn->setTitleText("Disable outline");
         disableOutlineBtn->setTitleFontName("fonts/Marker Felt.ttf");
-        disableOutlineBtn->setPosition(Vec2(widgetSize.width * 0.3f,
-                                 widgetSize.height * 0.7f));
+        disableOutlineBtn->setPosition(Vec2(widgetSize.width * 0.3,
+                                 widgetSize.height * 0.7));
         disableOutlineBtn->setPressedActionEnabled(true);
         disableOutlineBtn->addClickEventListener([=](Ref*){
             outline_label->disableEffect(LabelEffect::OUTLINE);
@@ -193,7 +169,7 @@ bool UILabelTest_Effect::init()
 
         auto disableGlowBtn = (Button*)disableOutlineBtn->clone();
         disableGlowBtn->setPosition(disableOutlineBtn->getPosition()
-                                    + Vec2(buttonWidth + 40,0.0f));
+                                    + Vec2(buttonWidth + 40,0));
         disableGlowBtn->setTitleText("Disable Glow");
         disableGlowBtn->addClickEventListener([=](Ref*){
             glow_label->disableEffect(LabelEffect::GLOW);
@@ -202,7 +178,7 @@ bool UILabelTest_Effect::init()
 
         auto disableShadowBtn = (Button*)disableGlowBtn->clone();
         disableShadowBtn->setPosition(disableGlowBtn->getPosition()
-                                      + Vec2(buttonWidth + 40,0.0f));
+                                      + Vec2(buttonWidth + 40,0));
         disableShadowBtn->setTitleText("Disable Shadow");
         disableShadowBtn->addClickEventListener([=](Ref*){
             shadow_label->disableEffect(LabelEffect::SHADOW);
@@ -257,7 +233,7 @@ bool UITextTest_IgnoreContentSize::init()
         leftText->setPosition(Vec2(widgetSize.width / 2.0f - 50,
                                 widgetSize.height / 2.0f));
         leftText->ignoreContentAdaptWithSize(false);
-        leftText->setTextAreaSize(Size(60.0f,60.0f));
+        leftText->setTextAreaSize(Size(60,60));
         leftText->setString("Text line with break\nText line with break\nText line with break\nText line with break\n");
         leftText->setTouchScaleChangeEnabled(true);
         leftText->setTouchEnabled(true);
@@ -270,7 +246,7 @@ bool UITextTest_IgnoreContentSize::init()
                                    widgetSize.height / 2.0f));
         rightText->setString("Text line with break\nText line with break\nText line with break\nText line with break\n");
         //note:setTextAreaSize must be used with ignoreContentAdaptWithSize(false)
-        rightText->setTextAreaSize(Size(100.0f,30.0f));
+        rightText->setTextAreaSize(Size(100,30));
         rightText->ignoreContentAdaptWithSize(false);
         _uiLayer->addChild(rightText);
 

@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -363,7 +362,6 @@ void WsThreadHelper::onSubThreadLoop()
                 if (msg->what == WS_MSG_TO_SUBTHREAD_CREATE_CONNECTION)
                 {
                     ws->onClientOpenConnectionRequest();
-                    delete *iter;
                     iter = __wsHelper->_subThreadWsMessageQueue->erase(iter);
                 }
                 else
@@ -392,7 +390,7 @@ void WsThreadHelper::onSubThreadStarted()
     int log_level = LLL_ERR | LLL_WARN | LLL_NOTICE | LLL_INFO/* | LLL_DEBUG | LLL_PARSER | LLL_HEADER*/ | LLL_EXT | LLL_CLIENT | LLL_LATENCY;
     lws_set_log_level(log_level, printWebSocketLog);
 
-    memset(__defaultProtocols, 0, 2 * sizeof(struct lws_protocols));
+    memset(__defaultProtocols, 0, sizeof(2 * sizeof(struct lws_protocols)));
 
     __defaultProtocols[0].name = "";
     __defaultProtocols[0].callback = WebSocketCallbackWrapper::onSocketCallback;
@@ -467,11 +465,11 @@ public:
             return false;
         }
 
-        _data.resize(LWS_PRE + len);
-        
+        _data.reserve(LWS_PRE + len);
+        _data.resize(LWS_PRE, 0x00);
         if (len > 0)
         {
-            std::copy(buf, buf + len, _data.begin() + LWS_PRE);
+            _data.insert(_data.end(), buf, buf + len);
         }
 
         _payload = _data.data() + LWS_PRE;
@@ -511,7 +509,6 @@ void WebSocket::closeAllConnections()
 
         std::lock_guard<std::mutex> lk(__instanceMutex);
         __websocketInstances->clear();
-        delete __websocketInstances;
         __websocketInstances = nullptr;
     }
 }
@@ -544,7 +541,7 @@ WebSocket::WebSocket()
 WebSocket::~WebSocket()
 {
     LOGD("In the destructor of WebSocket (%p)\n", this);
-    
+
     std::lock_guard<std::mutex> lk(__instanceMutex);
 
     if (__websocketInstances != nullptr)
@@ -570,11 +567,6 @@ WebSocket::~WebSocket()
         CC_SAFE_DELETE(__wsHelper);
     }
 
-    for(auto name:_protocolNames){
-        free(name);
-    }
-    free(_lwsProtocols);
-    
     Director::getInstance()->getEventDispatcher()->removeEventListener(_resetDirectorListener);
     
     *_isDestroyed = true;
@@ -606,7 +598,6 @@ bool WebSocket::init(const Delegate& delegate,
             _lwsProtocols[i].callback = WebSocketCallbackWrapper::onSocketCallback;
             size_t nameLen = protocols->at(i).length();
             char* name = (char*)malloc(nameLen + 1);
-            _protocolNames.push_back(name);
             name[nameLen] = '\0';
             strcpy(name, protocols->at(i).c_str());
             _lwsProtocols[i].name = name;

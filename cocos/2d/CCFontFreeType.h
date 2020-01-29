@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2013      Zynga Inc.
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -34,8 +33,18 @@
 #include <string>
 #include <ft2build.h>
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+#define generic GenericFromFreeTypeLibrary
+#define internal InternalFromFreeTypeLibrary
+#endif
+
 #include FT_FREETYPE_H
 #include FT_STROKER_H
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+#undef generic
+#undef internal
+#endif
 
 NS_CC_BEGIN
 
@@ -63,7 +72,6 @@ public:
     
     int getFontAscender() const;
     const char* getFontFamily() const;
-    std::string getFontName() const { return _fontName; }
 
     virtual FontAtlas* createFontAtlas() override;
     virtual int getFontMaxHeight() const override { return _lineHeight; }

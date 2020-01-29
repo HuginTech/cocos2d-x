@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
  
 http://www.cocos2d-x.org
 
@@ -35,18 +34,17 @@ unsigned char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 int _base64Decode(const unsigned char *input, unsigned int input_len, unsigned char *output, unsigned int *output_len )
 {
     static char inalphabet[256], decoder[256];
-    int c = 0, char_count, errors = 0;
+    int i, bits, c = 0, char_count, errors = 0;
     unsigned int input_idx = 0;
     unsigned int output_idx = 0;
 
-    auto alphabetSize = sizeof(alphabet);
-    for (size_t i = 0; i < alphabetSize; i++){
+    for (i = (sizeof alphabet) - 1; i >= 0 ; i--) {
         inalphabet[alphabet[i]] = 1;
         decoder[alphabet[i]] = i;
     }
 
     char_count = 0;
-    int bits = 0;
+    bits = 0;
     for( input_idx=0; input_idx < input_len ; input_idx++ ) {
         c = input[ input_idx ];
         if (c == '=')

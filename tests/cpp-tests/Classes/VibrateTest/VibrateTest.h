@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2014-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2014-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -51,10 +50,11 @@ public:
     virtual std::string title() const override;
     
 private:
-    float _duration = 0.f;
+    float _duration;
     
-    void* _durationLabel = nullptr;
-    void* _durationSlider = nullptr;
+    void* _durationLabel;
+    void* _durationSlider;
+    bool _updateTimeSlider;
 };
 
 

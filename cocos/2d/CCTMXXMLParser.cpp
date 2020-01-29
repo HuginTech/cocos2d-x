@@ -3,8 +3,7 @@ Copyright (c) 2011      Максим Аксенов
 Copyright (c) 2009-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -166,10 +165,10 @@ TMXMapInfo::TMXMapInfo()
 , _staggerAxis(TMXStaggerAxis_Y)
 , _staggerIndex(TMXStaggerIndex_Even)
 , _hexSideLength(0)
-, _mapSize(Size::ZERO)
-, _tileSize(Size::ZERO)
 , _parentElement(0)
 , _parentGID(0)
+, _mapSize(Size::ZERO)
+, _tileSize(Size::ZERO)
 , _layerAttribs(0)
 , _storingCharacters(false)
 , _xmlTileIndex(0)
@@ -297,9 +296,9 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
             _externalTilesetFilename = externalTilesetFilename;
 
             // Tileset file will be relative to the map file. So we need to convert it to an absolute path
-            if (_TMXFileName.find_last_of('/') != string::npos)
+            if (_TMXFileName.find_last_of("/") != string::npos)
             {
-                string dir = _TMXFileName.substr(0, _TMXFileName.find_last_of('/') + 1);
+                string dir = _TMXFileName.substr(0, _TMXFileName.find_last_of("/") + 1);
                 externalTilesetFilename = dir + externalTilesetFilename;
             }
             else 
@@ -416,9 +415,9 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
     {
         TMXTilesetInfo* tileset = tmxMapInfo->getTilesets().back();
         
-        float tileOffsetX = attributeDict["x"].asFloat();
+        double tileOffsetX = attributeDict["x"].asDouble();
         
-        float tileOffsetY = attributeDict["y"].asFloat();
+        double tileOffsetY = attributeDict["y"].asDouble();
         
         tileset->_tileOffset = Vec2(tileOffsetX, tileOffsetY);
         
@@ -431,9 +430,9 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
         std::string imagename = attributeDict["source"].asString();
         tileset->_originSourceImage = imagename;
 
-        if (_TMXFileName.find_last_of('/') != string::npos)
+        if (_TMXFileName.find_last_of("/") != string::npos)
         {
-            string dir = _TMXFileName.substr(0, _TMXFileName.find_last_of('/') + 1);
+            string dir = _TMXFileName.substr(0, _TMXFileName.find_last_of("/") + 1);
             tileset->_sourceImage = dir + imagename;
         }
         else 
@@ -518,8 +517,6 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
         s = CC_SIZE_PIXELS_TO_POINTS(s);
         dict["width"] = Value(s.width);
         dict["height"] = Value(s.height);
-
-        dict["rotation"] = attributeDict["rotation"].asDouble();
 
         // Add the object to the objectGroup
         objectGroup->getObjects().push_back(Value(dict));
@@ -746,7 +743,7 @@ void TMXMapInfo::endElement(void* /*ctx*/, const char *name)
             }
 
             uint32_t* bufferPtr = reinterpret_cast<uint32_t*>(buffer);
-            for(const auto& gidToken : gidTokens) {
+            for(auto gidToken : gidTokens) {
                 auto tileGid = (uint32_t)strtoul(gidToken.c_str(), nullptr, 10);
                 *bufferPtr = tileGid;
                 bufferPtr++;

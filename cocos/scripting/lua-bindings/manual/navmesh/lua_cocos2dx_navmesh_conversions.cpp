@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -54,38 +53,38 @@ bool luaval_to_navmeshagentparam(lua_State* L, int lo, cocos2d::NavMeshAgentPara
     {
         lua_pushstring(L, "radius");
         lua_gettable(L,lo);
-        outValue->radius = lua_isnumber(L, -1)? (float)lua_tonumber(L, -1) : 0.6f;
+        outValue->radius = lua_isnumber(L, -1)? (float)lua_tonumber(L, -1) : 0.6;
         lua_pop(L,1);
         
         lua_pushstring(L, "height");
         lua_gettable(L,lo);
-        outValue->height = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) : 2.0f;
+        outValue->height = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) : 2.0;
         lua_pop(L,1);
         
         lua_pushstring(L, "maxAcceleration");
         lua_gettable(L, lo);
-        outValue->maxAcceleration = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) : 8.0f;
+        outValue->maxAcceleration = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) : 8.0;
         lua_pop(L, 1);
         
 
         lua_pushstring(L, "maxSpeed");
         lua_gettable(L, lo);
-        outValue->maxSpeed = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) : 3.5f;
+        outValue->maxSpeed = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) : 3.5;
         lua_pop(L, 1);
 
         lua_pushstring(L, "collisionQueryRange");
         lua_gettable(L, lo);
-        outValue->collisionQueryRange = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) : outValue->radius * 12.0f;
+        outValue->collisionQueryRange = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) : outValue->radius * 12.0;
         lua_pop(L, 1);
 
         lua_pushstring(L, "pathOptimizationRange");
         lua_gettable(L, lo);
-        outValue->pathOptimizationRange = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) :  outValue->radius * 30.0f;
+        outValue->pathOptimizationRange = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) :  outValue->radius * 30.0;
         lua_pop(L, 1);
 
         lua_pushstring(L, "separationWeight");
         lua_gettable(L, lo);
-        outValue->separationWeight = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) : 2.0f;
+        outValue->separationWeight = lua_isnumber(L, -1)?(float)lua_tonumber(L, -1) : 2.0;
         lua_pop(L, 1);
 
         lua_pushstring(L, "updateFlags");

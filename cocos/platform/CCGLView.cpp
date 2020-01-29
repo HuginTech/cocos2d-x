@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -32,6 +31,8 @@ THE SOFTWARE.
 #include "2d/CCCamera.h"
 #include "2d/CCScene.h"
 #include "renderer/CCRenderer.h"
+#include "vr/CCVRProtocol.h"
+#include "vr/CCVRGenericRenderer.h"
 
 NS_CC_BEGIN
 
@@ -90,7 +91,7 @@ namespace {
 }
 
 //default context attributions are set as follows
-GLContextAttrs GLView::_glContextAttrs = {8, 8, 8, 8, 24, 8, 0};
+GLContextAttrs GLView::_glContextAttrs = {5, 6, 5, 0, 16, 0};
 
 void GLView::setGLContextAttrs(GLContextAttrs& glContextAttrs)
 {
@@ -103,17 +104,23 @@ GLContextAttrs GLView::getGLContextAttrs()
 }
 
 GLView::GLView()
-: _screenSize(0,0)
-, _designResolutionSize(0,0)
-, _scaleX(1.0f)
+: _scaleX(1.0f)
 , _scaleY(1.0f)
 , _resolutionPolicy(ResolutionPolicy::UNKNOWN)
+, _vrImpl(nullptr)
+, _designResolutionSize(0,0)
+, _screenSize(0,0)
 {
 }
 
 GLView::~GLView()
 {
 
+}
+
+void GLView::pollInputEvents()
+{
+    pollEvents();
 }
 
 void GLView::pollEvents()
@@ -165,8 +172,7 @@ void GLView::updateDesignResolutionSize()
         // A default viewport is needed in order to display the FPS,
         // since the FPS are rendered in the Director, and there is no viewport there.
         // Everything, including the FPS should renderer in the Scene.
-        //TODO: minggo
-//        glViewport(0, 0, _screenSize.width, _screenSize.height);
+        glViewport(0, 0, _screenSize.width, _screenSize.height);
     }
 }
 
@@ -190,7 +196,7 @@ const Size& GLView::getDesignResolutionSize() const
     return _designResolutionSize;
 }
 
-Size GLView::getFrameSize() const
+const Size& GLView::getFrameSize() const
 {
     return _screenSize;
 }
@@ -211,11 +217,6 @@ Rect GLView::getVisibleRect() const
     ret.size = getVisibleSize();
     ret.origin = getVisibleOrigin();
     return ret;
-}
-
-Rect GLView::getSafeAreaRect() const
-{
-    return getVisibleRect();
 }
 
 Size GLView::getVisibleSize() const
@@ -245,38 +246,34 @@ Vec2 GLView::getVisibleOrigin() const
 
 void GLView::setViewPortInPoints(float x , float y , float w , float h)
 {
-    Viewport vp;
-    vp.x = (int)(x * _scaleX + _viewPortRect.origin.x);
-    vp.y = (int)(y * _scaleY + _viewPortRect.origin.y);
-    vp.w = (unsigned int)(w * _scaleX);
-    vp.h = (unsigned int)(h * _scaleY);
+    experimental::Viewport vp((float)(x * _scaleX + _viewPortRect.origin.x),
+        (float)(y * _scaleY + _viewPortRect.origin.y),
+        (float)(w * _scaleX),
+        (float)(h * _scaleY));
     Camera::setDefaultViewport(vp);
 }
 
 void GLView::setScissorInPoints(float x , float y , float w , float h)
 {
-    auto renderer = Director::getInstance()->getRenderer();
-    renderer->setScissorRect((int)(x * _scaleX + _viewPortRect.origin.x),
-                             (int)(y * _scaleY + _viewPortRect.origin.y),
-                             (unsigned int)(w * _scaleX),
-                             (unsigned int)(h * _scaleY));
+    glScissor((GLint)(x * _scaleX + _viewPortRect.origin.x),
+              (GLint)(y * _scaleY + _viewPortRect.origin.y),
+              (GLsizei)(w * _scaleX),
+              (GLsizei)(h * _scaleY));
 }
 
 bool GLView::isScissorEnabled()
 {
-    auto renderer = Director::getInstance()->getRenderer();
-    return renderer->getScissorTest();
+    return (GL_FALSE == glIsEnabled(GL_SCISSOR_TEST)) ? false : true;
 }
 
 Rect GLView::getScissorRect() const
 {
-    auto renderer = Director::getInstance()->getRenderer();
-    auto& rect = renderer->getScissorRect();
-
-    float x = (rect.x - _viewPortRect.origin.x) / _scaleX;
-    float y = (rect.y- _viewPortRect.origin.y) / _scaleY;
-    float w = rect.width/ _scaleX;
-    float h = rect.height / _scaleY;
+    GLfloat params[4];
+    glGetFloatv(GL_SCISSOR_BOX, params);
+    float x = (params[0] - _viewPortRect.origin.x) / _scaleX;
+    float y = (params[1] - _viewPortRect.origin.y) / _scaleY;
+    float w = params[2] / _scaleX;
+    float h = params[3] / _scaleY;
     return Rect(x, y, w, h);
 }
 
@@ -491,7 +488,35 @@ void GLView::renderScene(Scene* scene, Renderer* renderer)
     CCASSERT(scene, "Invalid Scene");
     CCASSERT(renderer, "Invalid Renderer");
 
-    scene->render(renderer, Mat4::IDENTITY, nullptr);
+    if (_vrImpl)
+    {
+        _vrImpl->render(scene, renderer);
+    }
+    else
+    {
+        scene->render(renderer, Mat4::IDENTITY, nullptr);
+    }
+}
+
+VRIRenderer* GLView::getVR() const
+{
+    return _vrImpl;
+}
+
+void GLView::setVR(VRIRenderer* vrRenderer)
+{
+    if (_vrImpl != vrRenderer)
+    {
+        if (_vrImpl) {
+            _vrImpl->cleanup();
+            delete _vrImpl;
+        }
+
+        if (vrRenderer)
+            vrRenderer->setup(this);
+
+        _vrImpl = vrRenderer;
+    }
 }
 
 NS_CC_END

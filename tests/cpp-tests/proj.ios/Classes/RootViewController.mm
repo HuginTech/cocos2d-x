@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2013      cocos2d-x.org
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -72,11 +71,6 @@
 //fix not hide status on ios7
 - (BOOL)prefersStatusBarHidden
 {
-    return YES;
-}
-
-// Controls the application's preferred home indicator auto-hiding when this view controller is shown.
-- (BOOL)prefersHomeIndicatorAutoHidden {
     return YES;
 }
 

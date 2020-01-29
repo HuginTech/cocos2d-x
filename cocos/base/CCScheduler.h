@@ -2,8 +2,7 @@
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -51,10 +50,14 @@ class CC_DLL Timer : public Ref
 protected:
     Timer();
 public:
+    /** get interval in seconds */
+    float getInterval() const { return _interval; }
+    /** set interval in seconds */
+    void setInterval(float interval) { _interval = interval; }
+    
     void setupTimerWithInterval(float seconds, unsigned int repeat, float delay);
     void setAborted() { _aborted = true; }
     bool isAborted() const { return _aborted; }
-    bool isExhausted() const;
     
     virtual void trigger(float dt) = 0;
     virtual void cancel() = 0;
@@ -63,6 +66,7 @@ public:
     void update(float dt);
     
 protected:
+    
     Scheduler* _scheduler; // weak ref
     float _elapsed;
     bool _runForever;
@@ -364,7 +368,7 @@ public:
      @return True if the specified callback is invoked, false if not.
      @since v3.0.0
      */
-    bool isScheduled(const std::string& key, const void *target) const;
+    bool isScheduled(const std::string& key, void *target);
     
     /** Checks whether a selector for a given target is scheduled.
      @param selector The selector to be checked.
@@ -372,7 +376,7 @@ public:
      @return True if the specified selector is invoked, false if not.
      @since v3.0
      */
-    bool isScheduled(SEL_SCHEDULE selector, const Ref *target) const;
+    bool isScheduled(SEL_SCHEDULE selector, Ref *target);
     
     /////////////////////////////////////
     
@@ -427,7 +431,7 @@ public:
      @since v3.0
      @js NA
      */
-    void performFunctionInCocosThread(std::function<void()> function);
+    void performFunctionInCocosThread( const std::function<void()> &function);
     
     /**
      * Remove all pending functions queued to be performed with Scheduler::performFunctionInCocosThread
@@ -437,6 +441,64 @@ public:
      * @js NA
      */
     void removeAllFunctionsToBePerformedInCocosThread();
+    
+    /////////////////////////////////////
+    
+    // Deprecated methods:
+    
+    /** The scheduled method will be called every 'interval' seconds.
+     If paused is true, then it won't be called until it is resumed.
+     If 'interval' is 0, it will be called every frame, but if so, it's recommended to use 'scheduleUpdateForTarget:' instead.
+     If the selector is already scheduled, then only the interval parameter will be updated without re-scheduling it again.
+     repeat let the action be repeated repeat + 1 times, use CC_REPEAT_FOREVER to let the action run continuously
+     delay is the amount of time the action will wait before it'll start
+     @deprecated Please use `Scheduler::schedule` instead.
+     @since v0.99.3, repeat and delay added in v1.1
+     @js NA
+     */
+    CC_DEPRECATED_ATTRIBUTE void scheduleSelector(SEL_SCHEDULE selector, Ref *target, float interval, unsigned int repeat, float delay, bool paused)
+    {
+        schedule(selector, target, interval, repeat, delay, paused);
+    }
+    
+    /** Calls scheduleSelector with CC_REPEAT_FOREVER and a 0 delay.
+     *  @deprecated Please use `Scheduler::schedule` instead.
+     *  @js NA
+     */
+    CC_DEPRECATED_ATTRIBUTE void scheduleSelector(SEL_SCHEDULE selector, Ref *target, float interval, bool paused)
+    {
+        schedule(selector, target, interval, paused);
+    }
+    
+    /** Schedules the 'update' selector for a given target with a given priority.
+     The 'update' selector will be called every frame.
+     The lower the priority, the earlier it is called.
+     @deprecated Please use 'Scheduler::scheduleUpdate' instead.
+     @since v0.99.3
+     */
+    template <class T>
+    CC_DEPRECATED_ATTRIBUTE void scheduleUpdateForTarget(T* target, int priority, bool paused) { scheduleUpdate(target, priority, paused); };
+    
+    /** Unschedule a selector for a given target.
+     If you want to unschedule the "update", use unscheduleUpdateForTarget.
+     @deprecated Please use 'Scheduler::unschedule' instead.
+     @since v0.99.3
+     @js NA
+     */
+    CC_DEPRECATED_ATTRIBUTE void unscheduleSelector(SEL_SCHEDULE selector, Ref *target) { unschedule(selector, target); };
+    
+    /** Checks whether a selector for a given target is scheduled.
+     @deprecated Please use 'Scheduler::isScheduled' instead.
+     @since v0.99.3
+     @js NA
+     */
+    CC_DEPRECATED_ATTRIBUTE bool isScheduledForTarget(Ref *target, SEL_SCHEDULE selector) { return isScheduled(selector, target); };
+    
+    /** Unschedules the update selector for a given target
+     @deprecated Please use 'Scheduler::unscheduleUpdate' instead.
+     @since v0.99.3
+     */
+    CC_DEPRECATED_ATTRIBUTE void unscheduleUpdateForTarget(Ref *target) { return unscheduleUpdate(target); };
     
 protected:
     

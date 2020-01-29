@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2014-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2014-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -25,16 +24,18 @@
 
 #pragma once
 
-#include "platform/CCPlatformMacros.h"
-#include "audio/apple/AudioMacros.h"
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_MAC
 
 #include <condition_variable>
 #include <mutex>
 #include <string>
 #include <thread>
-#include <OpenAL/al.h>
+#import <OpenAL/al.h>
+#include "platform/CCPlatformMacros.h"
 
 NS_CC_BEGIN
+namespace experimental{
 
 class AudioCache;
 class AudioEngineImpl;
@@ -56,7 +57,6 @@ protected:
     void setCache(AudioCache* cache);
     void rotateBufferThread(int offsetFrame);
     bool play2d();
-    void wakeupRotateThread();
 
     AudioCache* _audioCache;
 
@@ -72,13 +72,12 @@ protected:
     //play by circular buffer
     float _currTime;
     bool _streamingSource;
-    ALuint _bufferIds[QUEUEBUFFER_NUM];
+    ALuint _bufferIds[3];
     std::thread* _rotateBufferThread;
     std::condition_variable _sleepCondition;
     std::mutex _sleepMutex;
     bool _timeDirty;
     bool _isRotateThreadExited;
-    std::atomic_bool _needWakeupRotateThread;
 
     std::mutex _play2dMutex;
 
@@ -87,4 +86,7 @@ protected:
     friend class AudioEngineImpl;
 };
 
+}
 NS_CC_END
+
+#endif

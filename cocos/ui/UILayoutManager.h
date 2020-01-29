@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -118,6 +117,12 @@ private:
     Widget* getRelativeWidget(Widget* widget);
     bool calculateFinalPositionWithRelativeWidget(LayoutProtocol *layout);
     void calculateFinalPositionWithRelativeAlign();
+    
+    /** @deprecated Use method calculateFinalPositionWithRelativeWidget() instead */
+    CC_DEPRECATED_ATTRIBUTE bool caculateFinalPositionWithRelativeWidget(LayoutProtocol *layout);
+
+    /** @deprecated Use method calculateFinalPositionWithRelativeAlign() instead */
+    CC_DEPRECATED_ATTRIBUTE void caculateFinalPositionWithRelativeAlign();
 
     ssize_t _unlayoutChildCount;
     Vector<Widget*> _widgetChildren;

@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2016-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -35,7 +34,7 @@ THE SOFTWARE.
 #define ALOGVV(a...) do { } while (0)
 #endif
 
-namespace cocos2d {
+namespace cocos2d { namespace experimental {
 
 PcmBufferProvider::PcmBufferProvider()
         : _addr(nullptr)
@@ -99,4 +98,4 @@ void PcmBufferProvider::reset() {
     _nextFrame = 0;
 }
 
-} // namespace cocos2d {
+}} // namespace cocos2d { namespace experimental {

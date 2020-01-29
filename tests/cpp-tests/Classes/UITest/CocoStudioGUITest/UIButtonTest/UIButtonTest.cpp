@@ -1,27 +1,3 @@
-/****************************************************************************
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
- http://www.cocos2d-x.org
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
 #include "UIButtonTest.h"
 
 USING_NS_CC;
@@ -47,7 +23,6 @@ UIButtonTests::UIButtonTests()
     ADD_TEST_CASE(Issue12249);
     ADD_TEST_CASE(Issue17116);
     ADD_TEST_CASE(UIButtonWithPolygonInfo);
-    ADD_TEST_CASE(UIButtonScale9ChangeSpriteFrame);
 }
 
 // UIButtonTest
@@ -109,7 +84,7 @@ bool UIButtonTest::init()
         auto item1 = MenuItemLabel::create(label1, CC_CALLBACK_1(UIButtonTest::printWidgetResources, this));
         item1->setPosition(Vec2(VisibleRect::left().x + 60, VisibleRect::bottom().y + item1->getContentSize().height * 3));
         auto pMenu1 = Menu::create(item1, nullptr);
-        pMenu1->setPosition(Vec2(0.0f, 0.0f));
+        pMenu1->setPosition(Vec2(0, 0));
         this->addChild(pMenu1, 10);
 
         return true;
@@ -198,9 +173,9 @@ bool UIButtonTest_Scale9::init()
         Button* button = Button::create("cocosui/button.png", "cocosui/buttonHighlighted.png");
         // open scale9 render
         button->setScale9Enabled(true);
-        button->setContentSize(Size(150.0f, 70.0f));
+        button->setContentSize(Size(150, 70));
         button->setPosition(Vec2(-button->getContentSize().width - 10, widgetSize.height / 2.0f));
-        auto moveBy = MoveBy::create(1.0f, Vec2(widgetSize.width/2, 0.0f));
+        auto moveBy = MoveBy::create(1.0, Vec2(widgetSize.width/2, 0));
         auto moveByReverse = moveBy->reverse()->clone();
         button->runAction(RepeatForever::create(
                                 Sequence::create(moveBy,moveByReverse, NULL)));
@@ -290,7 +265,7 @@ bool UIButtonTest_Scale9_State_Change::init()
         button->ignoreContentAdaptWithSize(false);
         button->setScale9Enabled(true);
         button->setPosition(Vec2(widgetSize.width / 2.0f - 100, widgetSize.height / 2.0f));
-        button->setContentSize(Size(180.0f, 60.0f));
+        button->setContentSize(Size(180, 60));
         button->setTitleText("Hello Scale9");
         button->setPressedActionEnabled(false);
         button->addTouchEventListener(CC_CALLBACK_2(UIButtonTest_Scale9_State_Change::touchEvent, this));
@@ -302,7 +277,7 @@ bool UIButtonTest_Scale9_State_Change::init()
         button2->setScale9Enabled(true);
         button2->setTitleText("Hello scale9");
         button2->setPosition(Vec2(widgetSize.width / 2.0f + 100, widgetSize.height / 2.0f));
-        button2->setContentSize(Size(180.0f, 60.0f));
+        button2->setContentSize(Size(180, 60));
         button2->setPressedActionEnabled(true);
         button2->addTouchEventListener(CC_CALLBACK_2(UIButtonTest_Scale9_State_Change::touchEvent, this));
         _uiLayer->addChild(button2);
@@ -387,7 +362,7 @@ bool UIButtonTest_PressedAction::init()
         _uiLayer->addChild(button);
 
         Button* button2 = Button::create("cocosui/animationbuttonnormal.png", "cocosui/animationbuttonpressed.png");
-        button2->setPosition(button->getPosition() + Vec2(100.0f,0.0f));
+        button2->setPosition(button->getPosition() + Vec2(100,0));
         button2->setName("button2");
         _uiLayer->addChild(button2);
 
@@ -447,7 +422,7 @@ bool UIButtonTest_Title::init()
 
         // Add a label in which the text button events will be displayed
         _displayValueLabel = Text::create("No Event", "fonts/Marker Felt.ttf", 32);
-        _displayValueLabel->setAnchorPoint(Vec2(0.5f, -1.0f));
+        _displayValueLabel->setAnchorPoint(Vec2(0.5f, -1));
         _displayValueLabel->setPosition(Vec2(widgetSize.width / 2.0f, widgetSize.height / 2.0f));
         _uiLayer->addChild(_displayValueLabel);
 
@@ -475,7 +450,7 @@ bool UIButtonTest_Title::init()
 
 
         TextBMFont *text = TextBMFont::create("BMFont", "cocosui/bitmapFontTest2.fnt");
-        text->setPosition(button->getPosition() + Vec2(button->getContentSize().width/2 + 50,0.0f));
+        text->setPosition(button->getPosition() + Vec2(button->getContentSize().width/2 + 50,0));
         text->setColor(Color3B::YELLOW);
         text->setOpacity(50);
         text->setName("text");
@@ -485,7 +460,7 @@ bool UIButtonTest_Title::init()
         button2->setTitleText("BMFont");
         //the change of font size will take no effect.
         button2->setTitleFontSize(30);
-        button2->setPosition(Vec2(button->getPosition() + Vec2(50.0f,-80.0f)));
+        button2->setPosition(Vec2(button->getPosition() + Vec2(50,-80)));
         this->addChild(button2);
 
         _uiLayer->addChild(text);
@@ -676,7 +651,7 @@ void UIButtonTestSwitchScale9::touchEvent(Ref *pSender, Widget::TouchEventType t
             _displayValueLabel->setString(StringUtils::format("Touch Up"));
             auto btn = ((Button*)pSender);
             btn->setScale9Enabled(!btn->isScale9Enabled());
-            btn->setContentSize(Size(200.0f,100.0f));
+            btn->setContentSize(Size(200,100));
         }
             break;
 
@@ -787,7 +762,7 @@ bool UIButtonTextOnly::init()
               button->getContentSize().height);
         button->setZoomScale(0.3f);
         button->setPressedActionEnabled(true);
-        button->addClickEventListener([](Ref* sender) {
+        button->addClickEventListener([this](Ref* sender) {
             CCLOG("clicked!");
         });
         _uiLayer->addChild(button);
@@ -825,7 +800,7 @@ bool UIButtonIgnoreContentSizeTest::init()
         auto button = Button::create("cocosui/animationbuttonnormal.png",
                                      "cocosui/animationbuttonpressed.png");
         button->ignoreContentAdaptWithSize(false);
-        button->setContentSize(Size(200.0f,100.0f));
+        button->setContentSize(Size(200,100));
         button->setPositionNormalized(Vec2(0.3f, 0.5f));
         button->setTitleText("PLAY GAME");
         button->setZoomScale(0.3f);
@@ -840,7 +815,7 @@ bool UIButtonIgnoreContentSizeTest::init()
         auto button2 = Button::create("cocosui/animationbuttonnormal.png",
                                      "cocosui/animationbuttonpressed.png");
         button2->ignoreContentAdaptWithSize(false);
-        button2->setContentSize(Size(200.0f,100.0f));
+        button2->setContentSize(Size(200,100));
         button2->setPositionNormalized(Vec2(0.8f, 0.5f));
         button2->setTitleText("PLAY GAME");
         button2->setZoomScale(0.3f);
@@ -1008,7 +983,7 @@ bool UIButtonNormalDefaultTest::init()
         // open scale9 render
         buttonScale9->setScale9Enabled(true);
         buttonScale9->setPosition(Vec2(widgetSize.width / 2.0f + 50, widgetSize.height / 2.0f + 40));
-        buttonScale9->setContentSize(Size(150.0f, 70.0f));
+        buttonScale9->setContentSize(Size(150, 70));
         buttonScale9->setPressedActionEnabled(true);
         _uiLayer->addChild(buttonScale9);
 
@@ -1071,7 +1046,7 @@ bool UIButtonDisableDefaultTest::init()
         // open scale9 render
         buttonScale9->setScale9Enabled(true);
         buttonScale9->setPosition(Vec2(widgetSize.width / 2.0f + 50, widgetSize.height / 2.0f + 40));
-        buttonScale9->setContentSize(Size(150.0f, 70.0f));
+        buttonScale9->setContentSize(Size(150, 70));
         buttonScale9->setPressedActionEnabled(true);
         buttonScale9->setEnabled(false);
         buttonScale9->setBright(false);
@@ -1138,16 +1113,16 @@ bool UIButtonCloneTest::init()
         
         
         auto buttonScale9Copy = (Button*)button->clone();
-        buttonScale9Copy->setPosition(button->getPosition() + Vec2(0.0f, -60.0f));
+        buttonScale9Copy->setPosition(button->getPosition() + Vec2(0, -60));
         buttonScale9Copy->setScale9Enabled(true);
-        buttonScale9Copy->setContentSize(button->getContentSize() * 1.5f);
+        buttonScale9Copy->setContentSize(button->getContentSize() * 1.5);
         this->addChild(buttonScale9Copy);
         
         
         auto buttonScale9Copy2 = (Button*)buttonScale9Copy->clone();
-        buttonScale9Copy2->setPosition(buttonCopy->getPosition() + Vec2(0.0f, -60.0f));
+        buttonScale9Copy2->setPosition(buttonCopy->getPosition() + Vec2(0, -60));
         buttonScale9Copy2->setScale9Enabled(true);
-        buttonScale9Copy2->setContentSize(buttonCopy->getContentSize() * 1.5f);
+        buttonScale9Copy2->setContentSize(buttonCopy->getContentSize() * 1.5);
         this->addChild(buttonScale9Copy2);
         
         
@@ -1265,36 +1240,3 @@ bool UIButtonWithPolygonInfo::init()
     }
     return false;
 }
-
-UIButtonScale9ChangeSpriteFrame::UIButtonScale9ChangeSpriteFrame()
-{
-}
-
-bool UIButtonScale9ChangeSpriteFrame::init()
-{
-    if (UIScene::init())
-    {
-        ImageView* sprite = ImageView::create("Images/blocks.png");
-        sprite->setScale9Enabled(true);
-        sprite->setCapInsets(Rect(32, 32, 32, 32));
-        sprite->setContentSize(Size(96 * 1.5, 96));
-        sprite->setNormalizedPosition(Vec2(0.2f, 0.5f));
-        this->addChild(sprite);
-        
-        auto button = Button::create("cocosui/button.png", "cocosui/buttonHighlighted.png");
-        button->setScale9Enabled(true);
-        button->setContentSize(Size(100.0f, 50.0f));
-        button->setNormalizedPosition(Vec2(0.6f, 0.5f));
-        button->setTitleText("Press me");
-        addChild(button);
-        
-        button->addClickEventListener([sprite](Ref* button){
-            sprite->loadTexture("Images/blocks9.png");
-        });
-
-        
-        return true;
-    }
-    return false;
-}
-

@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -23,7 +22,12 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-#pragma once
+
+#ifndef __CC_EGLVIEWIMPL_IPHONE_H__
+#define __CC_EGLVIEWIMPL_IPHONE_H__
+
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 
 #include "base/CCRef.h"
 #include "platform/CCCommon.h"
@@ -52,7 +56,6 @@ public:
     static void convertAttrs();
     static void* _pixelFormat;
     static int _depthFormat;
-    static int _multisamplingCount;
 
     /** sets the content scale factor */
     virtual bool setContentScaleFactor(float contentScaleFactor) override;
@@ -72,8 +75,6 @@ public:
     virtual void swapBuffers() override;
     virtual void setIMEKeyboardState(bool bOpen) override;
 
-    virtual Rect getSafeAreaRect() const override;
-
 protected:
     GLViewImpl();
     virtual ~GLViewImpl();
@@ -87,3 +88,7 @@ protected:
 };
 
 NS_CC_END
+
+#endif // CC_PLATFORM_IOS
+
+#endif    // end of __CC_EGLViewImpl_IPHONE_H__

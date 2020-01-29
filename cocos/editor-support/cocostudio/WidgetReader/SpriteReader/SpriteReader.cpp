@@ -1,6 +1,5 @@
 /****************************************************************************
  Copyright (c) 2014 cocos2d-x.org
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -25,7 +24,6 @@
 
 #include "editor-support/cocostudio/WidgetReader/SpriteReader/SpriteReader.h"
 
-#include "base/ccUtils.h"
 #include "2d/CCSprite.h"
 #include "2d/CCSpriteFrameCache.h"
 #include "platform/CCFileUtils.h"
@@ -141,11 +139,11 @@ namespace cocostudio
                     
                     if (name == "Src")
                     {
-                        blendFunc.src = utils::toBackendBlendFactor(atoi(value.c_str()));
+                        blendFunc.src = atoi(value.c_str());
                     }
                     else if (name == "Dst")
                     {
-                        blendFunc.dst = utils::toBackendBlendFactor(atoi(value.c_str()));
+                        blendFunc.dst = atoi(value.c_str());
                     }
                     
                     attribute = attribute->Next();
@@ -155,7 +153,7 @@ namespace cocostudio
             child = child->NextSiblingElement();
         }
         
-        flatbuffers::BlendFunc f_blendFunc(utils::toGLBlendFactor(blendFunc.src), utils::toGLBlendFactor(blendFunc.dst));
+        flatbuffers::BlendFunc f_blendFunc(blendFunc.src, blendFunc.dst);
 
         auto options = CreateSpriteOptions(*builder,
                                            nodeOptions,
@@ -235,17 +233,17 @@ namespace cocostudio
         if (f_blendFunc)
         {
             cocos2d::BlendFunc blendFunc = cocos2d::BlendFunc::ALPHA_PREMULTIPLIED;
-            blendFunc.src = utils::toBackendBlendFactor(f_blendFunc->src());
-            blendFunc.dst = utils::toBackendBlendFactor(f_blendFunc->dst());
+            blendFunc.src = f_blendFunc->src();
+            blendFunc.dst = f_blendFunc->dst();
             sprite->setBlendFunc(blendFunc);
         }
         
         auto nodeOptions = options->nodeOptions();
         
-        uint8_t alpha       = (uint8_t)nodeOptions->color()->a();
-        uint8_t red         = (uint8_t)nodeOptions->color()->r();
-        uint8_t green       = (uint8_t)nodeOptions->color()->g();
-        uint8_t blue        = (uint8_t)nodeOptions->color()->b();
+        GLubyte alpha       = (GLubyte)nodeOptions->color()->a();
+        GLubyte red         = (GLubyte)nodeOptions->color()->r();
+        GLubyte green       = (GLubyte)nodeOptions->color()->g();
+        GLubyte blue        = (GLubyte)nodeOptions->color()->b();
         
         if (alpha != 255)
         {

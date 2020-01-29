@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2016-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -30,10 +29,9 @@ THE SOFTWARE.
 #include "audio/android/Track.h"
 #include "audio/android/OpenSLHelper.h"
 
-#include <stdlib.h>
 #include <algorithm>
 
-namespace cocos2d {
+namespace cocos2d { namespace experimental {
 
 AudioMixerController::AudioMixerController(int bufferSizeInFrames, int sampleRate, int channelCount)
         : _bufferSizeInFrames(bufferSizeInFrames)
@@ -348,4 +346,4 @@ bool AudioMixerController::hasPlayingTacks()
     return false;
 }
 
-} // namespace cocos2d {
+}} // namespace cocos2d { namespace experimental {

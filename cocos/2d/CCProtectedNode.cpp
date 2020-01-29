@@ -3,8 +3,7 @@
  Copyright (c) 2009      Valentin Milea
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2011      Zynga Inc.
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -44,7 +43,7 @@ ProtectedNode::~ProtectedNode()
     removeAllProtectedChildren();
 }
 
-ProtectedNode * ProtectedNode::create()
+ProtectedNode * ProtectedNode::create(void)
 {
 	ProtectedNode * ret = new (std::nothrow) ProtectedNode();
     if (ret && ret->init())
@@ -396,7 +395,7 @@ void ProtectedNode::onExit()
         child->onExit();
 }
 
-void ProtectedNode::updateDisplayedOpacity(uint8_t parentOpacity)
+void ProtectedNode::updateDisplayedOpacity(GLubyte parentOpacity)
 {
 	_displayedOpacity = _realOpacity * parentOpacity/255.0;
     updateColor();

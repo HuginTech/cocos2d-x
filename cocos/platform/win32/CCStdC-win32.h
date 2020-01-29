@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,7 +22,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#pragma once
+
+#ifndef __CC_STD_C_H__
+#define __CC_STD_C_H__
+
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
 #include <BaseTsd.h>
 #ifndef __SSIZE_T
@@ -92,12 +96,12 @@ typedef SSIZE_T ssize_t;
 #ifndef NOMINMAX
   #define NOMINMAX
 #endif
+// Structure timeval has define in winsock.h, include windows.h for it.
+#include <Windows.h>
 
 #ifndef __MINGW32__
 
 #include <WinSock2.h>
-// Structure timeval has define in winsock.h, include windows.h for it.
-#include <Windows.h>
 
 NS_CC_BEGIN
 
@@ -115,7 +119,6 @@ NS_CC_END
 
 #undef _WINSOCKAPI_
 #include <winsock2.h>
-#include <Windows.h>
 
 // Conflicted with math.h isnan
 #include <cmath>
@@ -135,6 +138,11 @@ inline errno_t strcpy_s(char *strDestination, size_t numberOfElements,
 #endif
 #endif // __MINGW32__
 
+// Conflicted with cocos2d::MessageBox, so we need to undef it.
+#ifdef MessageBox
+#undef MessageBox
+#endif
+
 // Conflicted with ParticleSystem::PositionType::RELATIVE, so we need to undef it.
 #ifdef RELATIVE
 #undef RELATIVE
@@ -152,3 +160,10 @@ inline errno_t strcpy_s(char *strDestination, size_t numberOfElements,
 
 #undef min
 #undef max
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+
+#endif  // __CC_STD_C_H__
+
+
+

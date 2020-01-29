@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2014-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2014-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -28,6 +27,7 @@
 #include "base/CCDirector.h"
 #include "2d/CCCamera.h"
 #include "renderer/CCRenderer.h"
+#include "renderer/CCGLProgramCache.h"
 
 NS_CC_BEGIN
 
@@ -35,8 +35,6 @@ BillBoard::BillBoard()
 : _mode(Mode::VIEW_POINT_ORIENTED)
 , _modeDirty(false)
 {
-    _trianglesCommand.setTransparent(true);
-    _trianglesCommand.set3D(true);
     Node::setAnchorPoint(Vec2(0.5f,0.5f));
 }
 
@@ -105,11 +103,6 @@ void BillBoard::visit(Renderer *renderer, const Mat4& parentTransform, uint32_t 
         return;
     }
     bool visibleByCamera = isVisitableByVisitingCamera();
-    // quick return if not visible by camera and has no children.
-    if (!visibleByCamera && _children.empty())
-    {
-        return;
-    }
     
     uint32_t flags = processParentFlags(parentTransform, parentFlags);
     
@@ -192,7 +185,10 @@ bool BillBoard::calculateBillboardTransform()
             camDir.set(camWorldMat.m[8], camWorldMat.m[9], camWorldMat.m[10]);
         }
         camDir.normalize();
-
+        
+        Quaternion rotationQuaternion;
+        this->getNodeToWorldTransform().getRotation(&rotationQuaternion);
+        
         Mat4 rotationMatrix;
         rotationMatrix.setIdentity();
 
@@ -226,12 +222,18 @@ bool BillBoard::calculateBillboardTransform()
     return false;
 }
 
+bool BillBoard::calculateBillbaordTransform()
+{
+    return calculateBillboardTransform();
+}
+
 void BillBoard::draw(Renderer *renderer, const Mat4 &/*transform*/, uint32_t flags)
 {
     //FIXME: frustum culling here
     flags |= Node::FLAGS_RENDER_AS_3D;
-    _trianglesCommand.init(0, _texture, _blendFunc, _polyInfo.triangles, _modelViewTransform, flags);
-    setMVPMatrixUniform(); //update uniform
+    _trianglesCommand.init(0, _texture->getName(), getGLProgramState(), _blendFunc, _polyInfo.triangles, _modelViewTransform, flags);
+    _trianglesCommand.setTransparent(true);
+    _trianglesCommand.set3D(true);
     renderer->addCommand(&_trianglesCommand);
 }
 

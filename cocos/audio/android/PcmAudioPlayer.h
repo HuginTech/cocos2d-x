@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2016-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -29,7 +28,7 @@ THE SOFTWARE.
 #include "audio/android/PcmData.h"
 #include "audio/android/Track.h"
 
-namespace cocos2d {
+namespace cocos2d { namespace experimental {
 
 class ICallerThreadUtils;
 class AudioMixerController;
@@ -63,8 +62,6 @@ public:
 
     virtual float getVolume() const override;
 
-    virtual void setAudioFocus(bool isFocus) override;
-
     virtual void setLoop(bool isLoop) override;
 
     virtual bool isLoop() const override;
@@ -95,4 +92,4 @@ private:
     friend class AudioPlayerProvider;
 };
 
-} // namespace cocos2d {
+}} // namespace cocos2d { namespace experimental {

@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -33,7 +32,6 @@ extern "C" {
 #endif
 
 #include "scripting/lua-bindings/manual/network/lua_xml_http_request.h"
-#include "scripting/lua-bindings/manual/network/lua_downloader.h"
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 
 
@@ -52,7 +50,6 @@ int register_network_module(lua_State* L)
 #endif
         
         register_xml_http_request(L);
-        register_downloader(L);
     }
     lua_pop(L, 1);
     

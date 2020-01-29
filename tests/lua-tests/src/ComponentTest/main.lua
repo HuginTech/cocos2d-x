@@ -22,7 +22,7 @@ local function ComponentTestLayer()
     layer:addChild(player);
 
     local function onEvent(event)
-        cc.AudioEngine:stopAll()
+        ccexp.AudioEngine:stopAll()
         local scene = cc.Scene:create()
 
         scene:addChild(ComponentTestLayer())
@@ -32,7 +32,7 @@ local function ComponentTestLayer()
 
     local function onNodeEvent(event)
         if "exit" == event then
-            cc.AudioEngine:stopAll()
+            ccexp.AudioEngine:stopAll()
         end
     end
 

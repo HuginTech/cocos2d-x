@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2016-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -27,7 +26,7 @@ THE SOFTWARE.
 
 #include <functional>
 
-namespace cocos2d {
+namespace cocos2d { namespace experimental {
 
 class IAudioPlayer
 {
@@ -69,8 +68,6 @@ public:
 
     virtual float getVolume() const = 0;
 
-    virtual void setAudioFocus(bool isFocus) = 0;
-
     virtual void setLoop(bool isLoop) = 0;
 
     virtual bool isLoop() const = 0;
@@ -86,4 +83,4 @@ public:
     virtual void setPlayEventCallback(const PlayEventCallback &playEventCallback) = 0;
 };
 
-} // namespace cocos2d {
+}} // namespace cocos2d { namespace experimental {

@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -29,7 +28,6 @@ THE SOFTWARE.
 #include <condition_variable>
 #include <string>
 #include <thread>
-#include <atomic>
 
 class TestList;
 class TestSuite;
@@ -63,7 +61,6 @@ public:
 
     void setCurrTestSuite(TestSuite* testSuite) { _testSuite = testSuite; }
     TestSuite* getCurrTestSuite() { return _testSuite; }
-    bool isAutoTestRunning() const { return !_stopAutoTest; }
 private:
     TestController();
 
@@ -75,7 +72,7 @@ private:
 
     void logEx(const char * format, ...);
 
-    std::atomic<bool> _stopAutoTest;
+    bool _stopAutoTest;
     bool _isRunInBackground;
 
     TestList* _rootTestList;

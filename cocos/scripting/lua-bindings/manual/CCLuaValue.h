@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2011-2012 cocos2d-x.org
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -175,7 +174,7 @@ public:
      * Default constructor of LuaValue.
      * Set the default value for _type(LuaValueTypeInt) and _ccobjectType(nullptr),and init the _field.
      */
-    LuaValue()
+    LuaValue(void)
     : _type(LuaValueTypeInt)
     , _ccobjectType(nullptr)
     {
@@ -195,7 +194,7 @@ public:
     /**
      * Destructor.
      */
-    ~LuaValue();
+    ~LuaValue(void);
     
     /**
      * Get the type of LuaValue object.
@@ -211,7 +210,7 @@ public:
      *
      * @return the reference of _ccobjectType.
      */
-    const std::string& getObjectTypename() const {
+    const std::string& getObjectTypename(void) const {
         return *_ccobjectType;
     }
     
@@ -220,7 +219,7 @@ public:
      *
      * @return the int value.
      */
-    int intValue() const {
+    int intValue(void) const {
         return _field.intValue;
     }
     
@@ -229,7 +228,7 @@ public:
      *
      * @return the float value.
      */
-    float floatValue() const {
+    float floatValue(void) const {
         return _field.floatValue;
     }
     
@@ -238,7 +237,7 @@ public:
      *
      * @return the boolean value.
      */
-    bool booleanValue() const {
+    bool booleanValue(void) const {
         return _field.booleanValue;
     }
     
@@ -247,7 +246,7 @@ public:
      *
      * @return the reference about string value.
      */
-    const std::string& stringValue() const {
+    const std::string& stringValue(void) const {
         return *_field.stringValue;
     }
     
@@ -256,7 +255,7 @@ public:
      *
      * @return the LuaValueDict value.
      */
-    const LuaValueDict& dictValue() const {
+    const LuaValueDict& dictValue(void) const {
         return *_field.dictValue;
     }
     
@@ -265,7 +264,7 @@ public:
      *
      * @return the LuaValueArray value.
      */
-    const LuaValueArray& arrayValue() const {
+    const LuaValueArray& arrayValue(void) const {
         return *_field.arrayValue;
     }
     
@@ -274,7 +273,7 @@ public:
      *
      * @return the pointer point to a Ref object.
      */
-    Ref* ccobjectValue() const {
+    Ref* ccobjectValue(void) const {
         return _field.ccobjectValue;
     }
     

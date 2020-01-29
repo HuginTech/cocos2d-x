@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2014-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2014-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -43,6 +42,8 @@ NS_CC_BEGIN
 class EventCustom;
 class EventListener;
 
+namespace experimental {
+
 class IAudioPlayer;
 class AudioPlayerProvider;
 
@@ -71,7 +72,6 @@ public:
     void uncacheAll();
     void preload(const std::string& filePath, const std::function<void(bool)>& callback);
 
-    void setAudioFocusForAllPlayers(bool isFocus);
 private:
 
     void onEnterBackground(EventCustom* event);
@@ -89,7 +89,7 @@ private:
     std::unordered_map<int, std::function<void (int, const std::string &)>> _callbackMap;
 
     // UrlAudioPlayers which need to resumed while entering foreground
-    std::unordered_map<int, IAudioPlayer*> _urlAudioPlayersNeedResume;
+    std::vector<IAudioPlayer*> _urlAudioPlayersNeedResume;
 
     AudioPlayerProvider* _audioPlayerProvider;
     EventListener* _onPauseListener;
@@ -101,7 +101,7 @@ private:
 };
 
 #endif // __AUDIO_ENGINE_INL_H_
-
+ }
 NS_CC_END
 
 #endif

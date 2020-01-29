@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -235,11 +234,20 @@ public:
     */
     static void setDelegate(UserDefault *delegate);
 
+    /** @deprecated Use getInstance() instead.
+     * @js NA
+     * @lua NA
+     */
+    CC_DEPRECATED_ATTRIBUTE static UserDefault* sharedUserDefault();
+    /**@deprecated Use destroyInstance() instead.
+     * @js NA
+     */
+    CC_DEPRECATED_ATTRIBUTE static void purgeSharedUserDefault();
     /** All supported platforms other iOS & Android use xml file to save values. This function is return the file path of the xml path.
      * @js NA
      */
     static const std::string& getXMLFilePath();
-    /** All supported platforms other iOS & Android use xml file to save values. This function checks whether the xml file exists or not.
+    /** All supported platforms other iOS & Android and CC_PLATFORM_WINRT use xml file to save values. This function checks whether the xml file exists or not.
      * @return True if the xml file exists, false if not.
      * @js NA
      */

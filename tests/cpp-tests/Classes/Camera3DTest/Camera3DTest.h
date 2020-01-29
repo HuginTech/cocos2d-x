@@ -1,6 +1,5 @@
 /****************************************************************************
 Copyright (c) 2013 cocos2d-x.org
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -23,14 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#pragma once
+#ifndef _CAMERA3D_TEST_H_
+#define _CAMERA3D_TEST_H_
 
 #include "../BaseTest.h"
 #include "../Sprite3DTest/DrawNode3D.h"
-
-#include "renderer/backend/ProgramState.h"
-#include "renderer/backend/Types.h"
-
 #include <string>
 
 namespace cocos2d {
@@ -79,8 +75,8 @@ class CameraRotationTest : public CameraBaseTest {
 
 public:
     CREATE_FUNC(CameraRotationTest);
-    CameraRotationTest();
-    virtual ~CameraRotationTest();
+    CameraRotationTest(void);
+    virtual ~CameraRotationTest(void);
 
     virtual void onEnter() override;
     virtual void onExit() override;
@@ -102,8 +98,8 @@ class Camera3DTestDemo : public CameraBaseTest
 {
 public:
     CREATE_FUNC(Camera3DTestDemo);
-    Camera3DTestDemo();
-    virtual ~Camera3DTestDemo();
+    Camera3DTestDemo(void);
+    virtual ~Camera3DTestDemo(void);
 
     virtual void onEnter() override;
     virtual void onExit() override;
@@ -159,8 +155,8 @@ class CameraCullingDemo : public CameraBaseTest
 {
 public:
     CREATE_FUNC(CameraCullingDemo);
-    CameraCullingDemo();
-    virtual ~CameraCullingDemo();
+    CameraCullingDemo(void);
+    virtual ~CameraCullingDemo(void);
     
     virtual void onEnter() override;
     virtual void onExit() override;
@@ -193,8 +189,8 @@ class CameraArcBallDemo : public CameraBaseTest
 {
 public:
     CREATE_FUNC(CameraArcBallDemo);
-    CameraArcBallDemo();
-    virtual ~CameraArcBallDemo();
+    CameraArcBallDemo(void);
+    virtual ~CameraArcBallDemo(void);
     
     virtual void onEnter() override;
     virtual void onExit() override;
@@ -230,8 +226,8 @@ class FogTestDemo : public CameraBaseTest
 {
 public:
     CREATE_FUNC(FogTestDemo);
-    FogTestDemo();
-    virtual ~FogTestDemo();
+    FogTestDemo(void);
+    virtual ~FogTestDemo(void);
     
     virtual void onEnter() override;
     virtual void onExit() override;
@@ -246,42 +242,29 @@ public:
     void switchTypeCallback(cocos2d::Ref* sender,int type);
     
 protected:
-    CameraType                      _cameraType     = CameraType::Free;
-    cocos2d::Layer*                 _layer3D        = nullptr;
-    cocos2d::Camera*                _camera         = nullptr;
-    cocos2d::Sprite3D*              _sprite3D1      = nullptr;
-    cocos2d::Sprite3D*              _sprite3D2      = nullptr;
-    cocos2d::backend::ProgramState* _programState1  = nullptr;
-    cocos2d::backend::ProgramState* _programState2  = nullptr;
+    cocos2d::Layer*                  _layer3D;
+    CameraType              _cameraType;
+    cocos2d::Camera*                 _camera;
+    cocos2d::Sprite3D*               _sprite3D1;
+    cocos2d::Sprite3D*               _sprite3D2;
+    cocos2d::GLProgram*              _shader;
+    cocos2d::GLProgramState*         _state;
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
     cocos2d::EventListenerCustom* _backToForegroundListener;
 #endif
 };
 
-//class CameraFrameBufferTest : public CameraBaseTest
-//{
-//public:
-//    CREATE_FUNC(CameraFrameBufferTest);
-//    CameraFrameBufferTest();
-//    virtual ~CameraFrameBufferTest();
-//    // overrides
-//    virtual std::string title() const override;
-//    
-//    virtual void onEnter() override;
-//};
-
-class BackgroundColorBrushTest : public CameraBaseTest
+class CameraFrameBufferTest : public CameraBaseTest
 {
 public:
-    CREATE_FUNC(BackgroundColorBrushTest);
-    BackgroundColorBrushTest();
-    virtual ~BackgroundColorBrushTest();
-    
+    CREATE_FUNC(CameraFrameBufferTest);
+    CameraFrameBufferTest(void);
+    virtual ~CameraFrameBufferTest(void);
     // overrides
     virtual std::string title() const override;
-    virtual std::string subtitle() const override;
     
     virtual void onEnter() override;
 };
 
+#endif

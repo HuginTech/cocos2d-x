@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -106,12 +105,14 @@ public:
      *
      * @param value A given string needs to be displayed.
      */
+    CC_DEPRECATED_ATTRIBUTE void setStringValue(const std::string& value){this->setString(value);}
     void setString(const std::string& value);
     
     /**Get string value for labelatlas.
      *
      * @return The string value of TextAtlas.
      */
+    CC_DEPRECATED_ATTRIBUTE const std::string& getStringValue() const{return this->getString();}
     const std::string& getString() const;
     
     /**

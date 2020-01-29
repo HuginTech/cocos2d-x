@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,7 +22,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#pragma once
+
+#ifndef __CC_APPLICATION_MAC_H__
+#define __CC_APPLICATION_MAC_H__
+
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
 
 #include "platform/CCCommon.h"
 #include "platform/CCApplicationProtocol.h"
@@ -49,7 +53,7 @@ public:
     @param interval The time, which expressed in second in second, between current frame and next.
     */
     virtual void setAnimationInterval(float interval) override;
-
+    
     /**
     @brief  Run the message loop.
     * @js NA
@@ -62,6 +66,9 @@ public:
     @return Current application instance pointer.
     */
     static Application* getInstance();
+
+    /** @deprecated Use getInstance() instead */
+    CC_DEPRECATED_ATTRIBUTE static Application* sharedApplication();
     
     /**
     @brief Get current language config
@@ -91,10 +98,22 @@ public:
      @return true if the resource located by the URL was successfully opened; otherwise false.
      */
     virtual bool openURL(const std::string &url) override;
+
+    /**
+     *  Sets the Resource root path.
+     *  @deprecated Please use FileUtils::getInstance()->setSearchPaths() instead.
+     */
+    CC_DEPRECATED_ATTRIBUTE void setResourceRootPath(const std::string& rootResDir);
+    
+    /** 
+     *  Gets the Resource root path.
+     *  @deprecated Please use FileUtils::getInstance()->getSearchPaths() instead. 
+     */
+    CC_DEPRECATED_ATTRIBUTE const std::string& getResourceRootPath(void);
     
     void setStartupScriptFilename(const std::string& startupScriptFile);
     
-    const std::string& getStartupScriptFilename();
+    const std::string& getStartupScriptFilename(void);
     
 protected:
     static Application * sm_pSharedApplication;
@@ -105,3 +124,7 @@ protected:
 };
 
 NS_CC_END
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+
+#endif  // end of __CC_APPLICATION_MAC_H__;

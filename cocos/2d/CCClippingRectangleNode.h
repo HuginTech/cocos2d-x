@@ -4,7 +4,6 @@
  *
  * Copyright (c) 2012 Pierre-David Bélanger
  * Copyright (c) 2012 cocos2d-x.org
- * Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +24,13 @@
  * THE SOFTWARE.
  *
  */
-#pragma once
+
+#ifndef __MISCNODE_CCCLIPPING_RECTANGLE_NODE_H__
+#define __MISCNODE_CCCLIPPING_RECTANGLE_NODE_H__
 
 #include "2d/CCNode.h"
-#include "renderer/CCCallbackCommand.h"
+#include "renderer/CCCustomCommand.h"
+#include "platform/CCGL.h"
 
 NS_CC_BEGIN
 
@@ -91,21 +93,25 @@ public:
     virtual void visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags) override;
 
 protected:
-    ClippingRectangleNode() = default;
+    ClippingRectangleNode()
+    : _clippingEnabled(true)
+    {
+    }
     
     void onBeforeVisitScissor();
     void onAfterVisitScissor();
     
     Rect _clippingRegion;
-    bool _clippingEnabled = true;
-
-    bool _oldScissorTest = false;
+    bool _clippingEnabled;
     
-    CallbackCommand _beforeVisitCmdScissor;
-    CallbackCommand _afterVisitCmdScissor;
+    CustomCommand _beforeVisitCmdScissor;
+    CustomCommand _afterVisitCmdScissor;
 };
 
 // end of _2d group
 /// @}
 
 NS_CC_END
+
+#endif
+

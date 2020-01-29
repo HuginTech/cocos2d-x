@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,7 +22,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#pragma once
+#ifndef __CC_APPLICATION_WIN32_H__
+#define __CC_APPLICATION_WIN32_H__
+
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
 #include "platform/CCStdC.h"
 #include "platform/CCCommon.h"
@@ -31,6 +34,8 @@ THE SOFTWARE.
 #include <string>
 
 NS_CC_BEGIN
+
+class Rect;
 
 class CC_DLL Application : public ApplicationProtocol
 {
@@ -55,10 +60,12 @@ public:
     @return Current application instance pointer.
     */
     static Application* getInstance();
+
+    /** @deprecated Use getInstance() instead */
+    CC_DEPRECATED_ATTRIBUTE static Application* sharedApplication();
     
     /* override functions */
-    virtual void setAnimationInterval(float interval) override;
-
+    virtual void setAnimationInterval(float interval);
     virtual LanguageType getCurrentLanguage();
 
     virtual const char * getCurrentLanguageCode();
@@ -90,11 +97,11 @@ public:
      *  Gets the Resource root path.
      *  @deprecated Please use FileUtils::getInstance()->getSearchPaths() instead. 
      */
-    CC_DEPRECATED_ATTRIBUTE const std::string& getResourceRootPath();
+    CC_DEPRECATED_ATTRIBUTE const std::string& getResourceRootPath(void);
 
     void setStartupScriptFilename(const std::string& startupScriptFile);
 
-    const std::string& getStartupScriptFilename()
+    const std::string& getStartupScriptFilename(void)
     {
         return _startupScriptFilename;
     }
@@ -110,3 +117,7 @@ protected:
 };
 
 NS_CC_END
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+
+#endif    // __CC_APPLICATION_WIN32_H__

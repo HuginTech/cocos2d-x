@@ -3,8 +3,7 @@ Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2009      Valentin Milea
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -41,6 +40,8 @@ THE SOFTWARE.
 #include "2d/CCActionManager.h"
 #include "2d/CCScene.h"
 #include "2d/CCComponent.h"
+#include "renderer/CCGLProgram.h"
+#include "renderer/CCGLProgramState.h"
 #include "renderer/CCMaterial.h"
 #include "math/TransformUtils.h"
 
@@ -55,8 +56,7 @@ THE SOFTWARE.
 NS_CC_BEGIN
 
 // FIXME:: Yes, nodes might have a sort problem once every 30 days if the game runs at 60 FPS and each frame sprites are reordered.
-std::uint32_t Node::s_globalOrderOfArrival = 0;
-int Node::__attachedNodeCount = 0;
+unsigned int Node::s_globalOrderOfArrival = 0;
 
 // MARK: Constructor, Destructor, Init
 
@@ -73,7 +73,6 @@ Node::Node()
 , _normalizedPositionDirty(false)
 , _skewX(0.0f)
 , _skewY(0.0f)
-, _anchorPoint(0, 0)
 , _contentSize(Size::ZERO)
 , _contentSizeDirty(true)
 , _transformDirty(true)
@@ -83,7 +82,8 @@ Node::Node()
 , _transformUpdated(true)
 // children (lazy allocs)
 // lazy alloc
-, _localZOrder$Arrival(0LL)
+, _localZOrderAndArrival(0)
+, _localZOrder(0)
 , _globalZOrder(0)
 , _parent(nullptr)
 // "whole screen" objects. like Scenes and Layers, should set _ignoreAnchorPointForPosition to true
@@ -93,6 +93,7 @@ Node::Node()
 // userData is always inited as nil
 , _userData(nullptr)
 , _userObject(nullptr)
+, _glProgramState(nullptr)
 , _running(false)
 , _visible(true)
 , _ignoreAnchorPointForPosition(false)
@@ -109,10 +110,6 @@ Node::Node()
 , _cascadeColorEnabled(false)
 , _cascadeOpacityEnabled(false)
 , _cameraMask(1)
-, _onEnterCallback(nullptr)
-, _onExitCallback(nullptr)
-, _onEnterTransitionDidFinishCallback(nullptr)
-, _onExitTransitionDidStartCallback(nullptr)
 #if CC_USE_PHYSICS
 , _physicsBody(nullptr)
 #endif
@@ -159,8 +156,11 @@ Node::~Node()
 #endif
 
     // User object has to be released before others, since userObject may have a weak reference of this node
-    // It may invoke `node->stopAllActions();` while `_actionManager` is null if the next line is after `CC_SAFE_RELEASE_NULL(_actionManager)`.
+    // It may invoke `node->stopAllAction();` while `_actionManager` is null if the next line is after `CC_SAFE_RELEASE_NULL(_actionManager)`.
     CC_SAFE_RELEASE_NULL(_userObject);
+    
+    // attributes
+    CC_SAFE_RELEASE_NULL(_glProgramState);
 
     for (auto& child : _children)
     {
@@ -186,7 +186,6 @@ Node::~Node()
     CC_SAFE_RELEASE(_eventDispatcher);
 
     delete[] _additionalTransform;
-    CC_SAFE_RELEASE(_programState);
 }
 
 bool Node::init()
@@ -212,16 +211,6 @@ void Node::cleanup()
     this->stopAllActions();
     // timers
     this->unscheduleAllCallbacks();
-
-    // NOTE: Although it was correct that removing event listeners associated with current node in Node::cleanup.
-    // But it broke the compatibility to the versions before v3.16 .
-    // User code may call `node->removeFromParent(true)` which will trigger node's cleanup method, when the node 
-    // is added to scene again, event listeners like EventListenerTouchOneByOne will be lost. 
-    // In fact, user's code should use `node->removeFromParent(false)` in order not to do a cleanup and just remove node
-    // from its parent. For more discussion about why we revert this change is at https://github.com/cocos2d/cocos2d-x/issues/18104.
-    // We need to consider more before we want to correct the old and wrong logic code.
-    // For now, compatiblity is the most important for our users.
-//    _eventDispatcher->removeEventListenersForTarget(this);
     
     for( const auto &child: _children)
         child->cleanup();
@@ -262,7 +251,7 @@ void Node::setSkewY(float skewY)
     _transformUpdated = _transformDirty = _inverseDirty = true;
 }
 
-void Node::setLocalZOrder(std::int32_t z)
+void Node::setLocalZOrder(int z)
 {
     if (getLocalZOrder() == z)
         return;
@@ -278,14 +267,15 @@ void Node::setLocalZOrder(std::int32_t z)
 
 /// zOrder setter : private method
 /// used internally to alter the zOrder variable. DON'T call this method manually
-void Node::_setLocalZOrder(std::int32_t z)
+void Node::_setLocalZOrder(int z)
 {
+    _localZOrderAndArrival = (static_cast<std::int64_t>(z) << 32) | (_localZOrderAndArrival & 0xffffffff);
     _localZOrder = z;
 }
 
 void Node::updateOrderOfArrival()
 {
-    _orderOfArrival = (++s_globalOrderOfArrival);
+    _localZOrderAndArrival = (_localZOrderAndArrival & 0xffffffff00000000) | (++s_globalOrderOfArrival);
 }
 
 void Node::setGlobalZOrder(float globalZOrder)
@@ -415,7 +405,7 @@ void Node::setRotationSkewY(float rotationY)
 }
 
 /// scale getter
-float Node::getScale() const
+float Node::getScale(void) const
 {
     CCASSERT( _scaleX == _scaleY, "CCNode#scale. ScaleX != ScaleY. Don't know which one to return");
     return _scaleX;
@@ -721,6 +711,42 @@ void Node::setUserObject(Ref* userObject)
     _userObject = userObject;
 }
 
+GLProgramState* Node::getGLProgramState() const
+{
+    return _glProgramState;
+}
+
+void Node::setGLProgramState(cocos2d::GLProgramState* glProgramState)
+{
+    if (glProgramState != _glProgramState)
+    {
+        CC_SAFE_RELEASE(_glProgramState);
+        _glProgramState = glProgramState;
+        CC_SAFE_RETAIN(_glProgramState);
+
+        if (_glProgramState)
+            _glProgramState->setNodeBinding(this);
+    }
+}
+
+
+void Node::setGLProgram(GLProgram* glProgram)
+{
+    if (_glProgramState == nullptr || (_glProgramState && _glProgramState->getGLProgram() != glProgram))
+    {
+        CC_SAFE_RELEASE(_glProgramState);
+        _glProgramState = GLProgramState::getOrCreateWithGLProgram(glProgram);
+        _glProgramState->retain();
+
+        _glProgramState->setNodeBinding(this);
+    }
+}
+
+GLProgram * Node::getGLProgram() const
+{
+    return _glProgramState ? _glProgramState->getGLProgram() : nullptr;
+}
+
 Scene* Node::getScene() const
 {
     if (!_parent)
@@ -809,27 +835,22 @@ void Node::enumerateChildren(const std::string &name, std::function<bool (Node *
     
     // Remove '//', '/..' if exist
     std::string newName = name.substr(subStrStartPos, subStrlength);
-    
-    const Node* target = this;
-    
+
     if (searchFromParent)
     {
-        if (nullptr == _parent)
-        {
-            return;
-        }
-        target = _parent;
+        newName.insert(0, "[[:alnum:]]+/");
     }
+    
     
     if (searchRecursively)
     {
         // name is '//xxx'
-        target->doEnumerateRecursive(target, newName, callback);
+        doEnumerateRecursive(this, newName, callback);
     }
     else
     {
         // name is xxx
-        target->doEnumerate(newName, callback);
+        doEnumerate(newName, callback);
     }
 }
 
@@ -1153,7 +1174,7 @@ void Node::sortAllChildren()
 void Node::draw()
 {
     auto renderer = _director->getRenderer();
-    draw(renderer, _modelViewTransform, FLAGS_TRANSFORM_DIRTY);
+    draw(renderer, _modelViewTransform, true);
 }
 
 void Node::draw(Renderer* /*renderer*/, const Mat4 & /*transform*/, uint32_t /*flags*/)
@@ -1164,7 +1185,7 @@ void Node::visit()
 {
     auto renderer = _director->getRenderer();
     auto& parentTransform = _director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-    visit(renderer, parentTransform, FLAGS_TRANSFORM_DIRTY);
+    visit(renderer, parentTransform, true);
 }
 
 uint32_t Node::processParentFlags(const Mat4& parentTransform, uint32_t parentFlags)
@@ -1270,10 +1291,6 @@ Mat4 Node::transform(const Mat4& parentTransform)
 
 void Node::onEnter()
 {
-    if (!_running)
-    {
-        ++__attachedNodeCount;
-    }
 #if CC_ENABLE_SCRIPT_BINDING
     if (_scriptType == kScriptTypeJavascript)
     {
@@ -1358,10 +1375,6 @@ void Node::onExitTransitionDidStart()
 
 void Node::onExit()
 {
-    if (_running)
-    {
-        --__attachedNodeCount;
-    }
 #if CC_ENABLE_SCRIPT_BINDING
     if (_scriptType == kScriptTypeJavascript)
     {
@@ -1484,12 +1497,12 @@ void Node::setScheduler(Scheduler* scheduler)
     }
 }
 
-bool Node::isScheduled(SEL_SCHEDULE selector) const
+bool Node::isScheduled(SEL_SCHEDULE selector)
 {
     return _scheduler->isScheduled(selector, this);
 }
 
-bool Node::isScheduled(const std::string &key) const
+bool Node::isScheduled(const std::string &key)
 {
     return _scheduler->isScheduled(key, this);
 }
@@ -1604,6 +1617,16 @@ void Node::pause()
     _eventDispatcher->pauseEventListenersForTarget(this);
 }
 
+void Node::resumeSchedulerAndActions()
+{
+    resume();
+}
+
+void Node::pauseSchedulerAndActions()
+{
+    pause();
+}
+
 // override me
 void Node::update(float fDelta)
 {
@@ -1692,32 +1715,22 @@ const Mat4& Node::getNodeToParentTransform() const
             float sy = sinf(radiansY);
             
             float m0 = _transform.m[0], m1 = _transform.m[1], m4 = _transform.m[4], m5 = _transform.m[5], m8 = _transform.m[8], m9 = _transform.m[9];
-            _transform.m[0] = cy * m0 - sx * m1;
-            _transform.m[4] = cy * m4 - sx * m5;
-            _transform.m[8] = cy * m8 - sx * m9;
-            _transform.m[1] = sy * m0 + cx * m1;
-            _transform.m[5] = sy * m4 + cx * m5;
-            _transform.m[9] = sy * m8 + cx * m9;
+            _transform.m[0] = cy * m0 - sx * m1, _transform.m[4] = cy * m4 - sx * m5, _transform.m[8] = cy * m8 - sx * m9;
+            _transform.m[1] = sy * m0 + cx * m1, _transform.m[5] = sy * m4 + cx * m5, _transform.m[9] = sy * m8 + cx * m9;
         }
         _transform = translation * _transform;
 
         if (_scaleX != 1.f)
         {
-            _transform.m[0] *= _scaleX;
-            _transform.m[1] *= _scaleX;
-             _transform.m[2] *= _scaleX;
+            _transform.m[0] *= _scaleX, _transform.m[1] *= _scaleX, _transform.m[2] *= _scaleX;
         }
         if (_scaleY != 1.f)
         {
-            _transform.m[4] *= _scaleY;
-            _transform.m[5] *= _scaleY;
-            _transform.m[6] *= _scaleY;
+            _transform.m[4] *= _scaleY, _transform.m[5] *= _scaleY, _transform.m[6] *= _scaleY;
         }
         if (_scaleZ != 1.f)
         {
-            _transform.m[8] *= _scaleZ;
-            _transform.m[9] *= _scaleZ;
-            _transform.m[10] *= _scaleZ;
+            _transform.m[8] *= _scaleZ, _transform.m[9] *= _scaleZ, _transform.m[10] *= _scaleZ;
         }
         
         // FIXME:: Try to inline skew
@@ -1789,7 +1802,6 @@ void Node::setAdditionalTransform(const Mat4* additionalTransform)
 {
     if (additionalTransform == nullptr)
     {
-        if(_additionalTransform)  _transform = _additionalTransform[1];
         delete[] _additionalTransform;
         _additionalTransform = nullptr;
     }
@@ -1956,24 +1968,24 @@ void Node::removeAllComponents()
 
 // MARK: Opacity and Color
 
-uint8_t Node::getOpacity() const
+GLubyte Node::getOpacity(void) const
 {
     return _realOpacity;
 }
 
-uint8_t Node::getDisplayedOpacity() const
+GLubyte Node::getDisplayedOpacity() const
 {
     return _displayedOpacity;
 }
 
-void Node::setOpacity(uint8_t opacity)
+void Node::setOpacity(GLubyte opacity)
 {
     _displayedOpacity = _realOpacity = opacity;
     
     updateCascadeOpacity();
 }
 
-void Node::updateDisplayedOpacity(uint8_t parentOpacity)
+void Node::updateDisplayedOpacity(GLubyte parentOpacity)
 {
     _displayedOpacity = _realOpacity * parentOpacity/255.0;
     updateColor();
@@ -1987,7 +1999,7 @@ void Node::updateDisplayedOpacity(uint8_t parentOpacity)
     }
 }
 
-bool Node::isCascadeOpacityEnabled() const
+bool Node::isCascadeOpacityEnabled(void) const
 {
     return _cascadeOpacityEnabled;
 }
@@ -2013,7 +2025,7 @@ void Node::setCascadeOpacityEnabled(bool cascadeOpacityEnabled)
 
 void Node::updateCascadeOpacity()
 {
-    uint8_t parentOpacity = 255;
+    GLubyte parentOpacity = 255;
     
     if (_parent != nullptr && _parent->isCascadeOpacityEnabled())
     {
@@ -2041,7 +2053,7 @@ bool Node::isOpacityModifyRGB() const
     return false;
 }
 
-const Color3B& Node::getColor() const
+const Color3B& Node::getColor(void) const
 {
     return _realColor;
 }
@@ -2074,7 +2086,7 @@ void Node::updateDisplayedColor(const Color3B& parentColor)
     }
 }
 
-bool Node::isCascadeColorEnabled() const
+bool Node::isCascadeColorEnabled(void) const
 {
     return _cascadeColorEnabled;
 }
@@ -2176,24 +2188,11 @@ void Node::setCameraMask(unsigned short mask, bool applyChildren)
     }
 }
 
-int Node::getAttachedNodeCount()
-{
-    return __attachedNodeCount;
-}
+// MARK: Deprecated
 
-void Node::setProgramState(backend::ProgramState* programState)
+__NodeRGBA::__NodeRGBA()
 {
-    if (_programState != programState)
-    {
-        CC_SAFE_RELEASE(_programState);
-        _programState = programState;
-        CC_SAFE_RETAIN(programState);
-    }
-}
-
-backend::ProgramState* Node::getProgramState() const
-{
-    return _programState;
+    CCLOG("NodeRGBA deprecated.");
 }
 
 NS_CC_END

@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,6 +22,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+
 #include "platform/CCCommon.h"
 #include "platform/CCStdC.h"
 #include "platform/win32/CCUtils-win32.h"
@@ -31,7 +34,7 @@ NS_CC_BEGIN
 
 #define MAX_LEN         (cocos2d::kMaxLogLen + 1)
 
-void ccMessageBox(const char * pszMsg, const char * pszTitle)
+void MessageBox(const char * pszMsg, const char * pszTitle)
 {
     std::wstring wsMsg = cocos2d::StringUtf8ToWideChar(pszMsg);
     std::wstring wsTitle = cocos2d::StringUtf8ToWideChar(pszTitle);
@@ -47,3 +50,5 @@ void LuaLog(const char *pszMsg)
 }
 
 NS_CC_END
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_WIN32

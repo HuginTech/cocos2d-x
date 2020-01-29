@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -258,7 +257,7 @@ static cpSpaceDebugColor ColorForShape(cpShape *shape, cpDataPointer /*data*/)
             return LAColor(0.66f, 0.3f);
         } else {
             
-            float intensity = (cpBodyGetType(body) == CP_BODY_TYPE_STATIC ? 0.15f : 0.75f);
+            GLfloat intensity = (cpBodyGetType(body) == CP_BODY_TYPE_STATIC ? 0.15f : 0.75f);
             return RGBAColor(intensity, 0.0f, 0.0f, 0.3f);
         }
     }
@@ -270,7 +269,6 @@ void PhysicsWorld::debugDraw()
     if (_debugDraw == nullptr)
     {
         _debugDraw = DrawNode::create();
-        _debugDraw->setIsolated(true);
         _debugDraw->retain();
         Director::getInstance()->getRunningScene()->addChild(_debugDraw);
     }
@@ -488,7 +486,7 @@ bool PhysicsWorld::init()
 {
     do
     {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WINRT || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 		_cpSpace = cpSpaceNew();
 #else
         _cpSpace = cpHastySpaceNew();
@@ -701,10 +699,6 @@ void PhysicsWorld::updateJoints()
         doRemoveJoint(joint);
     }
     _delayRemoveJoints.clear();
-
-    for (auto joint : _joints) {
-        joint->flushDelayTasks();
-    }
 }
 
 void PhysicsWorld::removeShape(PhysicsShape* shape)
@@ -817,7 +811,7 @@ void PhysicsWorld::removeAllBodies()
 
 void PhysicsWorld::setDebugDrawMask(int mask)
 {
-    if (mask == DEBUGDRAW_NONE && _debugDraw)
+    if (mask == DEBUGDRAW_NONE)
     {
         _debugDraw->removeFromParent();
         CC_SAFE_RELEASE_NULL(_debugDraw);
@@ -876,9 +870,6 @@ void PhysicsWorld::step(float delta)
 
 void PhysicsWorld::update(float delta, bool userCall/* = false*/)
 {
-
-    if(_preUpdateCallback) _preUpdateCallback(); //fix #11154
-
     if(!_delayAddBodies.empty())
     {
         updateBodies();
@@ -887,7 +878,7 @@ void PhysicsWorld::update(float delta, bool userCall/* = false*/)
     {
         updateBodies();
     }
-
+    
     auto sceneToWorldTransform = _scene->getNodeToParentTransform();
     beforeSimulation(_scene, sceneToWorldTransform, 1.f, 1.f, 0.f);
 
@@ -895,15 +886,15 @@ void PhysicsWorld::update(float delta, bool userCall/* = false*/)
     {
         updateJoints();
     }
-
+    
     if (delta < FLT_EPSILON)
     {
         return;
     }
-
+    
     if (userCall)
     {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WINRT || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 		cpSpaceStep(_cpSpace, delta);
 #else
 		cpHastySpaceStep(_cpSpace, delta);
@@ -919,7 +910,7 @@ void PhysicsWorld::update(float delta, bool userCall/* = false*/)
             while(_updateTime>step)
             {
                 _updateTime-=step;
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WINRT || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 				cpSpaceStep(_cpSpace, dt);
 #else
 				cpHastySpaceStep(_cpSpace, dt);
@@ -933,7 +924,7 @@ void PhysicsWorld::update(float delta, bool userCall/* = false*/)
                 const float dt = _updateTime * _speed / _substeps;
                 for (int i = 0; i < _substeps; ++i)
                 {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WINRT || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 					cpSpaceStep(_cpSpace, dt);
 #else
 					cpHastySpaceStep(_cpSpace, dt);
@@ -957,8 +948,6 @@ void PhysicsWorld::update(float delta, bool userCall/* = false*/)
     // Update physics position, should loop as the same sequence as node tree.
     // PhysicsWorld::afterSimulation() will depend on the sequence.
     afterSimulation(_scene, sceneToWorldTransform, 0.f);
-
-    if(_postUpdateCallback) _postUpdateCallback(); //fix #11154
 }
 
 PhysicsWorld* PhysicsWorld::construct(Scene* scene)
@@ -1000,7 +989,7 @@ PhysicsWorld::~PhysicsWorld()
     removeAllBodies();
     if (_cpSpace)
     {
-#if  CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WINRT || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 		cpSpaceFree(_cpSpace);
 #else
 		cpHastySpaceFree(_cpSpace);
@@ -1040,16 +1029,6 @@ void PhysicsWorld::afterSimulation(Node *node, const Mat4& parentToWorldTransfor
 
     for (auto child : node->getChildren())
         afterSimulation(child, nodeToWorldTransform, nodeRotation);
-}
-
-void PhysicsWorld::setPostUpdateCallback(const std::function<void()> &callback)
-{
-    _postUpdateCallback = callback;
-}
-
-void PhysicsWorld::setPreUpdateCallback(const std::function<void()> &callback)
-{
-    _preUpdateCallback = callback;
 }
 
 NS_CC_END

@@ -1,9 +1,8 @@
-/****************************************************************************
+﻿/****************************************************************************
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2013 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -32,6 +31,7 @@ THE SOFTWARE.
 // standard includes
 #include <string>
 
+#include "2d/CCDrawingPrimitives.h"
 #include "2d/CCSpriteFrameCache.h"
 #include "platform/CCFileUtils.h"
 
@@ -42,12 +42,15 @@ THE SOFTWARE.
 #include "2d/CCTransition.h"
 #include "2d/CCFontFreeType.h"
 #include "2d/CCLabelAtlas.h"
+#include "renderer/CCGLProgramCache.h"
+#include "renderer/CCGLProgramStateCache.h"
 #include "renderer/CCTextureCache.h"
+#include "renderer/ccGLStateCache.h"
 #include "renderer/CCRenderer.h"
 #include "renderer/CCRenderState.h"
+#include "renderer/CCFrameBuffer.h"
 #include "2d/CCCamera.h"
 #include "base/CCUserDefault.h"
-#include "base/ccUtils.h"
 #include "base/ccFPSImages.h"
 #include "base/CCScheduler.h"
 #include "base/ccMacros.h"
@@ -57,9 +60,7 @@ THE SOFTWARE.
 #include "base/CCAutoreleasePool.h"
 #include "base/CCConfiguration.h"
 #include "base/CCAsyncTaskPool.h"
-#include "base/ObjectFactory.h"
 #include "platform/CCApplication.h"
-#include "renderer/backend/ProgramCache.h"
 
 #if CC_ENABLE_SCRIPT_BINDING
 #include "base/CCScriptSupport.h"
@@ -83,17 +84,14 @@ NS_CC_BEGIN
 static Director *s_SharedDirector = nullptr;
 
 #define kDefaultFPS        60  // 60 frames per second
-extern const char* cocos2dVersion();
+extern const char* cocos2dVersion(void);
 
-const char *Director::EVENT_BEFORE_SET_NEXT_SCENE = "director_before_set_next_scene";
-const char *Director::EVENT_AFTER_SET_NEXT_SCENE = "director_after_set_next_scene";
 const char *Director::EVENT_PROJECTION_CHANGED = "director_projection_changed";
 const char *Director::EVENT_AFTER_DRAW = "director_after_draw";
 const char *Director::EVENT_AFTER_VISIT = "director_after_visit";
 const char *Director::EVENT_BEFORE_UPDATE = "director_before_update";
 const char *Director::EVENT_AFTER_UPDATE = "director_after_update";
 const char *Director::EVENT_RESET = "director_reset";
-const char *Director::EVENT_BEFORE_DRAW = "director_before_draw";
 
 Director* Director::getInstance()
 {
@@ -108,18 +106,50 @@ Director* Director::getInstance()
 }
 
 Director::Director()
+: _isStatusLabelUpdated(true)
+, _invalid(true)
 {
 }
 
-bool Director::init()
+bool Director::init(void)
 {
     setDefaultValues();
+
+    // scenes
+    _runningScene = nullptr;
+    _nextScene = nullptr;
+
+    _notificationNode = nullptr;
 
     _scenesStack.reserve(15);
 
     // FPS
+    _accumDt = 0.0f;
+    _frameRate = 0.0f;
+    _FPSLabel = _drawnBatchesLabel = _drawnVerticesLabel = nullptr;
+    _totalFrames = 0;
     _lastUpdate = std::chrono::steady_clock::now();
+    _secondsPerFrame = 1.0f;
+
+    // paused ?
+    _paused = false;
+
+    // purge ?
+    _purgeDirectorInNextLoop = false;
     
+    // restart ?
+    _restartDirectorInNextLoop = false;
+    
+    // invalid ?
+    _invalid = false;
+
+    _winSizeInPoints = Size::ZERO;
+
+    _openGLView = nullptr;
+    _defaultFBO = nullptr;
+    
+    _contentScaleFactor = 1.0f;
+
     _console = new (std::nothrow) Console;
 
     // scheduler
@@ -129,15 +159,8 @@ bool Director::init()
     _scheduler->scheduleUpdate(_actionManager, Scheduler::PRIORITY_SYSTEM, false);
 
     _eventDispatcher = new (std::nothrow) EventDispatcher();
-    
-    _beforeSetNextScene = new (std::nothrow) EventCustom(EVENT_BEFORE_SET_NEXT_SCENE);
-    _beforeSetNextScene->setUserData(this);
-    _afterSetNextScene = new (std::nothrow) EventCustom(EVENT_AFTER_SET_NEXT_SCENE);
-    _afterSetNextScene->setUserData(this);
     _eventAfterDraw = new (std::nothrow) EventCustom(EVENT_AFTER_DRAW);
     _eventAfterDraw->setUserData(this);
-    _eventBeforeDraw = new (std::nothrow) EventCustom(EVENT_BEFORE_DRAW);
-    _eventBeforeDraw->setUserData(this);
     _eventAfterVisit = new (std::nothrow) EventCustom(EVENT_AFTER_VISIT);
     _eventAfterVisit->setUserData(this);
     _eventBeforeUpdate = new (std::nothrow) EventCustom(EVENT_BEFORE_UPDATE);
@@ -152,11 +175,12 @@ bool Director::init()
     initMatrixStack();
 
     _renderer = new (std::nothrow) Renderer;
+    RenderState::initialize();
 
     return true;
 }
 
-Director::~Director()
+Director::~Director(void)
 {
     CCLOGINFO("deallocing Director: %p", this);
 
@@ -168,43 +192,34 @@ Director::~Director()
     CC_SAFE_RELEASE(_notificationNode);
     CC_SAFE_RELEASE(_scheduler);
     CC_SAFE_RELEASE(_actionManager);
-
-    CC_SAFE_RELEASE(_beforeSetNextScene);
-    CC_SAFE_RELEASE(_afterSetNextScene);
-    CC_SAFE_RELEASE(_eventBeforeUpdate);
-    CC_SAFE_RELEASE(_eventAfterUpdate);
-    CC_SAFE_RELEASE(_eventAfterDraw);
-    CC_SAFE_RELEASE(_eventBeforeDraw);
-    CC_SAFE_RELEASE(_eventAfterVisit);
-    CC_SAFE_RELEASE(_eventProjectionChanged);
-    CC_SAFE_RELEASE(_eventResetDirector);
+    CC_SAFE_DELETE(_defaultFBO);
+    
+    delete _eventBeforeUpdate;
+    delete _eventAfterUpdate;
+    delete _eventAfterDraw;
+    delete _eventAfterVisit;
+    delete _eventProjectionChanged;
+    delete _eventResetDirector;
 
     delete _renderer;
+
     delete _console;
+
 
     CC_SAFE_RELEASE(_eventDispatcher);
     
     Configuration::destroyInstance();
-    ObjectFactory::destroyInstance();
 
     s_SharedDirector = nullptr;
-
-#if CC_ENABLE_SCRIPT_BINDING
-    ScriptEngineManager::destroyInstance();
-#endif
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    exit(0);
-#endif
 }
 
-void Director::setDefaultValues()
+void Director::setDefaultValues(void)
 {
     Configuration *conf = Configuration::getInstance();
 
     // default FPS
-    float fps = conf->getValue("cocos2d.x.fps", Value(kDefaultFPS)).asFloat();
-    _oldAnimationInterval = _animationInterval = 1.0f / fps;
+    double fps = conf->getValue("cocos2d.x.fps", Value(kDefaultFPS)).asDouble();
+    _oldAnimationInterval = _animationInterval = 1.0 / fps;
 
     // Display FPS
     _displayStats = conf->getValue("cocos2d.x.display_fps", Value(false)).asBool();
@@ -223,11 +238,11 @@ void Director::setDefaultValues()
     // Default pixel format for PNG images with alpha
     std::string pixel_format = conf->getValue("cocos2d.x.texture.pixel_format_for_png", Value("rgba8888")).asString();
     if (pixel_format == "rgba8888")
-        Texture2D::setDefaultAlphaPixelFormat(backend::PixelFormat::RGBA8888);
+        Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
     else if(pixel_format == "rgba4444")
-        Texture2D::setDefaultAlphaPixelFormat(backend::PixelFormat::RGBA4444);
+        Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
     else if(pixel_format == "rgba5551")
-        Texture2D::setDefaultAlphaPixelFormat(backend::PixelFormat::RGB5A1);
+        Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB5A1);
 
     // PVR v2 has alpha premultiplied ?
     bool pvr_alpha_premultiplied = conf->getValue("cocos2d.x.texture.pvrv2_has_alpha_premultiplied", Value(false)).asBool();
@@ -239,16 +254,14 @@ void Director::setGLDefaultValues()
     // This method SHOULD be called only after openGLView_ was initialized
     CCASSERT(_openGLView, "opengl view should not be null");
 
-    _renderer->setDepthTest(false);
-    _renderer->setDepthCompareFunction(backend::CompareFunction::LESS_EQUAL);
+    setAlphaBlending(true);
+    setDepthTest(false);
     setProjection(_projection);
 }
 
 // Draw the Scene
 void Director::drawScene()
 {
-    _renderer->beginFrame();
-
     // calculate "global" dt
     calculateDeltaTime();
     
@@ -265,10 +278,8 @@ void Director::drawScene()
         _eventDispatcher->dispatchEvent(_eventAfterUpdate);
     }
 
-    _renderer->clear(ClearFlag::ALL, _clearColor, 1, 0, -10000.0);
-    
-    _eventDispatcher->dispatchEvent(_eventBeforeDraw);
-    
+    _renderer->clear();
+    experimental::FrameBuffer::clearAllFBOs();
     /* to avoid flickr, nextScene MUST be here: after tick and before draw.
      * FIXME: Which bug is this one. It seems that it can't be reproduced with v0.9
      */
@@ -288,8 +299,7 @@ void Director::drawScene()
         _renderer->clearDrawStats();
         
         //render the scene
-        if(_openGLView)
-            _openGLView->renderScene(_runningScene, _renderer);
+        _openGLView->renderScene(_runningScene, _renderer);
         
         _eventDispatcher->dispatchEvent(_eventAfterVisit);
     }
@@ -300,16 +310,11 @@ void Director::drawScene()
         _notificationNode->visit(_renderer, Mat4::IDENTITY, 0);
     }
 
-    updateFrameRate();
-    
     if (_displayStats)
     {
-#if !CC_STRIP_FPS
         showStats();
-#endif
     }
-    
-   _renderer->render();
+    _renderer->render();
 
     _eventDispatcher->dispatchEvent(_eventAfterDraw);
 
@@ -322,35 +327,26 @@ void Director::drawScene()
     {
         _openGLView->swapBuffers();
     }
-    
-    _renderer->endFrame();
 
     if (_displayStats)
     {
-#if !CC_STRIP_FPS
         calculateMPF();
-#endif
     }
 }
 
 void Director::calculateDeltaTime()
 {
+    auto now = std::chrono::steady_clock::now();
+
     // new delta time. Re-fixed issue #1277
     if (_nextDeltaTimeZero)
     {
         _deltaTime = 0;
         _nextDeltaTimeZero = false;
-        _lastUpdate = std::chrono::steady_clock::now();
     }
     else
     {
-        // delta time may passed by invoke mainLoop(dt)
-        if (!_deltaTimePassedByCaller)
-        {
-            auto now = std::chrono::steady_clock::now();
-            _deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - _lastUpdate).count() / 1000000.0f;
-            _lastUpdate = now;
-        }
+        _deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - _lastUpdate).count() / 1000000.0f;
         _deltaTime = MAX(0, _deltaTime);
     }
 
@@ -361,8 +357,9 @@ void Director::calculateDeltaTime()
         _deltaTime = 1 / 60.0f;
     }
 #endif
-}
 
+    _lastUpdate = now;
+}
 float Director::getDeltaTime() const
 {
     return _deltaTime;
@@ -393,12 +390,17 @@ void Director::setOpenGLView(GLView *openGLView)
             setGLDefaultValues();
         }
 
-       _renderer->init();
+        _renderer->initGLView();
+
+        CHECK_GL_ERROR_DEBUG();
 
         if (_eventDispatcher)
         {
             _eventDispatcher->setEnabled(true);
         }
+        
+        _defaultFBO = experimental::FrameBuffer::getOrCreateDefaultFBO(_openGLView);
+        _defaultFBO->retain();
     }
 }
 
@@ -447,10 +449,7 @@ void Director::initMatrixStack()
         _modelViewMatrixStack.pop();
     }
 
-    while (!_projectionMatrixStack.empty())
-    {
-         _projectionMatrixStack.pop();
-    }
+    _projectionMatrixStackList.clear();
 
     while (!_textureMatrixStack.empty())
     {
@@ -458,13 +457,29 @@ void Director::initMatrixStack()
     }
 
     _modelViewMatrixStack.push(Mat4::IDENTITY);
-    _projectionMatrixStack.push(Mat4::IDENTITY);
+    std::stack<Mat4> projectionMatrixStack;
+    projectionMatrixStack.push(Mat4::IDENTITY);
+    _projectionMatrixStackList.push_back(projectionMatrixStack);
     _textureMatrixStack.push(Mat4::IDENTITY);
 }
 
 void Director::resetMatrixStack()
 {
     initMatrixStack();
+}
+
+void Director::initProjectionMatrixStack(size_t stackCount)
+{
+    _projectionMatrixStackList.clear();
+    std::stack<Mat4> projectionMatrixStack;
+    projectionMatrixStack.push(Mat4::IDENTITY);
+    for (size_t i = 0; i < stackCount; ++i)
+        _projectionMatrixStackList.push_back(projectionMatrixStack);
+}
+
+size_t Director::getProjectionMatrixStackSize()
+{
+    return _projectionMatrixStackList.size();
 }
 
 void Director::popMatrix(MATRIX_STACK_TYPE type)
@@ -475,7 +490,7 @@ void Director::popMatrix(MATRIX_STACK_TYPE type)
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION == type)
     {
-        _projectionMatrixStack.pop();
+        _projectionMatrixStackList[0].pop();
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_TEXTURE == type)
     {
@@ -487,6 +502,11 @@ void Director::popMatrix(MATRIX_STACK_TYPE type)
     }
 }
 
+void Director::popProjectionMatrix(size_t index)
+{
+    _projectionMatrixStackList[index].pop();
+}
+
 void Director::loadIdentityMatrix(MATRIX_STACK_TYPE type)
 {
     if(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW == type)
@@ -495,7 +515,7 @@ void Director::loadIdentityMatrix(MATRIX_STACK_TYPE type)
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION == type)
     {
-        _projectionMatrixStack.top() = Mat4::IDENTITY;
+        _projectionMatrixStackList[0].top() = Mat4::IDENTITY;
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_TEXTURE == type)
     {
@@ -507,6 +527,10 @@ void Director::loadIdentityMatrix(MATRIX_STACK_TYPE type)
     }
 }
 
+void Director::loadProjectionIdentityMatrix(size_t index)
+{
+    _projectionMatrixStackList[index].top() = Mat4::IDENTITY;
+}
 
 void Director::loadMatrix(MATRIX_STACK_TYPE type, const Mat4& mat)
 {
@@ -516,7 +540,7 @@ void Director::loadMatrix(MATRIX_STACK_TYPE type, const Mat4& mat)
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION == type)
     {
-        _projectionMatrixStack.top() = mat;
+        _projectionMatrixStackList[0].top() = mat;
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_TEXTURE == type)
     {
@@ -528,6 +552,11 @@ void Director::loadMatrix(MATRIX_STACK_TYPE type, const Mat4& mat)
     }
 }
 
+void Director::loadProjectionMatrix(const Mat4& mat, size_t index)
+{
+    _projectionMatrixStackList[index].top() = mat;
+}
+
 void Director::multiplyMatrix(MATRIX_STACK_TYPE type, const Mat4& mat)
 {
     if(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW == type)
@@ -536,7 +565,7 @@ void Director::multiplyMatrix(MATRIX_STACK_TYPE type, const Mat4& mat)
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION == type)
     {
-        _projectionMatrixStack.top() *= mat;
+        _projectionMatrixStackList[0].top() *= mat;
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_TEXTURE == type)
     {
@@ -548,6 +577,11 @@ void Director::multiplyMatrix(MATRIX_STACK_TYPE type, const Mat4& mat)
     }
 }
 
+void Director::multiplyProjectionMatrix(const Mat4& mat, size_t index)
+{
+    _projectionMatrixStackList[index].top() *= mat;
+}
+
 void Director::pushMatrix(MATRIX_STACK_TYPE type)
 {
     if(type == MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW)
@@ -556,7 +590,7 @@ void Director::pushMatrix(MATRIX_STACK_TYPE type)
     }
     else if(type == MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION)
     {
-        _projectionMatrixStack.push(_projectionMatrixStack.top());
+        _projectionMatrixStackList[0].push(_projectionMatrixStackList[0].top());
     }
     else if(type == MATRIX_STACK_TYPE::MATRIX_STACK_TEXTURE)
     {
@@ -568,6 +602,11 @@ void Director::pushMatrix(MATRIX_STACK_TYPE type)
     }
 }
 
+void Director::pushProjectionMatrix(size_t index)
+{
+    _projectionMatrixStackList[index].push(_projectionMatrixStackList[index].top());
+}
+
 const Mat4& Director::getMatrix(MATRIX_STACK_TYPE type) const
 {
     if(type == MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW)
@@ -576,7 +615,7 @@ const Mat4& Director::getMatrix(MATRIX_STACK_TYPE type) const
     }
     else if(type == MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION)
     {
-        return _projectionMatrixStack.top();
+        return _projectionMatrixStackList[0].top();
     }
     else if(type == MATRIX_STACK_TYPE::MATRIX_STACK_TEXTURE)
     {
@@ -585,6 +624,11 @@ const Mat4& Director::getMatrix(MATRIX_STACK_TYPE type) const
 
     CCASSERT(false, "unknown matrix stack type, will return modelview matrix instead");
     return  _modelViewMatrixStack.top();
+}
+
+const Mat4& Director::getProjectionMatrix(size_t index) const
+{
+    return _projectionMatrixStackList[index].top();
 }
 
 void Director::setProjection(Projection projection)
@@ -617,7 +661,7 @@ void Director::setProjection(Projection projection)
             Mat4 matrixPerspective, matrixLookup;
 
             // issue #1334
-            Mat4::createPerspective(60, (float)size.width/size.height, 10, zeye+size.height/2, &matrixPerspective);
+            Mat4::createPerspective(60, (GLfloat)size.width/size.height, 10, zeye+size.height/2, &matrixPerspective);
 
             Vec3 eye(size.width/2, size.height/2, zeye), center(size.width/2, size.height/2, 0.0f), up(0.0f, 1.0f, 0.0f);
             Mat4::createLookAt(eye, center, up, &matrixLookup);
@@ -639,11 +683,12 @@ void Director::setProjection(Projection projection)
     }
 
     _projection = projection;
+    GL::setProjectionMatrixDirty();
 
     _eventDispatcher->dispatchEvent(_eventProjectionChanged);
 }
 
-void Director::purgeCachedData()
+void Director::purgeCachedData(void)
 {
     FontFNT::purgeCachedData();
     FontAtlasCache::purgeCachedData();
@@ -660,14 +705,36 @@ void Director::purgeCachedData()
     FileUtils::getInstance()->purgeCachedEntries();
 }
 
-float Director::getZEye() const
+float Director::getZEye(void) const
 {
-    return (_winSizeInPoints.height / 1.154700538379252f);//(2 * tanf(M_PI/6))
+    return (_winSizeInPoints.height / 1.1566f);
+}
+
+void Director::setAlphaBlending(bool on)
+{
+    if (on)
+    {
+        GL::blendFunc(CC_BLEND_SRC, CC_BLEND_DST);
+    }
+    else
+    {
+        GL::blendFunc(GL_ONE, GL_ZERO);
+    }
+
+    CHECK_GL_ERROR_DEBUG();
+}
+
+void Director::setDepthTest(bool on)
+{
+    _renderer->setDepthTest(on);
 }
 
 void Director::setClearColor(const Color4F& clearColor)
 {
-    _clearColor = clearColor;
+    _renderer->setClearColor(clearColor);
+    auto defaultFBO = experimental::FrameBuffer::getOrCreateDefaultFBO(_openGLView);
+    
+    if(defaultFBO) defaultFBO->setClearColor(clearColor);
 }
 
 static void GLToClipTransform(Mat4 *transformOut)
@@ -729,7 +796,7 @@ Vec2 Director::convertToUI(const Vec2& glPoint)
     return Vec2(glSize.width * (clipCoord.x * 0.5f + 0.5f) * factor, glSize.height * (-clipCoord.y * 0.5f + 0.5f) * factor);
 }
 
-const Size& Director::getWinSize() const
+const Size& Director::getWinSize(void) const
 {
     return _winSizeInPoints;
 }
@@ -760,18 +827,6 @@ Vec2 Director::getVisibleOrigin() const
     else
     {
         return Vec2::ZERO;
-    }
-}
-
-Rect Director::getSafeAreaRect() const
-{
-    if (_openGLView)
-    {
-        return _openGLView->getSafeAreaRect();
-    }
-    else
-    {
-        return Rect::ZERO;
     }
 }
 
@@ -842,7 +897,7 @@ void Director::pushScene(Scene *scene)
     _nextScene = scene;
 }
 
-void Director::popScene()
+void Director::popScene(void)
 {
     CCASSERT(_runningScene != nullptr, "running scene should not null");
     
@@ -867,7 +922,7 @@ void Director::popScene()
     }
 }
 
-void Director::popToRootScene()
+void Director::popToRootScene(void)
 {
     popToSceneStackLevel(1);
 }
@@ -962,8 +1017,7 @@ void Director::reset()
     _runningScene = nullptr;
     _nextScene = nullptr;
 
-    if (_eventDispatcher)
-        _eventDispatcher->dispatchEvent(_eventResetDirector);
+    _eventDispatcher->dispatchEvent(_eventResetDirector);
     
     // cleanup scheduler
     getScheduler()->unscheduleAll();
@@ -995,12 +1049,7 @@ void Director::reset()
         }
     }
 #endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-    
-    while (!_scenesStack.empty())
-    {
-        _scenesStack.popBack();
-    }
-
+    _scenesStack.clear();
     
     stopAnimation();
     
@@ -1016,17 +1065,36 @@ void Director::reset()
     FontFreeType::shutdownFreeType();
     
     // purge all managed caches
+    
+#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#elif _MSC_VER >= 1400 //vs 2005 or higher
+#pragma warning (push)
+#pragma warning (disable: 4996)
+#endif
+//it will crash clang static analyzer so hide it if __clang_analyzer__ defined
+#ifndef __clang_analyzer__
+    DrawPrimitives::free();
+#endif
+#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+#elif _MSC_VER >= 1400 //vs 2005 or higher
+#pragma warning (pop)
+#endif
     AnimationCache::destroyInstance();
     SpriteFrameCache::destroyInstance();
+    GLProgramCache::destroyInstance();
+    GLProgramStateCache::destroyInstance();
     FileUtils::destroyInstance();
     AsyncTaskPool::destroyInstance();
-    backend::ProgramCache::destroyInstance();
-    
     
     // cocos2d-x specific data structures
     UserDefault::destroyInstance();
-    resetMatrixStack();
+    
+    GL::invalidateStateCache();
 
+    RenderState::finalize();
+    
     destroyTextureCache();
 }
 
@@ -1034,7 +1102,7 @@ void Director::purgeDirector()
 {
     reset();
 
-//    CHECK_GL_ERROR_DEBUG();
+    CHECK_GL_ERROR_DEBUG();
     
     // OpenGL view
     if (_openGLView)
@@ -1051,6 +1119,9 @@ void Director::restartDirector()
 {
     reset();
     
+    // RenderState need to be reinitialized
+    RenderState::initialize();
+
     // Texture cache need to be reinitialized
     initTextureCache();
     
@@ -1072,8 +1143,6 @@ void Director::restartDirector()
 
 void Director::setNextScene()
 {
-    _eventDispatcher->dispatchEvent(_beforeSetNextScene);
-
     bool runningIsTransition = dynamic_cast<TransitionScene*>(_runningScene) != nullptr;
     bool newIsTransition = dynamic_cast<TransitionScene*>(_nextScene) != nullptr;
 
@@ -1107,8 +1176,6 @@ void Director::setNextScene()
         _runningScene->onEnter();
         _runningScene->onEnterTransitionDidFinish();
     }
-    
-    _eventDispatcher->dispatchEvent(_afterSetNextScene);
 }
 
 void Director::pause()
@@ -1121,7 +1188,7 @@ void Director::pause()
     _oldAnimationInterval = _animationInterval;
 
     // when paused, don't consume CPU
-    setAnimationInterval(1 / 4.0, SetIntervalReason::BY_DIRECTOR_PAUSE);
+    setAnimationInterval(1 / 4.0);
     _paused = true;
 }
 
@@ -1132,28 +1199,13 @@ void Director::resume()
         return;
     }
 
-    setAnimationInterval(_oldAnimationInterval, SetIntervalReason::BY_ENGINE);
+    setAnimationInterval(_oldAnimationInterval);
 
     _paused = false;
     _deltaTime = 0;
     // fix issue #3509, skip one fps to avoid incorrect time calculation.
     setNextDeltaTimeZero(true);
 }
-
-void Director::updateFrameRate()
-{
-//    static const float FPS_FILTER = 0.1f;
-//    static float prevDeltaTime = 0.016f; // 60FPS
-//    
-//    float dt = _deltaTime * FPS_FILTER + (1.0f-FPS_FILTER) * prevDeltaTime;
-//    prevDeltaTime = dt;
-//    _frameRate = 1.0f/dt;
-
-    // Frame rate should be the real value of current frame.
-    _frameRate = 1.0f / _deltaTime;
-}
-
-#if !CC_STRIP_FPS
 
 // display the FPS using a LabelAtlas
 // updates the FPS every frame
@@ -1167,23 +1219,27 @@ void Director::showStats()
 
     static unsigned long prevCalls = 0;
     static unsigned long prevVerts = 0;
+    static float prevDeltaTime  = 0.016f; // 60FPS
+    static const float FPS_FILTER = 0.10f;
 
-    ++_frames;
     _accumDt += _deltaTime;
     
     if (_displayStats && _FPSLabel && _drawnBatchesLabel && _drawnVerticesLabel)
     {
-        char buffer[30] = {0};
+        char buffer[30];
+
+        float dt = _deltaTime * FPS_FILTER + (1-FPS_FILTER) * prevDeltaTime;
+        prevDeltaTime = dt;
+        _frameRate = 1/dt;
 
         // Probably we don't need this anymore since
         // the framerate is using a low-pass filter
         // to make the FPS stable
         if (_accumDt > CC_DIRECTOR_STATS_INTERVAL)
         {
-            sprintf(buffer, "%.1f / %.3f", _frames / _accumDt, _secondsPerFrame);
+            sprintf(buffer, "%.1f / %.3f", _frameRate, _secondsPerFrame);
             _FPSLabel->setString(buffer);
             _accumDt = 0;
-            _frames = 0;
         }
 
         auto currentCalls = (unsigned long)_renderer->getDrawnBatches();
@@ -1212,7 +1268,11 @@ void Director::calculateMPF()
     static float prevSecondsPerFrame = 0;
     static const float MPF_FILTER = 0.10f;
 
-    _secondsPerFrame = _deltaTime * MPF_FILTER + (1-MPF_FILTER) * prevSecondsPerFrame;
+    auto now = std::chrono::steady_clock::now();
+    
+    _secondsPerFrame = std::chrono::duration_cast<std::chrono::microseconds>(now - _lastUpdate).count() / 1000000.0f;
+
+    _secondsPerFrame = _secondsPerFrame * MPF_FILTER + (1-MPF_FILTER) * prevSecondsPerFrame;
     prevSecondsPerFrame = _secondsPerFrame;
 }
 
@@ -1243,17 +1303,15 @@ void Director::createStatsLabel()
         FileUtils::getInstance()->purgeCachedEntries();
     }
 
-    backend::PixelFormat currentFormat = Texture2D::getDefaultAlphaPixelFormat();
-    Texture2D::setDefaultAlphaPixelFormat(backend::PixelFormat::RGBA4444);
+    Texture2D::PixelFormat currentFormat = Texture2D::getDefaultAlphaPixelFormat();
+    Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
     unsigned char *data = nullptr;
     ssize_t dataLength = 0;
     getFPSImageData(&data, &dataLength);
 
     Image* image = new (std::nothrow) Image();
-    bool isOK = image ? image->initWithImageData(data, dataLength) : false;
+    bool isOK = image->initWithImageData(data, dataLength);
     if (! isOK) {
-        if(image)
-            delete image;
         CCLOGERROR("%s", "Fails: init fps_images");
         return;
     }
@@ -1292,13 +1350,11 @@ void Director::createStatsLabel()
 
     Texture2D::setDefaultAlphaPixelFormat(currentFormat);
 
-    const int height_spacing = (int)(22 / CC_CONTENT_SCALE_FACTOR());
-    _drawnVerticesLabel->setPosition(Vec2(0, height_spacing*2.0f) + CC_DIRECTOR_STATS_POSITION);
-    _drawnBatchesLabel->setPosition(Vec2(0, height_spacing*1.0f) + CC_DIRECTOR_STATS_POSITION);
-    _FPSLabel->setPosition(Vec2(0, height_spacing*0.0f)+CC_DIRECTOR_STATS_POSITION);
+    const int height_spacing = 22 / CC_CONTENT_SCALE_FACTOR();
+    _drawnVerticesLabel->setPosition(Vec2(0, height_spacing*2) + CC_DIRECTOR_STATS_POSITION);
+    _drawnBatchesLabel->setPosition(Vec2(0, height_spacing*1) + CC_DIRECTOR_STATS_POSITION);
+    _FPSLabel->setPosition(Vec2(0, height_spacing*0)+CC_DIRECTOR_STATS_POSITION);
 }
-
-#endif // #if !CC_STRIP_FPS
 
 void Director::setContentScaleFactor(float scaleFactor)
 {
@@ -1358,11 +1414,6 @@ void Director::setEventDispatcher(EventDispatcher* dispatcher)
 
 void Director::startAnimation()
 {
-    startAnimation(SetIntervalReason::BY_ENGINE);
-}
-
-void Director::startAnimation(SetIntervalReason reason)
-{
     _lastUpdate = std::chrono::steady_clock::now();
 
     _invalid = false;
@@ -1396,13 +1447,6 @@ void Director::mainLoop()
     }
 }
 
-void Director::mainLoop(float dt)
-{
-    _deltaTime = dt;
-    _deltaTimePassedByCaller = true;
-    mainLoop();
-}
-
 void Director::stopAnimation()
 {
     _invalid = true;
@@ -1410,17 +1454,12 @@ void Director::stopAnimation()
 
 void Director::setAnimationInterval(float interval)
 {
-    setAnimationInterval(interval, SetIntervalReason::BY_GAME);
-}
-
-void Director::setAnimationInterval(float interval, SetIntervalReason reason)
-{
     _animationInterval = interval;
     if (! _invalid)
     {
         stopAnimation();
-        startAnimation(reason);
-    }
+        startAnimation();
+    }    
 }
 
 NS_CC_END

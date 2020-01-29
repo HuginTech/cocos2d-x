@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2011-2012 cocos2d-x.org
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -31,7 +30,7 @@ extern "C" {
 #include "lua.h"
 }
 
-#include "scripting/deprecated/CCArray.h"
+#include "deprecated/CCArray.h"
 
 #include "scripting/lua-bindings/manual/CCLuaValue.h"
 
@@ -55,7 +54,7 @@ public:
     /**
      * Create a LuaStack object, it will new a lua_State.
      */
-    static LuaStack *create();
+    static LuaStack *create(void);
     /**
      * Create a LuaStack object with the existed lua_State.
      */
@@ -69,7 +68,7 @@ public:
      *
      * @return A pointer to the lua_State that the script module is attached to.
      */
-    lua_State* getLuaState() {
+    lua_State* getLuaState(void) {
         return _state;
     }
     
@@ -149,7 +148,7 @@ public:
     /**
      * Set the stack top index 0.
      */
-    virtual void clean();
+    virtual void clean(void);
     
     /**
      * Pushes a integer number with value intValue onto the stack.
@@ -197,7 +196,7 @@ public:
     /**
      * Pushes a nil value onto the stack.
      */
-    virtual void pushNil();
+    virtual void pushNil(void);
     
     /**
      * Pushes a Ref object onto the stack.
@@ -339,7 +338,7 @@ public:
     int luaLoadChunksFromZIP(lua_State *L);
     
 protected:
-    LuaStack()
+    LuaStack(void)
     : _state(nullptr)
     , _callFromLua(0)
     , _xxteaEnabled(false)
@@ -350,7 +349,7 @@ protected:
     {
     }
     
-    bool init();
+    bool init(void);
     bool initWithLuaState(lua_State *L);
     
     lua_State *_state;

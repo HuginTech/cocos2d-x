@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,12 +22,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#pragma once
+
+#ifndef __CC_APPLICATION_IOS_H__
+#define __CC_APPLICATION_IOS_H__
+
+#include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 
 #include "platform/CCCommon.h"
 #include "platform/CCApplicationProtocol.h"
 
 NS_CC_BEGIN
+
+class Rect;
 
 class CC_DLL Application : public ApplicationProtocol
 {
@@ -53,6 +59,9 @@ public:
     @return Current application instance pointer.
     */
     static Application* getInstance();
+    
+    /** @deprecated Use getInstance() instead */
+    CC_DEPRECATED_ATTRIBUTE static Application* sharedApplication();
     
     /**
      @brief    Callback by Director for limit FPS.
@@ -101,3 +110,7 @@ protected:
 };
 
 NS_CC_END
+
+#endif // CC_PLATFORM_IOS
+
+#endif    // end of __CC_APPLICATION_IOS_H__

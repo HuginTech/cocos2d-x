@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2015-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2015-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -39,7 +38,7 @@
 #include "base/CCRef.h"
 
 NS_CC_BEGIN
-
+    namespace experimental{
 #define MAX_AUDIOINSTANCES 32
 
 class CC_DLL AudioEngineImpl : public cocos2d::Ref
@@ -102,7 +101,7 @@ private:
     FMOD::System* pSystem;
     
 };
-
+}
 NS_CC_END
 #endif // __AUDIO_ENGINE_LINUX_H_
 #endif

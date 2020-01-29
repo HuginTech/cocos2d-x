@@ -2,8 +2,7 @@
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -110,6 +109,10 @@ public:
      * @return Returns the tile (Sprite) at a given a tile coordinate.
      */
     Sprite* getTileAt(const Vec2& tileCoordinate);
+    /**
+     * @js NA
+     */
+    CC_DEPRECATED_ATTRIBUTE Sprite* tileAt(const Vec2& tileCoordinate) { return getTileAt(tileCoordinate); };
     
     /** Returns the tile gid at a given tile coordinate. It also returns the tile flags.
      * This method requires the tile map has not been previously released (eg. don't call [layer releaseMap]).
@@ -119,6 +122,12 @@ public:
      * @return Returns the tile gid at a given tile coordinate. It also returns the tile flags.
      */
 	uint32_t getTileGIDAt(const Vec2& tileCoordinate, TMXTileFlags* flags = nullptr);
+    /**
+     * @js NA
+     */
+    CC_DEPRECATED_ATTRIBUTE uint32_t tileGIDAt(const Vec2& tileCoordinate, TMXTileFlags* flags = nullptr){
+        return getTileGIDAt(tileCoordinate, flags);
+    }
 
     /** Sets the tile gid (gid = tile global id) at a given tile coordinate.
      * The Tile GID can be obtained by using the method "tileGIDAt" or by using the TMX editor -> Tileset Mgr +1.
@@ -153,6 +162,10 @@ public:
      * @return The position in points of a given tile coordinate.
      */
 	Vec2 getPositionAt(const Vec2& tileCoordinate);
+    /**
+    * @js NA
+    */
+    CC_DEPRECATED_ATTRIBUTE Vec2 positionAt(const Vec2& tileCoordinate) { return getPositionAt(tileCoordinate); };
 
     /** Return the value for the specific property name.
      *
@@ -160,6 +173,10 @@ public:
      * @return Return the value for the specific property name.
      */
 	Value getProperty(const std::string& propertyName) const;
+    /**
+    * @js NA
+    */
+    CC_DEPRECATED_ATTRIBUTE Value propertyNamed(const std::string& propertyName) const { return getProperty(propertyName); };
 
     /** Creates the tiles. */
     void setupTiles();

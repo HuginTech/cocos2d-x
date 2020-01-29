@@ -1,6 +1,5 @@
 /****************************************************************************
  Copyright (c) 2013 cocos2d-x.org
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos2d-x.org
 
@@ -27,7 +26,7 @@
 #include "../testResource.h"
 #include <stdio.h>
 #include <stdlib.h>
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_WIN32)
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WIN32) && (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -55,7 +54,7 @@ BaseTestConsole::BaseTestConsole()
 {
 }
 
-BaseTestConsole::~BaseTestConsole()
+BaseTestConsole::~BaseTestConsole(void)
 {
 }
 
@@ -73,7 +72,7 @@ std::string BaseTestConsole::title() const
 ConsoleCustomCommand::ConsoleCustomCommand()
 {
     _console = Director::getInstance()->getConsole();
-    static Console::Command commands[] = {
+    static struct Console::Command commands[] = {
         {"hello", "This is just a user generated command", [](int fd, const std::string& args) {
             const char msg[] = "how are you?\nArguments passed: ";
             send(fd, msg, sizeof(msg),0);
@@ -113,11 +112,12 @@ std::string ConsoleCustomCommand::subtitle() const
 ConsoleUploadFile::ConsoleUploadFile()
 {
     std::srand ((unsigned)time(nullptr));
-    int id = rand()%100000;
+    int _id = rand()%100000;
     char buf[32];
-    sprintf(buf, "%d", id);
-    _targetFileName = std::string("grossini") + buf + ".png";
+    sprintf(buf, "%d", _id);
+    _target_file_name = std::string("grossini") + buf;
 
+    _src_file_path = FileUtils::getInstance()->fullPathForFilename(s_pathGrossini);
     std::thread t = std::thread( &ConsoleUploadFile::uploadFile, this);
     t.detach();
 }
@@ -135,14 +135,6 @@ ConsoleUploadFile::~ConsoleUploadFile()
 
 void ConsoleUploadFile::uploadFile()
 {
-    Data srcFileData = FileUtils::getInstance()->getDataFromFile(s_pathGrossini);
-    if (srcFileData.isNull())
-    {
-        CCLOGERROR("ConsoleUploadFile: could not open file %s", s_pathGrossini);
-    }
-
-    std::string targetFileName = _targetFileName;
-
     struct addrinfo hints;
     struct addrinfo *result, *rp;
     int sfd, s;
@@ -150,26 +142,20 @@ void ConsoleUploadFile::uploadFile()
     /* Obtain address(es) matching host/port */
 
     memset(&hints, 0, sizeof(struct addrinfo));
-    hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
+    hints.ai_family = AF_INET;    /* Allow IPv4 or IPv6 */
     hints.ai_socktype = SOCK_STREAM; /* stream socket */
     hints.ai_flags = 0;
     hints.ai_protocol = 0;          /* Any protocol */
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2),&wsaData);
 #endif
 
-    std::string nodeName;
-    if (Director::getInstance()->getConsole()->isIpv6Server())
-        nodeName = "::1";
-    else
-        nodeName = "localhost";
-
-    s = getaddrinfo(nodeName.c_str(), "5678", &hints, &result);
+    s = getaddrinfo("localhost", "5678", &hints, &result);
     if (s != 0) 
     {
-        CCLOG("ConsoleUploadFile: getaddrinfo error");
+       CCLOG("ConsoleUploadFile: getaddrinfo error");
         return;
     }
 
@@ -187,7 +173,7 @@ void ConsoleUploadFile::uploadFile()
         if (connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1)
             break;                  /* Success */
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
         closesocket(sfd);
 #else
         close(sfd);
@@ -201,45 +187,38 @@ void ConsoleUploadFile::uploadFile()
 
     freeaddrinfo(result);           /* No longer needed */
 
+    
+    FILE* fp = fopen(_src_file_path.c_str(), "rb");
+    if(!fp)
+    {
+        CCLOG("ConsoleUploadFile: could not open file %s", _src_file_path.c_str());
+        return;
+    }
+    
     std::string tmp = "upload";
 
     tmp += " ";
-    tmp += targetFileName;
+    tmp += _target_file_name;
     tmp += " ";
-    char cmd[512] = {0};
+    char cmd[512];
 
     strcpy(cmd, tmp.c_str());
     send(sfd,cmd,strlen(cmd),0);
-
-    size_t offset = 0;
-    auto readBuffer = [&offset](char* buf, size_t bytes, const Data& data) -> ssize_t {
-        if (offset >= data.getSize())
-            return 0;
-        ssize_t actualReadBytes = (offset + bytes) > data.getSize() ? (data.getSize() - offset) : bytes;
-        if (actualReadBytes > 0)
-        {
-            memcpy(buf, data.getBytes() + offset, actualReadBytes);
-            offset += actualReadBytes;
-        }
-        return actualReadBytes;
-    };
-
     while(true)
     {
         char buffer[3], *out;
         unsigned char *in;
         in = (unsigned char *)buffer;
         // copy the file into the buffer:
-        ssize_t ret = readBuffer(buffer, 3, srcFileData);
+        size_t ret = fread(buffer, 1, 3, fp);
         if (ret > 0)
         {
-            int len = base64Encode(in, (unsigned int)ret, &out);
-            send(sfd, out, len, 0);
+            base64Encode(in, (unsigned int)ret, &out);
+            send(sfd, out, 4, 0);
             free(out);
             if(ret < 3)
             {
                 //eof
-                log("Reach the end, total send: %d bytes", (int)offset);
                 break;
             }
         }
@@ -251,16 +230,16 @@ void ConsoleUploadFile::uploadFile()
     }
     char l = '\n';
     send(sfd, &l, 1, 0);
-
-    // Sleep 1s to wait server to receive all data.
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-    closesocket(sfd);
-    WSACleanup();
+    // terminate
+    fclose (fp);
+   
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+        closesocket(sfd);
+        WSACleanup();
 #else
-    close(sfd);
+        close(sfd);
 #endif
+    return;
 }
 
 std::string ConsoleUploadFile::title() const
@@ -274,6 +253,6 @@ std::string ConsoleUploadFile::subtitle() const
     
     std::string writablePath = sharedFileUtils->getWritablePath();
 
-    return "file uploaded to:" + writablePath + _targetFileName;
+    return "file uploaded to:" + writablePath + _target_file_name;
 }
 

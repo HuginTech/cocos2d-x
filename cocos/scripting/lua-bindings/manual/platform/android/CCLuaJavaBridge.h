@@ -1,32 +1,7 @@
-/****************************************************************************
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
- http://www.cocos2d-x.org
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
 #ifndef COCOS2DX_SCRIPT_LUA_COCOS2DX_SUPPORT_PLATFORM_ANDROID_LUA_JAVA_BRIDGE_H
 #define COCOS2DX_SCRIPT_LUA_COCOS2DX_SUPPORT_PLATFORM_ANDROID_LUA_JAVA_BRIDGE_H
 
 #include <jni.h>
-#include <string.h>
 #include <string>
 #include <vector>
 
@@ -158,17 +133,17 @@ private:
             memset(&m_ret, 0, sizeof(m_ret));
         	m_valid = validateMethodSig() && getMethodInfo();
         }
-    	~CallInfo();
+    	~CallInfo(void);
 
-        bool isValid() {
+        bool isValid(void) {
         	return m_valid;
         }
 
-        int getErrorCode() {
+        int getErrorCode(void) {
         	return m_error;
         }
 
-        JNIEnv *getEnv() {
+        JNIEnv *getEnv(void) {
         	return m_env;
         }
 
@@ -176,7 +151,7 @@ private:
         	return m_argumentsType.at(index);
         }
 
-        bool execute();
+        bool execute(void);
         bool executeWithArgs(jvalue *args);
         int pushReturnValue(lua_State *L);
 
@@ -199,8 +174,8 @@ private:
         jclass      m_classID;
         jmethodID   m_methodID;
 
-        bool validateMethodSig();
-        bool getMethodInfo();
+        bool validateMethodSig(void);
+        bool getMethodInfo(void);
         ValueType checkType(const string& sig, size_t *pos);
     };
 

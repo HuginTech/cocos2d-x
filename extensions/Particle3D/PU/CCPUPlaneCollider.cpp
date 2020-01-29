@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (C) 2013 Henry van Merode. All rights reserved.
- Copyright (c) 2015-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2015-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -33,7 +32,7 @@ NS_CC_BEGIN
 const Vec3 PUPlaneCollider::DEFAULT_NORMAL(0, 0, 0);
 
 //-----------------------------------------------------------------------
-PUPlaneCollider::PUPlaneCollider() : 
+PUPlaneCollider::PUPlaneCollider(void) : 
     PUBaseCollider(),
     _normal(DEFAULT_NORMAL)
 {
@@ -43,7 +42,7 @@ PUPlaneCollider::~PUPlaneCollider( void )
 
 }
 //-----------------------------------------------------------------------
-const Vec3 PUPlaneCollider::getNormal() const
+const Vec3 PUPlaneCollider::getNormal(void) const
 {
     return _normal;
 }

@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2014-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2014-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -72,6 +71,8 @@ namespace {
         
     private:
         TextButton()
+        : _enabled(true)
+        , _onTriggered(nullptr)
         {
             auto listener = EventListenerTouchOneByOne::create();
             listener->setSwallowTouches(true);
@@ -126,9 +127,9 @@ namespace {
             runAction(action);
         }
         
-        std::function<void(TextButton*)> _onTriggered = nullptr;
+        std::function<void(TextButton*)> _onTriggered;
         
-        bool _enabled = true;
+        bool _enabled;
     };
     
     class SliderEx : public Slider

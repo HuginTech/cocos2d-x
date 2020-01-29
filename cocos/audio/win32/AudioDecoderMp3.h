@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2016-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -29,7 +28,7 @@
 
 struct mpg123_handle_struct;
 
-namespace cocos2d {
+namespace cocos2d { namespace experimental {
 
 /**
  * @brief The class for decoding compressed audio file to PCM buffer.
@@ -83,4 +82,4 @@ protected:
     friend class AudioDecoderManager;
 };
 
-} // namespace cocos2d {
+}} // namespace cocos2d { namespace experimental {

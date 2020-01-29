@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2013      cocos2d-x.org
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -23,11 +22,12 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
 #include "AppDelegate.h"
 
 #include "cocos2d.h"
 #include "controller.h"
-// #include "editor-support/cocostudio/CocoStudio.h"
+#include "editor-support/cocostudio/CocoStudio.h"
 #include "extensions/cocos-ext.h"
 
 USING_NS_CC;
@@ -40,8 +40,7 @@ AppDelegate::AppDelegate()
 AppDelegate::~AppDelegate()
 {
     //SimpleAudioEngine::end();
-    //TODO: minggo
-    // cocostudio::ArmatureDataManager::destroyInstance();
+    cocostudio::ArmatureDataManager::destroyInstance();
 }
 
 // if you want a different context, modify the value of glContextAttrs
@@ -49,7 +48,7 @@ AppDelegate::~AppDelegate()
 void AppDelegate::initGLContextAttrs()
 {
     // set OpenGL context attributes: red,green,blue,alpha,depth,stencil
-    GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8, 0};
+    GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8};
 
     GLView::setGLContextAttrs(glContextAttrs);
 }
@@ -60,15 +59,15 @@ bool AppDelegate::applicationDidFinishLaunching()
     // FIXME:: This should be loaded before the Director is initialized,
     // FIXME:: but at this point, the director is already initialized
     Configuration::getInstance()->loadConfigFile("configs/config-example.plist");
-    
+
     // initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::create("Cpp Tests");   
+        glview = GLViewImpl::create("Cpp Tests");
         director->setOpenGLView(glview);
     }
-    
+
     director->setDisplayStats(true);
     director->setAnimationInterval(1.0f / 60);
 
@@ -98,13 +97,22 @@ bool AppDelegate::applicationDidFinishLaunching()
     
     fileUtils->setSearchPaths(searchPaths);
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
+    // a bug in DirectX 11 level9-x on the device prevents ResolutionPolicy::NO_BORDER from working correctly
+    glview->setDesignResolutionSize(designSize.width, designSize.height, ResolutionPolicy::SHOW_ALL);
+#else
     glview->setDesignResolutionSize(designSize.width, designSize.height, ResolutionPolicy::NO_BORDER);
+#endif
 
     // Enable Remote Console
     auto console = director->getConsole();
     console->listenOnTCP(5678);
 
     _testController = TestController::getInstance();
+
+    // To enable built-in VR, use this line.
+//    auto vrImpl = new VRGenericRenderer;
+//    glview->setVR(vrImpl);
 
     return true;
 }
@@ -114,7 +122,7 @@ void AppDelegate::applicationDidEnterBackground()
 {
     if (_testController)
     {
-//        _testController->onEnterBackground();
+        _testController->onEnterBackground();
     }
     
     Director::getInstance()->stopAnimation();
@@ -125,7 +133,7 @@ void AppDelegate::applicationWillEnterForeground()
 {
     if (_testController)
     {
-//        _testController->onEnterForeground();
+        _testController->onEnterForeground();
     }
     
     Director::getInstance()->startAnimation();

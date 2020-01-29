@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (C) 2013 Henry van Merode. All rights reserved.
- Copyright (c) 2015-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2015-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -26,7 +25,6 @@
 
 #include "CCPUMaterialTranslator.h"
 #include "extensions/Particle3D/PU/CCPUMaterialManager.h"
-#include "renderer/backend/Types.h"
 
 NS_CC_BEGIN
 
@@ -281,8 +279,8 @@ void PUMaterialPassTranslator::translate( PUScriptCompiler* compiler, PUAbstract
                     {
                         if (val == matToken[TOKEN_MAT_BLEND_ADD])
                         {
-                            material->blendFunc.src = backend::BlendFactor::ONE;
-                            material->blendFunc.dst= backend::BlendFactor::ONE;
+                            material->blendFunc.src = GL_ONE;
+                            material->blendFunc.dst= GL_ONE;
                         }
                         else if (val == matToken[TOKEN_MAT_BLEND_ALPHA])
                         {
@@ -290,26 +288,26 @@ void PUMaterialPassTranslator::translate( PUScriptCompiler* compiler, PUAbstract
                         }
                         else if (val == matToken[TOKEN_MAT_BLEND_COLOR])
                         {
-                            material->blendFunc.src = backend::BlendFactor::SRC_COLOR;
-                            material->blendFunc.dst= backend::BlendFactor::ONE_MINUS_SRC_COLOR;
+                            material->blendFunc.src = GL_SRC_COLOR;
+                            material->blendFunc.dst= GL_ONE_MINUS_SRC_COLOR;
                         }
                         else if (val == matToken[TOKEN_MAT_BLEND_MODULATE])
                         {
-                            material->blendFunc.src = backend::BlendFactor::DST_COLOR;
-                            material->blendFunc.dst= backend::BlendFactor::ZERO;
+                            material->blendFunc.src = GL_DST_COLOR;
+                            material->blendFunc.dst= GL_ZERO;
                         }
                         else if (val == matToken[TOKEN_MAT_BLEND_REPLACE])
                         {
-                            material->blendFunc.src = backend::BlendFactor::ONE;
-                            material->blendFunc.dst= backend::BlendFactor::ZERO;
+                            material->blendFunc.src = GL_ONE;
+                            material->blendFunc.dst= GL_ZERO;
                         }
                         else if (val == matToken[TOKEN_MAT_BLEND_SRC_COLOR])
                         {
-                            material->blendFunc.src = backend::BlendFactor::SRC_COLOR;
+                            material->blendFunc.src = GL_SRC_COLOR;
                         }
                         else if (val == matToken[TOKEN_MAT_BLEND_DEST_COLOR])
                         {
-                            material->blendFunc.src = backend::BlendFactor::DST_COLOR;
+                            material->blendFunc.src = GL_DST_COLOR;
                         }
                     }
 
@@ -319,19 +317,19 @@ void PUMaterialPassTranslator::translate( PUScriptCompiler* compiler, PUAbstract
                         {
                             if (val == matToken[TOKEN_MAT_BLEND_ONE])
                             {
-                                material->blendFunc.dst = backend::BlendFactor::ONE;
+                                material->blendFunc.dst = GL_ONE;
                             }
                             else if (val == matToken[TOKEN_MAT_BLEND_ZERO])
                             {
-                                material->blendFunc.dst = backend::BlendFactor::ZERO;
+                                material->blendFunc.dst = GL_ZERO;
                             }
                             else if (val == matToken[TOKEN_MAT_BLEND_SRC_COLOR])
                             {
-                                material->blendFunc.dst = backend::BlendFactor::SRC_COLOR;
+                                material->blendFunc.dst = GL_SRC_COLOR;
                             }
                             else if (val == matToken[TOKEN_MAT_BLEND_DEST_COLOR])
                             {
-                                material->blendFunc.dst = backend::BlendFactor::DST_COLOR;
+                                material->blendFunc.dst = GL_DST_COLOR;
                             }
                         }
                     }
@@ -421,15 +419,15 @@ void PUMaterialTextureUnitTranslator::translate( PUScriptCompiler* compiler, PUA
                     {
                         if (val == matToken[TOKEN_MAT_TEXTURE_CLAMP])
                         {
-                            material->wrapMode = backend::SamplerAddressMode::CLAMP_TO_EDGE;
+                            material->wrapMode = GL_CLAMP_TO_EDGE;
                         }
                         else if (val == matToken[TOKEN_MAT_TEXTURE_REPEAT])
                         {
-                            material->wrapMode = backend::SamplerAddressMode::REPEAT;
+                            material->wrapMode = GL_REPEAT;
                         }
                         else if (val == matToken[TOKEN_MAT_TEXTURE_MIRROR])
                         {
-                            material->wrapMode = backend::SamplerAddressMode::MIRROR_REPEAT;//GL_MIRROR_CLAMP_EXT;
+                            material->wrapMode = GL_MIRRORED_REPEAT;//GL_MIRROR_CLAMP_EXT;
                         }
                     }
                 }

@@ -1,8 +1,7 @@
 /****************************************************************************
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -78,7 +77,7 @@ public:
      * @js NA
      * @lua NA
      */
-    virtual unsigned char getDisplayedOpacity() const = 0;
+    virtual GLubyte getDisplayedOpacity() const = 0;
     /**
      * Returns the opacity.
      *
@@ -89,7 +88,7 @@ public:
      * @js NA
      * @lua NA
      */
-    virtual unsigned char getOpacity() const = 0;
+    virtual GLubyte getOpacity() const = 0;
     
     /**
      * Changes the opacity.
@@ -98,7 +97,7 @@ public:
      * @js NA
      * @lua NA
      */
-    virtual void setOpacity(unsigned char opacity) = 0;
+    virtual void setOpacity(GLubyte opacity) = 0;
     
     // optional
     
@@ -160,7 +159,7 @@ public:
      * @js NA
      * @lua NA
      */
-    virtual void updateDisplayedOpacity(unsigned char opacity) = 0;
+    virtual void updateDisplayedOpacity(GLubyte opacity) = 0;
 };
 
 /**
@@ -177,7 +176,7 @@ public:
      * Sets the source blending function.
      *
      * @param blendFunc A structure with source and destination factor to specify pixel arithmetic, 
-     *                  e.g. {BlendFactor::ONE, BlendFactor::ONE}, {BlendFactor::SRC_ALPHA, BlendFactor::ONE_MINUS_SRC_ALPHA}.
+     *                  e.g. {GL_ONE, GL_ONE}, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}.
      * @js NA
      * @lua NA
      */
@@ -197,9 +196,9 @@ public:
  * Node objects that uses a Texture2D to render the images.
  * The texture can have a blending function.
  * If the texture has alpha premultiplied the default blending function is:
- *   src=BlendFactor::ONE dst= BlendFactor::ONE_MINUS_SRC_ALPHA
+ *   src=GL_ONE dst= GL_ONE_MINUS_SRC_ALPHA
  * else
- *   src=BlendFactor::SRC_ALPHA dst= BlendFactor::ONE_MINUS_SRC_ALPHA
+ *   src=GL_SRC_ALPHA dst= GL_ONE_MINUS_SRC_ALPHA
  * But you can change the blending function at any time.
  */
 class CC_DLL TextureProtocol : public BlendProtocol
@@ -236,7 +235,7 @@ public:
     /**
      * Sets a new label using a string
      *
-     * @param label The name of the new label.
+     * @param label A null terminated string
      * @js NA
      * @lua NA
      */

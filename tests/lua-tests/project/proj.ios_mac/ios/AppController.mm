@@ -1,6 +1,5 @@
 /****************************************************************************
  Copyright (c) 2010 cocos2d-x.org
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos2d-x.org
 
@@ -52,8 +51,8 @@ static AppDelegate s_sharedApplication;
                                          depthFormat: cocos2d::GLViewImpl::_depthFormat
                                   preserveBackbuffer: NO
                                           sharegroup: nil
-                                       multiSampling: cocos2d::GLViewImpl::_multisamplingCount > 0 ? YES : NO
-                                     numberOfSamples: cocos2d::GLViewImpl::_multisamplingCount ];
+                                       multiSampling: NO
+                                     numberOfSamples: 0 ];
 
 #if !defined(CC_TARGET_OS_TVOS)
     [eaglView setMultipleTouchEnabled:YES];
@@ -84,11 +83,6 @@ static AppDelegate s_sharedApplication;
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
 #endif
 
-    //Launching the app with the arguments -NSAllowsDefaultLineBreakStrategy NO to force back to the old behavior.
-    if ( [[UIDevice currentDevice].systemVersion floatValue] >= 13.0f)
-    {
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"NSAllowsDefaultLineBreakStrategy"];
-    }
 
     // IMPORTANT: Setting the GLView should be done after creating the RootViewController
     cocos2d::GLView *glview = cocos2d::GLViewImpl::createWithEAGLView(eaglView);

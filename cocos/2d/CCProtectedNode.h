@@ -3,8 +3,7 @@
  Copyright (c) 2009      Valentin Milea
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2011      Zynga Inc.
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -51,7 +50,7 @@ public:
      * Creates a ProtectedNode with no argument.
      *@return A instance of ProtectedNode.
      */
-    static ProtectedNode * create();
+    static ProtectedNode * create(void);
     
     /// @{
     /// @name Children and Parent
@@ -177,7 +176,7 @@ public:
      */
     virtual void onExitTransitionDidStart() override;
 
-    virtual void updateDisplayedOpacity(uint8_t parentOpacity) override;
+    virtual void updateDisplayedOpacity(GLubyte parentOpacity) override;
     virtual void updateDisplayedColor(const Color3B& parentColor) override;
     virtual void disableCascadeColor() override;
     virtual void disableCascadeOpacity()override;

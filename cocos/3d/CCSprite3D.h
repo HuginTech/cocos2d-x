@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2014-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2014-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -33,6 +32,7 @@
 #include "base/CCProtocols.h"
 #include "2d/CCNode.h"
 #include "renderer/CCMeshCommand.h"
+#include "renderer/CCGLProgramState.h"
 #include "3d/CCSkeleton3D.h" // need to include for lua-binding
 #include "3d/CCAABB.h"
 #include "3d/CCBundle3DData.h"
@@ -103,6 +103,9 @@ public:
     /** get mesh count */
     ssize_t getMeshCount() const { return _meshes.size(); }
     
+    /**get skin*/
+    CC_DEPRECATED_ATTRIBUTE MeshSkin* getSkin() const;
+    
     Skeleton3D* getSkeleton() const { return _skeleton; }
     
     /**get AttachNode by bone name, return nullptr if not exist*/
@@ -119,9 +122,11 @@ public:
     virtual const BlendFunc &getBlendFunc() const override;
     
     // overrides
-    /** set ProgramState, you should bind attributes by yourself */
-    virtual void setProgramState(backend::ProgramState *programState) override;
-
+    /** set GLProgramState, you should bind attributes by yourself */
+    virtual void setGLProgramState(GLProgramState *glProgramState) override;
+    /** just remember bind attributes */
+    virtual void setGLProgram(GLProgram *glprogram) override;
+    
     /*
      * Get AABB
      * If the sprite has animation, it can't be calculated accurately,
@@ -160,8 +165,8 @@ public:
      */
     virtual Rect getBoundingBox() const override;
 
-    // set which face is going to cull, CullFaceSide::BACK, CullFaceSide::FRONT and CullFaceSide::NONE.
-    void setCullFace(CullFaceSide side);
+    // set which face is going to cull, GL_BACK, GL_FRONT, GL_FRONT_AND_BACK, default GL_BACK
+    void setCullFace(GLenum cullFace);
     // set cull face enable or not
     void setCullFaceEnabled(bool enable);
     
@@ -286,7 +291,7 @@ public:
     struct Sprite3DData
     {
         Vector<MeshVertexData*>   meshVertexDatas;
-        Vector<backend::ProgramState*>   programStates;
+        Vector<GLProgramState*>   glProgramStates;
         NodeDatas*      nodedatas;
         MaterialDatas*  materialdatas;
         ~Sprite3DData()
@@ -296,7 +301,7 @@ public:
             if (materialdatas)
                 delete materialdatas;
             meshVertexDatas.clear();
-            programStates.clear();
+            glProgramStates.clear();
         }
     };
     

@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2012 cocos2d-x.org
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -41,8 +40,8 @@ protected:
     std::string    _title;
 
 public:
-    EaseSpriteDemo();
-    ~EaseSpriteDemo();
+    EaseSpriteDemo(void);
+    ~EaseSpriteDemo(void);
 
     virtual std::string subtitle() const override;
     virtual void onEnter() override;

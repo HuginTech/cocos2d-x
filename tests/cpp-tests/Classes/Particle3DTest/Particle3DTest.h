@@ -1,6 +1,5 @@
 /****************************************************************************
  Copyright (c) 2013 cocos2d-x.org
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -36,8 +35,8 @@ class Particle3DTestDemo : public TestCase
 {
 public:
     CREATE_FUNC(Particle3DTestDemo);
-    Particle3DTestDemo();
-    virtual ~Particle3DTestDemo();
+    Particle3DTestDemo(void);
+    virtual ~Particle3DTestDemo(void);
     
     // overrides
     virtual bool init() override;

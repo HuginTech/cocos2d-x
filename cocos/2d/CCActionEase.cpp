@@ -1,8 +1,7 @@
 /****************************************************************************
 Copyright (c) 2008-2009 Jason Booth
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -64,7 +63,7 @@ bool ActionEase::initWithAction(ActionInterval *action)
     return false;
 }
 
-ActionEase::~ActionEase()
+ActionEase::~ActionEase(void)
 {
     CC_SAFE_RELEASE(_inner);
 }
@@ -82,7 +81,7 @@ void ActionEase::startWithTarget(Node *target)
     }
 }
 
-void ActionEase::stop()
+void ActionEase::stop(void)
 {
     if (_inner)
         _inner->stop();

@@ -1,6 +1,5 @@
 /****************************************************************************
  Copyright (c) 2010 cocos2d-x.org
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -26,7 +25,7 @@
 #import "AppController.h"
 #import "cocos2d.h"
 #import "platform/ios/CCEAGLView-ios.h"
-#import "../Classes/AppDelegate.h"
+#import "AppDelegate.h"
 #import "RootViewController.h"
 
 @implementation AppController
@@ -53,13 +52,13 @@ static AppDelegate s_sharedApplication;
                                          depthFormat: cocos2d::GLViewImpl::_depthFormat
                                  preserveBackbuffer: NO
                                          sharegroup: nil
-                                      multiSampling: cocos2d::GLViewImpl::_multisamplingCount > 0 ? YES : NO
-                                    numberOfSamples: cocos2d::GLViewImpl::_multisamplingCount];
+                                      multiSampling: NO
+                                    numberOfSamples: 0];
     
     
     // Use RootViewController manage CCEAGLView
     viewController = [[RootViewController alloc] initWithNibName:nil bundle:nil];
-    viewController.extendedLayoutIncludesOpaqueBars = YES;
+    viewController.wantsFullScreenLayout = YES;
     viewController.view = eaglView;
 
     // Set RootViewController to window
@@ -78,12 +77,6 @@ static AppDelegate s_sharedApplication;
 
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
     
-    //Launching the app with the arguments -NSAllowsDefaultLineBreakStrategy NO to force back to the old behavior.
-    if ( [[UIDevice currentDevice].systemVersion floatValue] >= 13.0f)
-    {
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"NSAllowsDefaultLineBreakStrategy"];
-    }
-
     // IMPORTANT: Setting the GLView should be done after creating the RootViewController
     cocos2d::GLViewImpl *glview = cocos2d::GLViewImpl::createWithEAGLView(eaglView);
     cocos2d::Director::getInstance()->setOpenGLView(glview);

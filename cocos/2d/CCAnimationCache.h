@@ -2,8 +2,7 @@
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -75,7 +74,13 @@ public:
      */
     static void destroyInstance();
 
-    bool init();
+    /** @deprecated Use getInstance() instead. */
+    CC_DEPRECATED_ATTRIBUTE static AnimationCache* sharedAnimationCache() { return AnimationCache::getInstance(); }
+
+    /** @deprecated Use destroyInstance() instead. */
+    CC_DEPRECATED_ATTRIBUTE static void purgeSharedAnimationCache() { return AnimationCache::destroyInstance(); }
+
+    bool init(void);
 
     /** Adds a Animation with a name.
      *
@@ -89,6 +94,11 @@ public:
      * @param name The name of animation.
      */
     void removeAnimation(const std::string& name);
+    /** @deprecated. Use removeAnimation() instead
+     * @js NA
+     * @lua NA
+     */
+    CC_DEPRECATED_ATTRIBUTE void removeAnimationByName(const std::string& name){ removeAnimation(name);}
 
     /** Returns a Animation that was previously added.
      * If the name is not found it will return nil.
@@ -97,6 +107,12 @@ public:
      * @return A Animation that was previously added. If the name is not found it will return nil.
      */
     Animation* getAnimation(const std::string& name);
+    /**
+     * @deprecated. Use getAnimation() instead
+     * @js NA
+     * @lua NA
+     */
+    CC_DEPRECATED_ATTRIBUTE Animation* animationByName(const std::string& name){ return getAnimation(name); }
 
     /** Adds an animation from an NSDictionary.
      * Make sure that the frames were previously loaded in the SpriteFrameCache.

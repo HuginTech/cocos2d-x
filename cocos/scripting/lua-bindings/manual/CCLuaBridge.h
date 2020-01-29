@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -70,7 +69,7 @@ public:
      *
      * @return the LuaStack object.
      */
-    static LuaStack *getStack();
+    static LuaStack *getStack(void);
     /**
      * Push the function pointer corresponding to functionId on the top of lua stack by searching the `lua_bridge_function_id` table.
      * If it don't find the function pointer corresponding to functionId, it will reset stack top index to the index before searching.

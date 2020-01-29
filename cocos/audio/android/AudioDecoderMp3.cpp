@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -29,7 +28,7 @@ THE SOFTWARE.
 #include "audio/android/mp3reader.h"
 #include "platform/CCFileUtils.h"
 
-namespace cocos2d {
+namespace cocos2d { namespace experimental {
 
 AudioDecoderMp3::AudioDecoderMp3()
 {
@@ -80,4 +79,4 @@ bool AudioDecoderMp3::decodeToPcm()
     return false;
 }
 
-} // namespace cocos2d {
+}} // namespace cocos2d { namespace experimental {

@@ -1,7 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,7 +22,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#pragma once
+
+#ifndef __CC_UTILS_WIN32_H__
+#define __CC_UTILS_WIN32_H__
 
 #include "platform/CCPlatformMacros.h"
 
@@ -36,3 +37,5 @@ std::string CC_DLL StringWideCharToUtf8(const std::wstring& strWideChar);
 std::string CC_DLL UTF8StringToMultiByte(const std::string& strUtf8);
 
 NS_CC_END
+
+#endif // __CC_UTILS_WIN32_H__

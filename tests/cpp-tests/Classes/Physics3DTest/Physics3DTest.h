@@ -1,6 +1,5 @@
 /****************************************************************************
  Copyright (c) 2013 cocos2d-x.org
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -49,8 +48,8 @@ class Physics3DTestDemo : public TestCase
 {
 public:
     CREATE_FUNC(Physics3DTestDemo);
-    Physics3DTestDemo();
-    virtual ~Physics3DTestDemo();
+    Physics3DTestDemo(void);
+    virtual ~Physics3DTestDemo(void);
     
     // overrides
     virtual bool init() override;
@@ -68,9 +67,9 @@ protected:
 
 protected:
     std::string    _title;
-    cocos2d::Camera *_camera = nullptr;
-    float _angle = 0.f;
-    bool _needShootBox = false;
+    cocos2d::Camera *_camera;
+    float _angle;
+    bool _needShootBox;
 };
 
 class BasicPhysics3DDemo : public Physics3DTestDemo

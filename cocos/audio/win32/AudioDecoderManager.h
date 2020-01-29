@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2016-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -25,7 +24,7 @@ THE SOFTWARE.
 
 #pragma once
 
-namespace cocos2d {
+namespace cocos2d { namespace experimental {
 
 class AudioDecoder;
 
@@ -38,5 +37,5 @@ public:
     static void destroyDecoder(AudioDecoder* decoder);
 };
 
-} // namespace cocos2d {
+}} // namespace cocos2d { namespace experimental {
 

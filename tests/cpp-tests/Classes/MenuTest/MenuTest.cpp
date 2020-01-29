@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2012 cocos2d-x.org
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -59,12 +58,13 @@ MenuLayerMainMenu::MenuLayerMainMenu()
 {
     _touchListener = EventListenerTouchOneByOne::create();
     _touchListener->setSwallowTouches(true);
-    _touchListener->onTouchBegan = CC_CALLBACK_2(MenuLayerMainMenu::touchBegan, this);
-    _touchListener->onTouchMoved = CC_CALLBACK_2(MenuLayerMainMenu::touchMoved, this);
-    _touchListener->onTouchEnded = CC_CALLBACK_2(MenuLayerMainMenu::touchEnded, this);
-    _touchListener->onTouchCancelled = CC_CALLBACK_2(MenuLayerMainMenu::touchCancelled, this);
-    _eventDispatcher->addEventListenerWithFixedPriority(_touchListener, 1);
+    _touchListener->onTouchBegan = CC_CALLBACK_2(MenuLayerMainMenu::onTouchBegan, this);
+    _touchListener->onTouchMoved = CC_CALLBACK_2(MenuLayerMainMenu::onTouchMoved, this);
+    _touchListener->onTouchEnded = CC_CALLBACK_2(MenuLayerMainMenu::onTouchEnded, this);
+    _touchListener->onTouchCancelled = CC_CALLBACK_2(MenuLayerMainMenu::onTouchCancelled, this);
     
+    _eventDispatcher->addEventListenerWithFixedPriority(_touchListener, 1);
+
     // Font Item    
     auto spriteNormal = Sprite::create(s_MenuItem, Rect(0,23*2,115,23));
     auto spriteSelected = Sprite::create(s_MenuItem, Rect(0,23*1,115,23));
@@ -127,7 +127,7 @@ MenuLayerMainMenu::MenuLayerMainMenu()
         
         child->setPosition( Vec2( dstPoint.x + offset, dstPoint.y) );
         child->runAction(
-                         EaseElasticOut::create(MoveBy::create(2, Vec2(dstPoint.x - offset,0.0f)), 0.35f)
+                         EaseElasticOut::create(MoveBy::create(2, Vec2(dstPoint.x - offset,0)), 0.35f)
                          );
         i++;
     }
@@ -136,26 +136,25 @@ MenuLayerMainMenu::MenuLayerMainMenu()
     _disabledItem->setEnabled( false );
 
     addChild(menu);
-    menu->setTag(100);
     menu->setPosition(Vec2(s.width/2, s.height/2));
     menu->setScale(0);
     menu->runAction(ScaleTo::create(1,1));
 }
 
-bool MenuLayerMainMenu::touchBegan(Touch *touch, Event * event)
+bool MenuLayerMainMenu::onTouchBegan(Touch *touch, Event * event)
 {
     return true;
 }
 
-void MenuLayerMainMenu::touchEnded(Touch *touch, Event * event)
+void MenuLayerMainMenu::onTouchEnded(Touch *touch, Event * event)
 {
 }
 
-void MenuLayerMainMenu::touchCancelled(Touch *touch, Event * event)
+void MenuLayerMainMenu::onTouchCancelled(Touch *touch, Event * event)
 {
 }
 
-void MenuLayerMainMenu::touchMoved(Touch *touch, Event * event)
+void MenuLayerMainMenu::onTouchMoved(Touch *touch, Event * event)
 {
 }
 
@@ -167,12 +166,12 @@ MenuLayerMainMenu::~MenuLayerMainMenu()
 
 void MenuLayerMainMenu::menuCallback(Ref* sender)
 {
-    static_cast<LayerMultiplex*>(_parent)->switchTo(1, false);
+    static_cast<LayerMultiplex*>(_parent)->switchTo(1);
 }
 
 void MenuLayerMainMenu::menuCallbackConfig(Ref* sender)
 {
-    static_cast<LayerMultiplex*>(_parent)->switchTo(3, false);
+    static_cast<LayerMultiplex*>(_parent)->switchTo(3);
 }
 
 void MenuLayerMainMenu::allowTouches(float dt)
@@ -192,12 +191,12 @@ void MenuLayerMainMenu::menuCallbackDisabled(Ref* sender)
 
 void MenuLayerMainMenu::menuCallback2(Ref* sender)
 {
-    static_cast<LayerMultiplex*>(_parent)->switchTo(2, false);
+    static_cast<LayerMultiplex*>(_parent)->switchTo(2);
 }
 
 void MenuLayerMainMenu::menuCallbackBugsTest(Ref *pSender)
 {
-    static_cast<LayerMultiplex*>(_parent)->switchTo(4, false);
+    static_cast<LayerMultiplex*>(_parent)->switchTo(4);
 }
 
 void MenuLayerMainMenu::onQuit(Ref* sender)
@@ -208,7 +207,7 @@ void MenuLayerMainMenu::onQuit(Ref* sender)
 
 void MenuLayerMainMenu::menuMovingCallback(Ref *pSender)
 {
-    static_cast<LayerMultiplex*>(_parent)->switchTo(5, false);
+    static_cast<LayerMultiplex*>(_parent)->switchTo(5);
 }
 
 //------------------------------------------------------------------
@@ -259,7 +258,7 @@ void MenuLayer2::alignMenusH()
             // TIP: if no padding, padding = 5
             menu->alignItemsHorizontally();            
             auto p = menu->getPosition();
-            menu->setPosition(p + Vec2(0.0f,30.0f));
+            menu->setPosition(p + Vec2(0,30));
             
         } 
         else 
@@ -267,7 +266,7 @@ void MenuLayer2::alignMenusH()
             // TIP: but padding is configurable
             menu->alignItemsHorizontallyWithPadding(40);
             auto p = menu->getPosition();
-            menu->setPosition(p - Vec2(0.0f,30.0f));
+            menu->setPosition(p - Vec2(0,30));
         }        
     }
 }
@@ -283,27 +282,27 @@ void MenuLayer2::alignMenusV()
             // TIP: if no padding, padding = 5
             menu->alignItemsVertically();            
             auto p = menu->getPosition();
-            menu->setPosition(p + Vec2(100.0f,0.0f));
+            menu->setPosition(p + Vec2(100,0));
         } 
         else 
         {
             // TIP: but padding is configurable
             menu->alignItemsVerticallyWithPadding(40);    
             auto p = menu->getPosition();
-            menu->setPosition(p - Vec2(100.0f,0.0f));
+            menu->setPosition(p - Vec2(100,0));
         }        
     }
 }
 
 void MenuLayer2::menuCallback(Ref* sender)
 {
-    static_cast<LayerMultiplex*>(_parent)->switchTo(0, false);
+    static_cast<LayerMultiplex*>(_parent)->switchTo(0);
 }
 
 void MenuLayer2::menuCallbackOpacity(Ref* sender)
 {
     auto menu = static_cast<Menu*>( static_cast<Node*>(sender)->getParent() );
-    uint8_t opacity = menu->getOpacity();
+    GLubyte opacity = menu->getOpacity();
     if( opacity == 128 )
         menu->setOpacity(255);
     else
@@ -337,7 +336,7 @@ MenuLayer3::MenuLayer3()
 		_disabledItem->stopAllActions();
 	});
     auto item2 = MenuItemFont::create("--- Go Back ---", [&](Ref *sender) {
-		    static_cast<LayerMultiplex*>(_parent)->switchTo(0, false);
+		    static_cast<LayerMultiplex*>(_parent)->switchTo(0);
 	});
 
     auto spriteNormal   = Sprite::create(s_MenuItem,  Rect(0,23*2,115,23));
@@ -471,7 +470,7 @@ void MenuLayer4::menuCallback(Ref* sender)
 
 void MenuLayer4::backCallback(Ref* sender)
 {
-    static_cast<LayerMultiplex*>(_parent)->switchTo(0, false);
+    static_cast<LayerMultiplex*>(_parent)->switchTo(0);
 }
 
 // BugsTest
@@ -509,7 +508,7 @@ void BugsTest::issue1410v2MenuCallback(cocos2d::Ref *pSender)
 
 void BugsTest::backMenuCallback(cocos2d::Ref *pSender)
 {
-    static_cast<LayerMultiplex*>(_parent)->switchTo(0, false);
+    static_cast<LayerMultiplex*>(_parent)->switchTo(0);
 }
 
 RemoveMenuItemWhenMove::RemoveMenuItemWhenMove()
@@ -544,7 +543,7 @@ RemoveMenuItemWhenMove::RemoveMenuItemWhenMove()
 
 void RemoveMenuItemWhenMove::goBack(Ref *pSender)
 {
-    static_cast<LayerMultiplex*>(_parent)->switchTo(0, false);
+    static_cast<LayerMultiplex*>(_parent)->switchTo(0);
 }
 
 RemoveMenuItemWhenMove::~RemoveMenuItemWhenMove()

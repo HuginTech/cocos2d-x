@@ -1,27 +1,3 @@
-/****************************************************************************
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
- http://www.cocos2d-x.org
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
 #include "EffectsAdvancedTest.h"
 
 USING_NS_CC;
@@ -282,7 +258,7 @@ void Issue631::onEnter()
     auto layer2 = LayerColor::create(Color4B( 0, 255,0,255 ) );
     auto fog = Sprite::create("Images/Fog.png");
 
-    BlendFunc bf = {backend::BlendFactor::SRC_ALPHA, backend::BlendFactor::ONE_MINUS_SRC_ALPHA};
+    BlendFunc bf = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
     fog->setBlendFunc(bf);
     layer2->addChild(fog, 1);
     addChild(layer2BaseGrid, 1);
@@ -307,12 +283,12 @@ std::string Issue631::subtitle() const
 //
 //------------------------------------------------------------------
 
-void EffectAdvanceBaseTest::onEnter()
+void EffectAdvanceBaseTest::onEnter(void)
 {
     TestCase::onEnter();
     
     _bgNode = NodeGrid::create();
-    _bgNode->setAnchorPoint(Vec2(0.5f,0.5f));
+    _bgNode->setAnchorPoint(Vec2(0.5,0.5));
     addChild(_bgNode);
     //_bgNode->setPosition( VisibleRect::center() );
     auto bg = Sprite::create("Images/background3.png");
@@ -322,7 +298,7 @@ void EffectAdvanceBaseTest::onEnter()
     _bgNode->addChild(bg);
 
     _target1 = NodeGrid::create();
-    _target1->setAnchorPoint(Vec2(0.5f,0.5f));
+    _target1->setAnchorPoint(Vec2(0.5,0.5));
     auto grossini = Sprite::create("Images/grossinis_sister2.png");
     _target1->addChild(grossini);
     _bgNode->addChild(_target1);
@@ -333,7 +309,7 @@ void EffectAdvanceBaseTest::onEnter()
 
 
     _target2 = NodeGrid::create();
-    _target2->setAnchorPoint(Vec2(0.5f,0.5f));
+    _target2->setAnchorPoint(Vec2(0.5,0.5));
     auto tamara = Sprite::create("Images/grossinis_sister1.png");
     _target2->addChild(tamara);
     _bgNode->addChild(_target2);
@@ -344,7 +320,7 @@ void EffectAdvanceBaseTest::onEnter()
 
 }
 
-EffectAdvanceBaseTest::~EffectAdvanceBaseTest()
+EffectAdvanceBaseTest::~EffectAdvanceBaseTest(void)
 {
 }
 

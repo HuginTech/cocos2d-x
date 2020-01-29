@@ -1,7 +1,6 @@
 /****************************************************************************
  Copyright (c) 2013      Zynga Inc.
- Copyright (c) 2013-2016 Chukong Technologies Inc.
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -35,11 +34,11 @@
 #include "platform/CCPlatformMacros.h"
 #include "base/CCRef.h"
 #include "platform/CCStdC.h" // ssize_t on windows
-#include "renderer/CCTexture2D.h"
 
 NS_CC_BEGIN
 
 class Font;
+class Texture2D;
 class EventCustom;
 class EventListenerCustom;
 class FontFreeType;
@@ -55,7 +54,6 @@ struct FontLetterDefinition
     int textureID;
     bool validDefinition;
     int xAdvance;
-    bool rotated;
 };
 
 class CC_DLL FontAtlas : public Ref
@@ -85,8 +83,6 @@ public:
     float getLineHeight() const { return _lineHeight; }
     void  setLineHeight(float newHeight);
     
-    std::string getFontName() const;
-
     Texture2D* getTexture(int slot);
     const Font* getFont() const { return _font; }
 
@@ -115,15 +111,11 @@ public:
 protected:
     void reset();
     
-    void reinit();
-    
     void releaseTextures();
 
     void findNewCharacters(const std::u32string& u32Text, std::unordered_map<unsigned int, unsigned int>& charCodeMap);
 
     void conversionU32TOGB2312(const std::u32string& u32Text, std::unordered_map<unsigned int, unsigned int>& charCodeMap);
-
-    void initTextureWithZeros(Texture2D *texture);
 
     /**
      * Scale each font letter by scaleFactor.
@@ -131,31 +123,27 @@ protected:
      * @param scaleFactor A float scale factor for scaling font letter info.
      */
     void scaleFontLetterDefinition(float scaleFactor);
-    
-    void updateTextureContent(backend::PixelFormat format, int startY);
 
     std::unordered_map<ssize_t, Texture2D*> _atlasTextures;
     std::unordered_map<char32_t, FontLetterDefinition> _letterDefinitions;
-    float _lineHeight = 0.f;
-    Font* _font = nullptr;
-    FontFreeType* _fontFreeType = nullptr;
-    void* _iconv = nullptr;
+    float _lineHeight;
+    Font* _font;
+    FontFreeType* _fontFreeType;
+    void* _iconv;
 
     // Dynamic GlyphCollection related stuff
-    int _currentPage = 0;
-    unsigned char *_currentPageData = nullptr;
-    unsigned char *_currentPageDataRGBA = nullptr;
-    int _currentPageDataSize = 0;
-    int _currentPageDataSizeRGBA = 0;
-    float _currentPageOrigX = 0;
-    float _currentPageOrigY = 0;
-    int _letterPadding = 0;
-    int _letterEdgeExtend = 0;
+    int _currentPage;
+    unsigned char *_currentPageData;
+    int _currentPageDataSize;
+    float _currentPageOrigX;
+    float _currentPageOrigY;
+    int _letterPadding;
+    int _letterEdgeExtend;
 
-    int _fontAscender = 0;
-    EventListenerCustom* _rendererRecreatedListener = nullptr;
-    bool _antialiasEnabled = true;
-    int _currLineHeight = 0;
+    int _fontAscender;
+    EventListenerCustom* _rendererRecreatedListener;
+    bool _antialiasEnabled;
+    int _currLineHeight;
 
     friend class Label;
 };
